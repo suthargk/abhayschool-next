@@ -27,19 +27,32 @@ import { LANGUAGES } from "@/Helper/languages";
 const CustomizeSettingDialog = () => {
   const { theme, setTheme } = useTheme();
 
-  const [customizeSettings, setCustomizeSettings] = useState(() => {
-    const language = localStorage.getItem("language");
-    return {
-      isCustomizeSettingDialog: !(language && theme),
-      themeMode: localStorage.getItem("theme") || theme,
-      language:
-        LANGUAGES.find((lang) => lang.value === language) || LANGUAGES[0],
-    };
+  const [customizeSettings, setCustomizeSettings] = useState({
+    isCustomizeSettingDialog: true,
+    themeMode: theme,
+    language: LANGUAGES[0],
   });
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const language = localStorage.getItem("language");
+      const storedTheme = localStorage.getItem("theme");
+
+      setCustomizeSettings({
+        isCustomizeSettingDialog: !(language && (storedTheme || theme)),
+        themeMode: storedTheme || theme,
+        language:
+          LANGUAGES.find((lang) => lang.value === language) || LANGUAGES[0],
+      });
+    }
+  }, [theme]);
 
   const handleClick = () => {
     localStorage.setItem("language", customizeSettings.language.value);
+    localStorage.setItem("theme", customizeSettings.themeMode); // (you missed saving theme before)
+
     setTheme(customizeSettings.themeMode);
+
     setCustomizeSettings((settings) => ({
       ...settings,
       isCustomizeSettingDialog: false,
