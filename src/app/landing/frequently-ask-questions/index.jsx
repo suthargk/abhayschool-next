@@ -50,10 +50,10 @@ const FrequentlyAskQuestions = () => {
               Is it animated?
             </AccordionTrigger>
             <AccordionContent className="text-lg text-violet-800 dark:text-zinc-200 animate-fade-up-from-top">
-              Yes. It's animated by default, but you can disable it if you
-              prefer. Yes. It's animated by default, but you can disable it if
-              you prefer. Yes. It's animated by default, but you can disable it
-              if you prefer.
+              Yes. It&apos;s animated by default, but you can disable it if you
+              prefer. Yes. It&apos;s animated by default, but you can disable it
+              if you prefer. Yes. It&apos;s animated by default, but you can
+              disable it if you prefer.
             </AccordionContent>
           </AccordionItem>
         </Accordion>
@@ -90,7 +90,7 @@ const FrequentlyAskQuestions = () => {
               Is it animated?
             </AccordionTrigger>
             <AccordionContent className="text-lg text-violet-800 dark:text-zinc-200 animate-fade-up-from-top">
-              Yes. It's animated by default, but you can disable it if you
+              Yes. It&apos;s animated by default, but you can disable it if you
               prefer.
             </AccordionContent>
           </AccordionItem>
