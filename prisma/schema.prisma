@@ -1,0 +1,12 @@
+// Prisma + Supabase (Postgres): https://www.prisma.io/docs/orm/overview/databases/supabase
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// Add models here, then run: npm run db:migrate (or db:push)
