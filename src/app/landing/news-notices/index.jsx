@@ -1,5 +1,5 @@
 import React from "react";
-import webpImage from "/public/peppa_news.png";
+import webpImage from "../../../../public/peppa_news.png";
 import Link from "next/link";
 import Image from "next/image";
 
