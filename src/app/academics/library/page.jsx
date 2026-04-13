@@ -10,101 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
-const tabs = [
-  { id: "class_ix", label: "Class IX" },
-  { id: "class_x", label: "Class X" },
-  { id: "class_xi", label: "Class XI" },
-];
-
-const booksByTab = {
-  class_ix: [
-    {
-      bookName: "Beehive — English Textbook",
-      subject: "English",
-      publication: "NCERT",
-    },
-    {
-      bookName: "Moments — Supplementary Reader",
-      subject: "English",
-      publication: "NCERT",
-    },
-    {
-      bookName: "Mathematics",
-      subject: "Mathematics",
-      publication: "NCERT",
-    },
-    {
-      bookName: "Science",
-      subject: "Science",
-      publication: "NCERT",
-    },
-    {
-      bookName: "India and the Contemporary World — I",
-      subject: "Social Science",
-      publication: "NCERT",
-    },
-  ],
-  class_x: [
-    {
-      bookName: "First Flight — English Textbook",
-      subject: "English",
-      publication: "NCERT",
-    },
-    {
-      bookName: "Footprints Without Feet",
-      subject: "English",
-      publication: "NCERT",
-    },
-    {
-      bookName: "Mathematics",
-      subject: "Mathematics",
-      publication: "NCERT",
-    },
-    {
-      bookName: "Science",
-      subject: "Science",
-      publication: "NCERT",
-    },
-    {
-      bookName: "Understanding Economic Development",
-      subject: "Social Science",
-      publication: "NCERT",
-    },
-  ],
-  class_xi: [
-    {
-      bookName: "Hornbill — Core Course",
-      subject: "English",
-      publication: "NCERT",
-    },
-    {
-      bookName: "Snapshots — Supplementary Reader",
-      subject: "English",
-      publication: "NCERT",
-    },
-    {
-      bookName: "Physics Part 1 & 2",
-      subject: "Physics",
-      publication: "NCERT",
-    },
-    {
-      bookName: "Chemistry Part 1 & 2",
-      subject: "Chemistry",
-      publication: "NCERT",
-    },
-    {
-      bookName: "Biology",
-      subject: "Biology",
-      publication: "NCERT",
-    },
-    {
-      bookName: "Mathematics",
-      subject: "Mathematics",
-      publication: "NCERT",
-    },
-  ],
-};
+import { libraryBooksByTab, libraryTabs } from "@/data/library-books";
 
 function BooksTable({ tabId, rows }) {
   return (
@@ -171,12 +77,12 @@ const LibraryPage = () => {
           </p>
         </div>
 
-        <Tabs defaultValue={tabs[0].id} className="w-full">
+        <Tabs defaultValue={libraryTabs[0].id} className="w-full">
           <TabsList
             aria-label="Library catalogue by class"
             className="h-auto w-full flex-wrap justify-start gap-1 bg-zinc-100 p-1 dark:bg-zinc-800 md:w-auto"
           >
-            {tabs.map((tab) => (
+            {libraryTabs.map((tab) => (
               <TabsTrigger
                 key={tab.id}
                 value={tab.id}
@@ -187,9 +93,12 @@ const LibraryPage = () => {
             ))}
           </TabsList>
 
-          {tabs.map((tab) => (
+          {libraryTabs.map((tab) => (
             <TabsContent key={tab.id} value={tab.id} className="pt-6">
-              <BooksTable tabId={tab.id} rows={booksByTab[tab.id] ?? []} />
+              <BooksTable
+                tabId={tab.id}
+                rows={libraryBooksByTab[tab.id] ?? []}
+              />
             </TabsContent>
           ))}
         </Tabs>
