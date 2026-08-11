@@ -27,6 +27,7 @@ model Profile {
   galleryAlbums     GalleryAlbum[]
   principalMessages PrincipalMessage[]
   faculty           Faculty[]
+  libraryBooks      LibraryBook[]
 
   @@map("profiles")
 }
@@ -136,4 +137,38 @@ model Faculty {
 
   @@index([status, position])
   @@map("faculty")
+}
+
+enum LibraryClass {
+  CLASS_I
+  CLASS_II
+  CLASS_III
+  CLASS_IV
+  CLASS_V
+  CLASS_VI
+  CLASS_VII
+  CLASS_VIII
+  CLASS_IX
+  CLASS_X
+  CLASS_XI
+  CLASS_XII
+}
+
+model LibraryBook {
+  id          String        @id @default(cuid())
+  class       LibraryClass
+  bookName    String
+  subject     String
+  publication String
+  position    Int           @default(0)
+  status      ContentStatus @default(DRAFT)
+  publishedAt DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  authorId String  @db.Uuid
+  author   Profile @relation(fields: [authorId], references: [id])
+
+  @@index([class, status, position])
+  @@map("library_books")
 }

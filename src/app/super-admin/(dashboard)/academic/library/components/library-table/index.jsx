@@ -1,7 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   DndContext,
   KeyboardSensor,
@@ -18,22 +17,32 @@ import {
 } from "@dnd-kit/sortable";
 import { Search } from "lucide-react";
 
-import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
-import { FacultyDeleteDialog } from "./delete-dialog";
-import { FacultyRow } from "./row";
+import { LibraryRow } from "./row";
 
-export function FacultyTable({ initialItems, canPublish }) {
-  const router = useRouter();
-  const [items, setItems] = useState(initialItems);
+export function LibraryTable({
+  items,
+  canPublish,
+  pendingId,
+  onReorder,
+  onTogglePublish,
+  onDelete,
+  onBulkDelete,
+}) {
   const [search, setSearch] = useState("");
-  const [pendingId, setPendingId] = useState(null);
-  const [deleteTarget, setDeleteTarget] = useState(null);
-  const [deleting, setDeleting] = useState(false);
   const [selected, setSelected] = useState(() => new Set());
+
+  useEffect(() => {
+    setSelected((prev) => {
+      const ids = new Set(items.map((item) => item.id));
+      const next = new Set(Array.from(prev).filter((id) => ids.has(id)));
+      return next.size === prev.size ? prev : next;
+    });
+  }, [items]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -45,78 +54,20 @@ export function FacultyTable({ initialItems, canPublish }) {
     if (!q) return items;
     return items.filter(
       (item) =>
-        item.name.toLowerCase().includes(q) ||
-        item.designation.toLowerCase().includes(q) ||
-        (item.department || "").toLowerCase().includes(q),
+        item.bookName.toLowerCase().includes(q) ||
+        item.subject.toLowerCase().includes(q) ||
+        item.publication.toLowerCase().includes(q),
     );
   }, [items, search]);
 
   const dragDisabled = Boolean(search.trim());
 
-  async function handleDragEnd(event) {
+  function handleDragEnd(event) {
     const { active, over } = event;
     if (!over || active.id === over.id) return;
-
     const oldIndex = items.findIndex((item) => item.id === active.id);
     const newIndex = items.findIndex((item) => item.id === over.id);
-    const next = arrayMove(items, oldIndex, newIndex);
-    setItems(next);
-
-    await fetch("/api/super-admin/faculty/reorder", {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ order: next.map((item) => item.id) }),
-    });
-    router.refresh();
-  }
-
-  async function togglePublish(item) {
-    setPendingId(item.id);
-    try {
-      await fetch(`/api/super-admin/faculty/${item.id}/publish`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ publish: item.status !== "PUBLISHED" }),
-      });
-      setItems((prev) =>
-        prev.map((i) =>
-          i.id === item.id ? { ...i, status: i.status === "PUBLISHED" ? "DRAFT" : "PUBLISHED" } : i,
-        ),
-      );
-      router.refresh();
-    } finally {
-      setPendingId(null);
-    }
-  }
-
-  function requestDelete(item) {
-    setDeleteTarget({ ids: [item.id], label: `"${item.name}"` });
-  }
-
-  function requestBulkDelete() {
-    const ids = Array.from(selected);
-    if (ids.length === 0) return;
-    setDeleteTarget({ ids, label: `${ids.length} faculty member${ids.length === 1 ? "" : "s"}` });
-  }
-
-  async function confirmDelete() {
-    if (!deleteTarget) return;
-    setDeleting(true);
-    try {
-      await Promise.all(
-        deleteTarget.ids.map((id) => fetch(`/api/super-admin/faculty/${id}`, { method: "DELETE" })),
-      );
-      setItems((prev) => prev.filter((item) => !deleteTarget.ids.includes(item.id)));
-      setSelected((prev) => {
-        const next = new Set(prev);
-        deleteTarget.ids.forEach((id) => next.delete(id));
-        return next;
-      });
-      setDeleteTarget(null);
-      router.refresh();
-    } finally {
-      setDeleting(false);
-    }
+    onReorder(arrayMove(items, oldIndex, newIndex).map((item) => item.id));
   }
 
   function toggleSelected(id, checked) {
@@ -148,14 +99,22 @@ export function FacultyTable({ initialItems, canPublish }) {
             type="search"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search by name, designation, or department..."
+            placeholder="Search by book name, subject, or publication..."
             className="pl-8"
           />
         </div>
         {canPublish && selected.size > 0 ? (
           <div className="flex items-center gap-2">
             <span className="text-sm text-muted-foreground">{selected.size} selected</span>
-            <Button type="button" variant="destructive" size="sm" onClick={requestBulkDelete}>
+            <Button
+              type="button"
+              variant="destructive"
+              size="sm"
+              onClick={() => {
+                const selectedItems = items.filter((item) => selected.has(item.id));
+                onBulkDelete(selectedItems);
+              }}
+            >
               Delete selected
             </Button>
             <Button type="button" variant="ghost" size="sm" onClick={() => setSelected(new Set())}>
@@ -167,7 +126,7 @@ export function FacultyTable({ initialItems, canPublish }) {
 
       {items.length === 0 ? (
         <p className="rounded-md border border-dashed p-8 text-center text-sm text-muted-foreground">
-          No faculty members yet.
+          No books in this class yet.
         </p>
       ) : filtered.length === 0 ? (
         <p className="rounded-md border border-dashed p-8 text-center text-sm text-muted-foreground">
@@ -175,11 +134,7 @@ export function FacultyTable({ initialItems, canPublish }) {
         </p>
       ) : (
         <div className="rounded-md border">
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragEnd={handleDragEnd}
-          >
+          <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
             <Table>
               <TableHeader>
                 <TableRow>
@@ -195,9 +150,9 @@ export function FacultyTable({ initialItems, canPublish }) {
                       />
                     </TableHead>
                   ) : null}
-                  <TableHead>Name</TableHead>
-                  <TableHead>Designation</TableHead>
-                  <TableHead>Department</TableHead>
+                  <TableHead>Book name</TableHead>
+                  <TableHead>Subject</TableHead>
+                  <TableHead>Publication</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead className="w-10">
                     <span className="sr-only">Actions</span>
@@ -205,9 +160,12 @@ export function FacultyTable({ initialItems, canPublish }) {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                <SortableContext items={filtered.map((item) => item.id)} strategy={verticalListSortingStrategy}>
+                <SortableContext
+                  items={filtered.map((item) => item.id)}
+                  strategy={verticalListSortingStrategy}
+                >
                   {filtered.map((item) => (
-                    <FacultyRow
+                    <LibraryRow
                       key={item.id}
                       item={item}
                       canPublish={canPublish}
@@ -215,8 +173,8 @@ export function FacultyTable({ initialItems, canPublish }) {
                       pending={pendingId === item.id}
                       selected={selected.has(item.id)}
                       onToggleSelect={(checked) => toggleSelected(item.id, checked)}
-                      onTogglePublish={() => togglePublish(item)}
-                      onDelete={() => requestDelete(item)}
+                      onTogglePublish={() => onTogglePublish(item)}
+                      onDelete={() => onDelete(item)}
                     />
                   ))}
                 </SortableContext>
@@ -226,20 +184,13 @@ export function FacultyTable({ initialItems, canPublish }) {
         </div>
       )}
 
-      {dragDisabled ? (
-        <p className="text-xs text-muted-foreground">Clear the search to drag and reorder.</p>
-      ) : (
-        <p className="text-xs text-muted-foreground">Drag rows to change display order.</p>
-      )}
-
-      <FacultyDeleteDialog
-        target={deleteTarget}
-        deleting={deleting}
-        onOpenChange={(open) => {
-          if (!open) setDeleteTarget(null);
-        }}
-        onConfirm={confirmDelete}
-      />
+      {items.length > 0 ? (
+        dragDisabled ? (
+          <p className="text-xs text-muted-foreground">Clear the search to drag and reorder.</p>
+        ) : (
+          <p className="text-xs text-muted-foreground">Drag rows to change display order.</p>
+        )
+      ) : null}
     </div>
   );
 }

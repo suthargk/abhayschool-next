@@ -1,10 +1,9 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Check, Circle, CircleDashed, GripVertical, MoreHorizontal, UserRound } from "lucide-react";
+import { Check, Circle, CircleDashed, GripVertical, MoreHorizontal } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -19,7 +18,7 @@ import {
 import { TableCell, TableRow } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 
-export function FacultyRow({
+export function LibraryRow({
   item,
   canPublish,
   dragDisabled,
@@ -60,27 +59,20 @@ export function FacultyRow({
           <Checkbox
             checked={selected}
             onCheckedChange={(checked) => onToggleSelect(Boolean(checked))}
-            aria-label={`Select ${item.name}`}
+            aria-label={`Select ${item.bookName}`}
           />
         </TableCell>
       ) : null}
       <TableCell className="font-medium">
         <Link
-          href={`/super-admin/about-us/faculty/${item.id}/edit`}
-          className="flex items-center gap-3 hover:text-primary hover:underline"
+          href={`/super-admin/academic/library/${item.id}/edit`}
+          className="hover:text-primary hover:underline"
         >
-          <span className="relative flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-full border bg-muted">
-            {item.photoUrl ? (
-              <Image src={item.photoUrl} alt="" fill className="object-cover" unoptimized />
-            ) : (
-              <UserRound className="size-4 text-muted-foreground" />
-            )}
-          </span>
-          {item.name}
+          {item.bookName}
         </Link>
       </TableCell>
-      <TableCell className="text-muted-foreground">{item.designation}</TableCell>
-      <TableCell className="text-muted-foreground">{item.department || "—"}</TableCell>
+      <TableCell className="text-muted-foreground">{item.subject}</TableCell>
+      <TableCell className="text-muted-foreground">{item.publication}</TableCell>
       <TableCell>
         <Badge variant="outline">
           {item.status === "PUBLISHED" ? (
@@ -110,7 +102,7 @@ export function FacultyRow({
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem asChild>
-              <Link href={`/super-admin/about-us/faculty/${item.id}/edit`}>Edit</Link>
+              <Link href={`/super-admin/academic/library/${item.id}/edit`}>Edit</Link>
             </DropdownMenuItem>
             {canPublish ? (
               <>
