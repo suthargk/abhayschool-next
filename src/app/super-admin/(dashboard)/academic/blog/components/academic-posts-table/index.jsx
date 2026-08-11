@@ -1,0 +1,193 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Table,
+  TableBody,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+
+import { COLUMNS } from "./columns";
+import { AcademicPostsDeleteDialog } from "./delete-dialog";
+import { AcademicPostsPaginationBar } from "./pagination-bar";
+import { AcademicPostRow } from "./table-row";
+import { AcademicPostsTableToolbar } from "./toolbar";
+
+export function AcademicPostsTable({
+  items,
+  canPublish,
+  search,
+  page,
+  totalPages,
+  total,
+  pageSize,
+}) {
+  const router = useRouter();
+  const [pendingId, setPendingId] = useState(null);
+  const [visibleColumns, setVisibleColumns] = useState(() =>
+    Object.fromEntries(COLUMNS.map((c) => [c.key, c.defaultVisible]))
+  );
+  const [selectedIds, setSelectedIds] = useState(() => new Set());
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [deleting, setDeleting] = useState(false);
+
+  useEffect(() => {
+    setSelectedIds(new Set());
+  }, [page, search]);
+
+  function toggleColumn(key) {
+    setVisibleColumns((prev) => ({ ...prev, [key]: !prev[key] }));
+  }
+
+  function toggleSelected(id) {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  }
+
+  function toggleSelectAll() {
+    setSelectedIds((prev) =>
+      prev.size === items.length ? new Set() : new Set(items.map((item) => item.id))
+    );
+  }
+
+  async function togglePublish(item) {
+    setPendingId(item.id);
+    try {
+      await fetch(`/api/super-admin/academic-blog/${item.id}/publish`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ publish: item.status !== "PUBLISHED" }),
+      });
+      router.refresh();
+    } finally {
+      setPendingId(null);
+    }
+  }
+
+  function requestDelete(item) {
+    setDeleteTarget({ ids: [item.id], label: `"${item.title}"` });
+  }
+
+  function requestBulkDelete() {
+    setDeleteTarget({
+      ids: Array.from(selectedIds),
+      label: `${selectedIds.size} item${selectedIds.size === 1 ? "" : "s"}`,
+    });
+  }
+
+  async function confirmDelete() {
+    if (!deleteTarget) return;
+    setDeleting(true);
+    try {
+      await Promise.all(
+        deleteTarget.ids.map((id) =>
+          fetch(`/api/super-admin/academic-blog/${id}`, { method: "DELETE" })
+        )
+      );
+      setSelectedIds((prev) => {
+        const next = new Set(prev);
+        deleteTarget.ids.forEach((id) => next.delete(id));
+        return next;
+      });
+      setDeleteTarget(null);
+      router.refresh();
+    } finally {
+      setDeleting(false);
+    }
+  }
+
+  const allSelected = items.length > 0 && selectedIds.size === items.length;
+  const someSelected = selectedIds.size > 0 && !allSelected;
+
+  return (
+    <div className="space-y-3">
+      <AcademicPostsTableToolbar
+        search={search}
+        canPublish={canPublish}
+        selectedCount={selectedIds.size}
+        visibleColumns={visibleColumns}
+        onToggleColumn={toggleColumn}
+        onBulkDelete={requestBulkDelete}
+      />
+
+      {items.length === 0 ? (
+        <p className="rounded-md border border-dashed p-8 text-center text-sm text-muted-foreground">
+          {total === 0
+            ? "No academic posts yet."
+            : "No results match your search."}
+        </p>
+      ) : (
+        <div className="rounded-md border">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                {canPublish ? (
+                  <TableHead className="w-10">
+                    <Checkbox
+                      checked={allSelected ? true : someSelected ? "indeterminate" : false}
+                      onCheckedChange={toggleSelectAll}
+                      aria-label="Select all rows"
+                    />
+                  </TableHead>
+                ) : null}
+                <TableHead>Title</TableHead>
+                {visibleColumns.status ? <TableHead>Status</TableHead> : null}
+                {visibleColumns.author ? <TableHead>Author</TableHead> : null}
+                {visibleColumns.created ? (
+                  <TableHead>Created</TableHead>
+                ) : null}
+                <TableHead className="w-10">
+                  <span className="sr-only">Actions</span>
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {items.map((item) => (
+                <AcademicPostRow
+                  key={item.id}
+                  item={item}
+                  canPublish={canPublish}
+                  visibleColumns={visibleColumns}
+                  pending={pendingId === item.id}
+                  selected={selectedIds.has(item.id)}
+                  onToggleSelected={() => toggleSelected(item.id)}
+                  onTogglePublish={() => togglePublish(item)}
+                  onDelete={() => requestDelete(item)}
+                />
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      )}
+
+      <AcademicPostsPaginationBar
+        search={search}
+        page={page}
+        totalPages={totalPages}
+        total={total}
+        pageSize={pageSize}
+      />
+
+      <AcademicPostsDeleteDialog
+        target={deleteTarget}
+        deleting={deleting}
+        onOpenChange={(open) => {
+          if (!open) setDeleteTarget(null);
+        }}
+        onConfirm={confirmDelete}
+      />
+    </div>
+  );
+}

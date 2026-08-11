@@ -46,3 +46,22 @@ export async function generateUniqueGallerySlug(title, excludeId) {
 
   return slug;
 }
+
+/** Generates a unique slug for an AcademicPost, suffixing on collision. */
+export async function generateUniqueAcademicPostSlug(title, excludeId) {
+  const base = slugify(title) || "post";
+  let slug = base;
+  let suffix = 1;
+
+  while (
+    await prisma.academicPost.findFirst({
+      where: { slug, ...(excludeId ? { id: { not: excludeId } } : {}) },
+      select: { id: true },
+    })
+  ) {
+    suffix += 1;
+    slug = `${base}-${suffix}`;
+  }
+
+  return slug;
+}

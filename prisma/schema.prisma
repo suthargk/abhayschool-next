@@ -28,6 +28,7 @@ model Profile {
   principalMessages PrincipalMessage[]
   faculty           Faculty[]
   libraryBooks      LibraryBook[]
+  academicPosts     AcademicPost[]
 
   @@map("profiles")
 }
@@ -171,4 +172,23 @@ model LibraryBook {
 
   @@index([class, status, position])
   @@map("library_books")
+}
+
+model AcademicPost {
+  id            String        @id @default(cuid())
+  title         String
+  slug          String        @unique
+  summary       String
+  content       Json
+  coverImageUrl String?
+  status        ContentStatus @default(DRAFT)
+  publishedAt   DateTime?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  authorId String  @db.Uuid
+  author   Profile @relation(fields: [authorId], references: [id])
+
+  @@index([status, publishedAt])
+  @@map("academic_posts")
 }

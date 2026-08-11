@@ -15,6 +15,7 @@ import {
   LogOut,
   Megaphone,
   MessageSquareQuote,
+  Newspaper,
   Trophy,
   Users,
 } from "lucide-react";
@@ -51,6 +52,7 @@ const navSections = [
     title: "Academic",
     items: [
       { href: "/super-admin/academic/library", label: "Library", icon: Library },
+      { href: "/super-admin/academic/blog", label: "Blog", icon: Newspaper },
     ],
   },
   {
