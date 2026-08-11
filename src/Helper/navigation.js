@@ -91,6 +91,11 @@ const navigationCategory = [
     href: "/homework",
     subCategories: [],
   },
+  {
+    title: "News & Notices",
+    href: "/news-notices",
+    subCategories: [],
+  },
 ];
 
 export default navigationCategory;

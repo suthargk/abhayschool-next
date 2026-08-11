@@ -1,3 +1,5 @@
+export const revalidate = 60;
+
 import CampusHighlights from "./campus-highlights";
 import FrequentlyAskQuestions from "./frequently-ask-questions";
 import Hero from "./hero";

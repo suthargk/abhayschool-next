@@ -9,4 +9,52 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-// Add models here, then run: npm run db:migrate (or db:push)
+enum Role {
+  EDITOR
+  ADMIN
+}
+
+// Mirrors a Supabase Auth user (auth.users.id). Created manually via Prisma
+// Studio after the account is created in the Supabase Auth dashboard —
+// this row is what grants dashboard access and a role.
+model Profile {
+  id        String   @id @db.Uuid
+  email     String   @unique
+  role      Role     @default(EDITOR)
+  createdAt DateTime @default(now())
+
+  newsNotices NewsNotice[]
+
+  @@map("profiles")
+}
+
+enum ContentType {
+  NEWS
+  NOTICE
+}
+
+enum ContentStatus {
+  DRAFT
+  PUBLISHED
+}
+
+model NewsNotice {
+  id            String        @id @default(cuid())
+  type          ContentType
+  title         String
+  slug          String        @unique
+  summary       String
+  content       Json
+  coverImageUrl String?
+  status        ContentStatus @default(DRAFT)
+  publishedAt   DateTime?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  authorId String  @db.Uuid
+  author   Profile @relation(fields: [authorId], references: [id])
+
+  @@index([status, publishedAt])
+  @@index([type, status, publishedAt])
+  @@map("news_notices")
+}

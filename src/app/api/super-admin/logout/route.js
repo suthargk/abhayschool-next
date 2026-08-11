@@ -1,14 +1,9 @@
 import { NextResponse } from "next/server";
 
-const AUTH_COOKIE = "super_admin_auth";
+import { createClient } from "@/lib/supabase/server";
 
 export async function POST() {
-  const res = NextResponse.json({ ok: true });
-  res.cookies.set(AUTH_COOKIE, "", {
-    httpOnly: true,
-    sameSite: "lax",
-    path: "/",
-    maxAge: 0,
-  });
-  return res;
+  const supabase = await createClient();
+  await supabase.auth.signOut();
+  return NextResponse.json({ ok: true });
 }

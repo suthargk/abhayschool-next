@@ -43,7 +43,7 @@ export default function SuperAdminLoginPage() {
             Super admin sign in
           </h1>
           <p className="text-sm text-muted-foreground">
-            Use the dummy credentials configured for development.
+            Sign in with your dashboard account.
           </p>
         </div>
         <form onSubmit={onSubmit} className="space-y-4">
@@ -84,11 +84,6 @@ export default function SuperAdminLoginPage() {
             {loading ? "Signing in…" : "Sign in"}
           </Button>
         </form>
-        <p className="rounded-md bg-muted p-3 text-xs text-muted-foreground">
-          <span className="font-medium text-foreground">Dummy login:</span>{" "}
-          <span className="select-all">superadmin@school.local</span> /{" "}
-          <span className="select-all">SuperAdmin123!</span>
-        </p>
       </div>
     </div>
   );

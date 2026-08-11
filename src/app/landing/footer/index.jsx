@@ -20,18 +20,18 @@ import Image from "next/image";
 const Footer = () => {
   const { theme, setTheme } = useTheme();
   return (
-    <footer className="bg-violet-600 py-10 px-5 mt-10">
-      <div className="flex justify-center">
-        <div className="mr-10">
+    <footer className="bg-violet-600 py-10 px-5 sm:px-8 lg:px-16 mt-10">
+      <div className="flex flex-col lg:flex-row items-center lg:items-stretch justify-center gap-8 lg:gap-0">
+        <div className="lg:mr-10">
           <Image
             draggable={false}
-            className="-mt-6"
+            className="lg:-mt-6"
             src={webpImage}
             height={130}
             width={130}
           />
         </div>
-        <div className="grid grid-cols-4 gap-10">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-8 sm:gap-10 text-left w-full sm:w-auto">
           <div>
             <h3 className="text-violet-200 font-semibold mb-3">School</h3>
             <ul className="space-y-3">
@@ -63,7 +63,7 @@ const Footer = () => {
                 <Link href="#">Homework</Link>
               </li>
               <li className="text-sm text-zinc-50">
-                <Link href="#">News & Notices</Link>
+                <Link href="/news-notices">News & Notices</Link>
               </li>
             </ul>
           </div>
@@ -96,7 +96,7 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="flex flex-col justify-between">
+        <div className="flex flex-col items-center lg:items-end justify-between gap-4 lg:gap-0">
           <Select>
             <SelectTrigger className="w-48 text-white border-none bg-violet-500 focus:ring-violet-400 rounded-full">
               <SelectValue placeholder="Select a language" />
@@ -117,7 +117,7 @@ const Footer = () => {
 
           <ToggleGroup
             type="single"
-            className="justify-start rounded-full border bg-violet-500 border-violet-400 w-fit p-0.5 self-end"
+            className="justify-start rounded-full border bg-violet-500 border-violet-400 w-fit p-0.5 lg:self-end"
             defaultValue={theme}
             onValueChange={(value) => {
               setTheme(value);
@@ -156,9 +156,9 @@ const Footer = () => {
         </div>
       </div>
 
-      <div className="mt-10 flex flex-col items-center gap-5 px-24">
+      <div className="mt-10 flex flex-col items-center gap-5 px-0 sm:px-10 lg:px-24">
         <div className="h-[0.5px] w-full bg-violet-400"></div>
-        <div className="flex justify-between text-xs self-start text-violet-200 w-full">
+        <div className="flex flex-col sm:flex-row justify-between items-center sm:items-start gap-2 text-xs text-center sm:text-left self-start text-violet-200 w-full">
           <p className="">&copy; Shri Abhay Nobles Senior Secondary School</p>
           <p>
             Peppa Pig Theme by{" "}

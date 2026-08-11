@@ -1,10 +1,7 @@
 import { NextResponse } from "next/server";
 
-const AUTH_COOKIE = "super_admin_auth";
-
-/** Dummy credentials for local super admin access (replace with real auth later). */
-const DUMMY_EMAIL = "superadmin@school.local";
-const DUMMY_PASSWORD = "SuperAdmin123!";
+import { prisma } from "@/lib/prisma";
+import { createClient } from "@/lib/supabase/server";
 
 export async function POST(request) {
   let body;
@@ -17,16 +14,40 @@ export async function POST(request) {
   const email = typeof body.email === "string" ? body.email.trim() : "";
   const password = typeof body.password === "string" ? body.password : "";
 
-  if (email === DUMMY_EMAIL && password === DUMMY_PASSWORD) {
-    const res = NextResponse.json({ ok: true });
-    res.cookies.set(AUTH_COOKIE, "1", {
-      httpOnly: true,
-      sameSite: "lax",
-      path: "/",
-      maxAge: 60 * 60 * 24 * 7,
-    });
-    return res;
+  if (!email || !password) {
+    return NextResponse.json(
+      { error: "Email and password are required" },
+      { status: 400 },
+    );
   }
 
-  return NextResponse.json({ error: "Invalid email or password" }, { status: 401 });
+  const supabase = await createClient();
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
+
+  if (error || !data.user) {
+    return NextResponse.json(
+      { error: "Invalid email or password" },
+      { status: 401 },
+    );
+  }
+
+  const profile = await prisma.profile.findUnique({
+    where: { id: data.user.id },
+  });
+
+  if (!profile) {
+    await supabase.auth.signOut();
+    return NextResponse.json(
+      {
+        error:
+          "This account isn't set up for dashboard access. Contact an administrator.",
+      },
+      { status: 403 },
+    );
+  }
+
+  return NextResponse.json({ ok: true });
 }

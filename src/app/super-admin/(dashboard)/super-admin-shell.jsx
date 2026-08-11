@@ -13,6 +13,7 @@ import {
   LayoutDashboard,
   Library,
   LogOut,
+  Megaphone,
   Trophy,
   Users,
 } from "lucide-react";
@@ -31,7 +32,14 @@ const navSections = [
   },
   {
     title: null,
-    items: [{ href: "/super-admin/gallery", label: "Gallery", icon: ImageIcon }],
+    items: [
+      { href: "/super-admin/gallery", label: "Gallery", icon: ImageIcon },
+      {
+        href: "/super-admin/news-notices",
+        label: "News & Notices",
+        icon: Megaphone,
+      },
+    ],
   },
   {
     title: "Academic",

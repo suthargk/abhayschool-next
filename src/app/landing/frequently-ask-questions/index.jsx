@@ -7,26 +7,26 @@ import {
 
 const FrequentlyAskQuestions = () => {
   return (
-    <section className="flex flex-col gap-10 items-center">
+    <section className="flex flex-col gap-10 items-center px-4">
       <div>
-        <h4 className="text-3xl font-semibold mb-2 text-center">
+        <h4 className="text-2xl sm:text-3xl font-semibold mb-2 text-center">
           <span>Frequently Asked Questions</span>
         </h4>
-        <div className="text-zinc-700 text-center dark:text-zinc-500">
+        <div className="text-zinc-700 text-center dark:text-zinc-500 max-w-md mx-auto">
           Find answers to common queries about our school, including admissions,
           academics, facilities, and more.
         </div>
       </div>
-      <div className="flex gap-4 px-36 w-full">
-        <Accordion type="multiple" collapsible="true" className="w-1/2">
+      <div className="flex flex-col lg:flex-row gap-4 sm:px-10 md:px-20 lg:px-36 w-full">
+        <Accordion type="multiple" collapsible="true" className="w-full lg:w-1/2">
           <AccordionItem
             value="item-1"
             className="bg-zinc-100 mb-4 py-2.5 px-5 rounded-lg dark:bg-zinc-800 [&[data-state=open]]:bg-violet-100 [&[data-state=open]]:dark:bg-zinc-700"
           >
-            <AccordionTrigger className="text-2xl [&[data-state=open]]:text-violet-900 [&[data-state=open]]:dark:text-zinc-50">
+            <AccordionTrigger className="text-lg sm:text-xl lg:text-2xl [&[data-state=open]]:text-violet-900 [&[data-state=open]]:dark:text-zinc-50">
               Is it accessible?
             </AccordionTrigger>
-            <AccordionContent className="text-lg text-violet-800 dark:text-zinc-200 animate-fade-up-from-top">
+            <AccordionContent className="text-base sm:text-lg text-violet-800 dark:text-zinc-200 animate-fade-up-from-top">
               Yes. It adheres to the WAI-ARIA design pattern.
             </AccordionContent>
           </AccordionItem>
@@ -34,10 +34,10 @@ const FrequentlyAskQuestions = () => {
             value="item-2"
             className="bg-zinc-100 mb-4 py-2.5 px-5 rounded-lg dark:bg-zinc-800 [&[data-state=open]]:bg-violet-100 [&[data-state=open]]:dark:bg-zinc-700"
           >
-            <AccordionTrigger className="text-2xl [&[data-state=open]]:text-violet-900 [&[data-state=open]]:dark:text-zinc-50">
+            <AccordionTrigger className="text-lg sm:text-xl lg:text-2xl [&[data-state=open]]:text-violet-900 [&[data-state=open]]:dark:text-zinc-50">
               Is it styled?
             </AccordionTrigger>
-            <AccordionContent className="text-lg text-violet-800 dark:text-zinc-200 animate-fade-up-from-top">
+            <AccordionContent className="text-base sm:text-lg text-violet-800 dark:text-zinc-200 animate-fade-up-from-top">
               Yes. It comes with default styles that matches the other
               components&apos; aesthetic.
             </AccordionContent>
@@ -46,10 +46,10 @@ const FrequentlyAskQuestions = () => {
             value="item-3"
             className="bg-zinc-100 mb-4 py-2.5 px-5 rounded-lg dark:bg-zinc-800 [&[data-state=open]]:bg-violet-100 [&[data-state=open]]:dark:bg-zinc-700"
           >
-            <AccordionTrigger className="text-2xl [&[data-state=open]]:text-violet-900 [&[data-state=open]]:dark:text-zinc-50">
+            <AccordionTrigger className="text-lg sm:text-xl lg:text-2xl [&[data-state=open]]:text-violet-900 [&[data-state=open]]:dark:text-zinc-50">
               Is it animated?
             </AccordionTrigger>
-            <AccordionContent className="text-lg text-violet-800 dark:text-zinc-200 animate-fade-up-from-top">
+            <AccordionContent className="text-base sm:text-lg text-violet-800 dark:text-zinc-200 animate-fade-up-from-top">
               Yes. It&apos;s animated by default, but you can disable it if you
               prefer. Yes. It&apos;s animated by default, but you can disable it
               if you prefer. Yes. It&apos;s animated by default, but you can
@@ -58,15 +58,15 @@ const FrequentlyAskQuestions = () => {
           </AccordionItem>
         </Accordion>
 
-        <Accordion type="multiple" collapsible="true" className="w-1/2">
+        <Accordion type="multiple" collapsible="true" className="w-full lg:w-1/2">
           <AccordionItem
             value="item-1"
             className="bg-zinc-100 mb-4 py-2.5 px-5 rounded-lg dark:bg-zinc-800 [&[data-state=open]]:bg-violet-100 [&[data-state=open]]:dark:bg-zinc-700"
           >
-            <AccordionTrigger className="text-2xl [&[data-state=open]]:text-violet-900 [&[data-state=open]]:dark:text-zinc-50">
+            <AccordionTrigger className="text-lg sm:text-xl lg:text-2xl [&[data-state=open]]:text-violet-900 [&[data-state=open]]:dark:text-zinc-50">
               Is it accessible?
             </AccordionTrigger>
-            <AccordionContent className="text-lg text-violet-800 dark:text-zinc-200 animate-fade-up-from-top">
+            <AccordionContent className="text-base sm:text-lg text-violet-800 dark:text-zinc-200 animate-fade-up-from-top">
               Yes. It adheres to the WAI-ARIA design pattern.
             </AccordionContent>
           </AccordionItem>
@@ -74,10 +74,10 @@ const FrequentlyAskQuestions = () => {
             value="item-2"
             className="bg-zinc-100 mb-4 py-2.5 px-5 rounded-lg dark:bg-zinc-800 [&[data-state=open]]:bg-violet-100 [&[data-state=open]]:dark:bg-zinc-700"
           >
-            <AccordionTrigger className="text-2xl [&[data-state=open]]:text-violet-900 [&[data-state=open]]:dark:text-zinc-50">
+            <AccordionTrigger className="text-lg sm:text-xl lg:text-2xl [&[data-state=open]]:text-violet-900 [&[data-state=open]]:dark:text-zinc-50">
               Is it styled?
             </AccordionTrigger>
-            <AccordionContent className="text-lg text-violet-800 dark:text-zinc-200 animate-fade-up-from-top">
+            <AccordionContent className="text-base sm:text-lg text-violet-800 dark:text-zinc-200 animate-fade-up-from-top">
               Yes. It comes with default styles that matches the other
               components&apos; aesthetic.
             </AccordionContent>
@@ -86,10 +86,10 @@ const FrequentlyAskQuestions = () => {
             value="item-3"
             className="bg-zinc-100 mb-4 py-2.5 px-5 rounded-lg dark:bg-zinc-800 [&[data-state=open]]:bg-violet-100 [&[data-state=open]]:dark:bg-zinc-700"
           >
-            <AccordionTrigger className="text-2xl [&[data-state=open]]:text-violet-900 [&[data-state=open]]:dark:text-zinc-50">
+            <AccordionTrigger className="text-lg sm:text-xl lg:text-2xl [&[data-state=open]]:text-violet-900 [&[data-state=open]]:dark:text-zinc-50">
               Is it animated?
             </AccordionTrigger>
-            <AccordionContent className="text-lg text-violet-800 dark:text-zinc-200 animate-fade-up-from-top">
+            <AccordionContent className="text-base sm:text-lg text-violet-800 dark:text-zinc-200 animate-fade-up-from-top">
               Yes. It&apos;s animated by default, but you can disable it if you
               prefer.
             </AccordionContent>
