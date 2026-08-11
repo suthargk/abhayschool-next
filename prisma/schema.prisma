@@ -26,6 +26,7 @@ model Profile {
   newsNotices       NewsNotice[]
   galleryAlbums     GalleryAlbum[]
   principalMessages PrincipalMessage[]
+  faculty           Faculty[]
 
   @@map("profiles")
 }
@@ -111,4 +112,28 @@ model GalleryImage {
 
   @@index([albumId, position])
   @@map("gallery_images")
+}
+
+model Faculty {
+  id              String        @id @default(cuid())
+  name            String
+  designation     String
+  department      String?
+  subjects        String[]      @default([])
+  qualification   String?
+  bio             String?
+  experienceYears Int?
+  email           String?
+  photoUrl        String?
+  position        Int           @default(0)
+  status          ContentStatus @default(DRAFT)
+  publishedAt     DateTime?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  authorId String  @db.Uuid
+  author   Profile @relation(fields: [authorId], references: [id])
+
+  @@index([status, position])
+  @@map("faculty")
 }

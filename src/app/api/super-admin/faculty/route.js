@@ -1,0 +1,67 @@
+import { NextResponse } from "next/server";
+
+import { requireRole } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+
+function sanitizeSubjects(subjects) {
+  if (!Array.isArray(subjects)) return [];
+  return subjects
+    .map((subject) => (typeof subject === "string" ? subject.trim() : ""))
+    .filter(Boolean);
+}
+
+export async function GET() {
+  try {
+    await requireRole(["EDITOR", "ADMIN"]);
+  } catch (error) {
+    return NextResponse.json({ error: "Forbidden" }, { status: error.status ?? 403 });
+  }
+
+  const items = await prisma.faculty.findMany({
+    orderBy: { position: "asc" },
+    include: { author: { select: { email: true } } },
+  });
+
+  return NextResponse.json({ items });
+}
+
+export async function POST(request) {
+  let profile;
+  try {
+    profile = await requireRole(["EDITOR", "ADMIN"]);
+  } catch (error) {
+    return NextResponse.json({ error: "Forbidden" }, { status: error.status ?? 403 });
+  }
+
+  const body = await request.json().catch(() => null);
+  if (!body || typeof body.name !== "string" || !body.name.trim()) {
+    return NextResponse.json({ error: "Name is required" }, { status: 400 });
+  }
+  if (typeof body.designation !== "string" || !body.designation.trim()) {
+    return NextResponse.json({ error: "Designation is required" }, { status: 400 });
+  }
+
+  const maxPosition = await prisma.faculty.aggregate({ _max: { position: true } });
+
+  const item = await prisma.faculty.create({
+    data: {
+      name: body.name.trim(),
+      designation: body.designation.trim(),
+      department: typeof body.department === "string" ? body.department.trim() || null : null,
+      subjects: sanitizeSubjects(body.subjects),
+      qualification:
+        typeof body.qualification === "string" ? body.qualification.trim() || null : null,
+      bio: typeof body.bio === "string" ? body.bio.trim() || null : null,
+      experienceYears:
+        Number.isFinite(Number(body.experienceYears)) && body.experienceYears !== ""
+          ? Number(body.experienceYears)
+          : null,
+      email: typeof body.email === "string" ? body.email.trim() || null : null,
+      photoUrl: body.photoUrl || null,
+      position: (maxPosition._max.position ?? -1) + 1,
+      authorId: profile.id,
+    },
+  });
+
+  return NextResponse.json({ item }, { status: 201 });
+}
