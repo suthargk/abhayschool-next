@@ -23,7 +23,8 @@ model Profile {
   role      Role     @default(EDITOR)
   createdAt DateTime @default(now())
 
-  newsNotices NewsNotice[]
+  newsNotices   NewsNotice[]
+  galleryAlbums GalleryAlbum[]
 
   @@map("profiles")
 }
@@ -57,4 +58,37 @@ model NewsNotice {
   @@index([status, publishedAt])
   @@index([type, status, publishedAt])
   @@map("news_notices")
+}
+
+model GalleryAlbum {
+  id            String        @id @default(cuid())
+  title         String
+  slug          String        @unique
+  description   String
+  eventDate     DateTime
+  coverImageUrl String?
+  status        ContentStatus @default(DRAFT)
+  publishedAt   DateTime?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  authorId String  @db.Uuid
+  author   Profile @relation(fields: [authorId], references: [id])
+
+  images GalleryImage[]
+
+  @@index([status, eventDate])
+  @@map("gallery_albums")
+}
+
+model GalleryImage {
+  id       String @id @default(cuid())
+  imageUrl String
+  position Int    @default(0)
+
+  albumId String       @map("album_id")
+  album   GalleryAlbum @relation(fields: [albumId], references: [id], onDelete: Cascade)
+
+  @@index([albumId, position])
+  @@map("gallery_images")
 }

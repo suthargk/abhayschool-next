@@ -27,3 +27,22 @@ export async function generateUniqueSlug(title, excludeId) {
 
   return slug;
 }
+
+/** Generates a unique slug for a GalleryAlbum, suffixing on collision. */
+export async function generateUniqueGallerySlug(title, excludeId) {
+  const base = slugify(title) || "album";
+  let slug = base;
+  let suffix = 1;
+
+  while (
+    await prisma.galleryAlbum.findFirst({
+      where: { slug, ...(excludeId ? { id: { not: excludeId } } : {}) },
+      select: { id: true },
+    })
+  ) {
+    suffix += 1;
+    slug = `${base}-${suffix}`;
+  }
+
+  return slug;
+}

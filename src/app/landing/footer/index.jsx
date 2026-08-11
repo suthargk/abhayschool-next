@@ -84,7 +84,7 @@ const Footer = () => {
             <h3 className="text-violet-200 font-semibold mb-3">Utilities</h3>
             <ul className="space-y-3">
               <li className="text-sm text-zinc-50">
-                <Link href="#">Gallery</Link>
+                <Link href="/gallery">Gallery</Link>
               </li>
               <li className="text-sm text-zinc-50">
                 <Link href="#">Contact Us</Link>
