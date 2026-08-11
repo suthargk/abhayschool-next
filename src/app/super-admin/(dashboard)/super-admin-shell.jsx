@@ -14,6 +14,7 @@ import {
   Library,
   LogOut,
   Megaphone,
+  MessageSquareQuote,
   Trophy,
   Users,
 } from "lucide-react";
@@ -22,6 +23,11 @@ const navSections = [
   {
     title: "About us",
     items: [
+      {
+        href: "/super-admin/principal-message",
+        label: "Principal's Message",
+        icon: MessageSquareQuote,
+      },
       { href: "/super-admin/about-us/faculty", label: "Faculty", icon: Users },
       {
         href: "/super-admin/about-us/route-plan",
