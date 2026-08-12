@@ -1,33 +1,56 @@
+import { Suspense } from "react";
+import Link from "next/link";
 import Image from "next/image";
-import { Camera, ChevronDown } from "lucide-react";
+import { Camera, ChevronDown, ImageOff, Images } from "lucide-react";
+
+import { prisma } from "@/lib/prisma";
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
+
+const FALLBACK_IMAGES = [
+  "/images/campus_highlight_1.jpg",
+  "/images/campus_highlight_2.jpg",
+  "/images/campus_highlight_3.jpg",
+  "/images/campus_highlight_4.jpg",
+  "/images/campus_highlight_6.jpg",
+];
+
+const MOSAIC_LAYOUT = [
+  "col-span-2 row-span-2",
+  "col-span-1 row-span-1",
+  "col-span-1 row-span-1",
+  "col-span-1 row-span-1",
+  "col-span-1 row-span-1",
+];
 
 export function GalleryHero() {
   return (
     <section className="flex flex-col items-center gap-6 px-4 pb-4 pt-28 text-center sm:pt-32">
-      <span className="inline-flex items-center gap-1.5 text-sm font-medium text-violet-600 dark:text-violet-400">
-        <Camera className="size-4" />
+      <Badge
+        variant="purple"
+        className="animate-fade-up-from-top [animation-fill-mode:both]"
+      >
+        <Camera className="size-3.5" />
         Gallery
-      </span>
-      <h1 className="text-3xl font-semibold sm:text-5xl">
+      </Badge>
+
+      <h1
+        className="animate-fade-up-from-top text-3xl font-semibold [animation-delay:60ms] [animation-fill-mode:both] sm:text-5xl"
+      >
         <span className="block">Our School</span>
         <span className="block bg-clip-text text-transparent bg-gradient-to-b from-[#8371fa] to-[#c25ff9]">
           In Pictures
         </span>
       </h1>
-      <p className="max-w-xl text-muted-foreground">
-        Explore moments from our campus, classrooms, celebrations,
-        activities, and student life.
+
+      <p className="max-w-xl animate-fade-up-from-top text-muted-foreground [animation-delay:120ms] [animation-fill-mode:both]">
+        Explore moments from our campus, classrooms, celebrations, activities,
+        and student life.
       </p>
 
-      <div className="relative mt-4 aspect-[21/9] w-full max-w-4xl overflow-hidden rounded-2xl border shadow-lg">
-        <Image
-          src="/images/campus_highlight_1.jpg"
-          alt="Our school campus"
-          fill
-          className="object-cover"
-          priority
-        />
-      </div>
+      <Suspense fallback={<HeroMosaicSkeleton />}>
+        <HeroMosaic />
+      </Suspense>
 
       <a
         href="#gallery-albums"
@@ -37,5 +60,78 @@ export function GalleryHero() {
         <ChevronDown className="size-4" />
       </a>
     </section>
+  );
+}
+
+async function HeroMosaic() {
+  const [albums, photoCount] = await Promise.all([
+    prisma.galleryAlbum.findMany({
+      where: { status: "PUBLISHED", coverImageUrl: { not: null } },
+      orderBy: { eventDate: "desc" },
+      take: 5,
+      select: { id: true, title: true, slug: true, coverImageUrl: true },
+    }),
+    prisma.galleryImage.count({ where: { album: { status: "PUBLISHED" } } }),
+  ]);
+
+  const tiles = [...albums];
+  while (tiles.length < 5) {
+    tiles.push({
+      id: `fallback-${tiles.length}`,
+      title: "Our school campus",
+      coverImageUrl: FALLBACK_IMAGES[tiles.length % FALLBACK_IMAGES.length],
+      isFallback: true,
+    });
+  }
+
+  return (
+    <>
+      {photoCount > 0 ? (
+        <span className="inline-flex items-center gap-1.5 text-sm text-muted-foreground">
+          <Images className="size-4" />
+          {photoCount.toLocaleString()}+ photos across our albums
+        </span>
+      ) : null}
+
+      <div className="mt-4 grid aspect-[21/9] w-full max-w-4xl grid-cols-3 grid-rows-2 gap-2 sm:gap-3">
+        {tiles.slice(0, 5).map((tile, index) => (
+          <Link
+            key={tile.id}
+            href={tile.isFallback ? "#gallery-albums" : `/gallery/${tile.slug ?? ""}`}
+            className={cn(
+              "group relative animate-in overflow-hidden rounded-xl border bg-muted shadow-sm fade-in zoom-in-95 duration-700",
+              MOSAIC_LAYOUT[index],
+            )}
+            style={{ animationDelay: `${index * 80}ms`, animationFillMode: "both" }}
+          >
+            {tile.coverImageUrl ? (
+              <Image
+                src={tile.coverImageUrl}
+                alt={tile.title ?? "Gallery photo"}
+                fill
+                sizes="(max-width: 640px) 33vw, 400px"
+                className="object-cover transition-transform duration-500 group-hover:scale-105"
+                unoptimized={!tile.isFallback}
+                priority={index === 0}
+              />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center">
+                <ImageOff className="size-6 text-muted-foreground" />
+              </div>
+            )}
+          </Link>
+        ))}
+      </div>
+    </>
+  );
+}
+
+function HeroMosaicSkeleton() {
+  return (
+    <div className="mt-4 grid aspect-[21/9] w-full max-w-4xl animate-pulse grid-cols-3 grid-rows-2 gap-2 sm:gap-3">
+      {MOSAIC_LAYOUT.map((layout, index) => (
+        <div key={index} className={cn("rounded-xl bg-muted", layout)} />
+      ))}
+    </div>
   );
 }
