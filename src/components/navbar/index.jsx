@@ -15,7 +15,7 @@ import {
 
 export function Navbar() {
   return (
-    <NavigationMenu className="mx-auto border border-zinc-150 dark:border-zinc-900 rounded-[6px] p-0.5 backdrop-blur-lg backdrop-saturate-100">
+    <NavigationMenu className="col-start-2 mx-auto hidden rounded-[6px] border border-zinc-150 bg-white/60 p-0.5 backdrop-blur-lg backdrop-saturate-100 dark:border-zinc-900 dark:bg-zinc-950/60 md:block">
       <NavigationMenuList className="">
         {navigationCategory.map((category) => {
           return (

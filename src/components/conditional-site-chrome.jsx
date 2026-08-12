@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import { Navbar } from "@/components/navbar";
+import { MobileNav } from "@/components/navbar/mobile-nav";
 import CustomizeSettingDialog from "@/components/customize-setting-dialog";
 import Footer from "@/app/landing/footer";
 
@@ -18,8 +19,8 @@ export function ConditionalSiteChrome({ children }) {
 
   return (
     <>
-      <div className="fixed z-50 grid w-full grid-cols-[1fr_auto_1fr] items-center gap-2 p-2 px-4 sm:px-8">
-        <Link href="/" className="flex items-center">
+      <div className="fixed z-50 grid w-full grid-cols-[1fr_auto_1fr] items-center gap-2 border-b border-zinc-200 bg-white/80 p-2 px-4 backdrop-blur-lg backdrop-saturate-100 dark:border-zinc-800 dark:bg-zinc-950/80 sm:px-8 md:border-b-0 md:bg-transparent md:backdrop-blur-none md:dark:bg-transparent">
+        <Link href="/" className="col-start-1 flex items-center">
           <Image
             src="/images/logo.png"
             alt="Shri Abhay Nobles Senior Secondary School"
@@ -30,7 +31,9 @@ export function ConditionalSiteChrome({ children }) {
           />
         </Link>
         <Navbar />
-        <span aria-hidden="true" />
+        <div className="col-start-3 flex justify-end">
+          <MobileNav />
+        </div>
       </div>
       {children}
       <Footer />
