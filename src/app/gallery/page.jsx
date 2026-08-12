@@ -121,25 +121,43 @@ async function GalleryAlbums({ q, year, month, category, page }) {
     ...(category ? { category } : {}),
   };
 
-  const [matching, allEventDates] = await Promise.all([
-    prisma.galleryAlbum.findMany({
-      where,
-      orderBy: { eventDate: "desc" },
-      include: { _count: { select: { images: true } } },
-    }),
-    prisma.galleryAlbum.findMany({
-      where: { status: "PUBLISHED" },
-      select: { eventDate: true },
-    }),
-  ]);
+  const allEventDatesPromise = prisma.galleryAlbum.findMany({
+    where: { status: "PUBLISHED" },
+    select: { eventDate: true },
+  });
 
-  const filtered = month
-    ? matching.filter((album) => new Date(album.eventDate).getUTCMonth() + 1 === month)
-    : matching;
+  let albums;
+  let total;
+  let allEventDates;
 
-  const total = filtered.length;
+  if (month) {
+    // Month has no direct SQL predicate here, so filter/paginate in memory.
+    [albums, allEventDates] = await Promise.all([
+      prisma.galleryAlbum.findMany({
+        where,
+        orderBy: { eventDate: "desc" },
+        include: { _count: { select: { images: true } } },
+      }),
+      allEventDatesPromise,
+    ]);
+    albums = albums.filter((album) => new Date(album.eventDate).getUTCMonth() + 1 === month);
+    total = albums.length;
+    albums = albums.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  } else {
+    [albums, total, allEventDates] = await Promise.all([
+      prisma.galleryAlbum.findMany({
+        where,
+        orderBy: { eventDate: "desc" },
+        skip: (page - 1) * PAGE_SIZE,
+        take: PAGE_SIZE,
+        include: { _count: { select: { images: true } } },
+      }),
+      prisma.galleryAlbum.count({ where }),
+      allEventDatesPromise,
+    ]);
+  }
+
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
-  const albums = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   const years = Array.from(
     new Set(allEventDates.map((a) => new Date(a.eventDate).getUTCFullYear())),

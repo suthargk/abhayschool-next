@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { Search } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/select";
 
 import { buildGalleryHref } from "../lib/query";
+import { useScrollAlbumsOnSettle } from "../lib/use-scroll-albums-on-settle";
 
 const MONTHS = [
   "January", "February", "March", "April", "May", "June",
@@ -29,6 +30,8 @@ export function GalleryFilters({
   years,
 }) {
   const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+  useScrollAlbumsOnSettle(isPending);
   const [q, setQ] = useState(initialQuery ?? "");
   const [year, setYear] = useState(initialYear ? String(initialYear) : "all");
   const [month, setMonth] = useState(initialMonth ? String(initialMonth) : "all");
@@ -37,14 +40,15 @@ export function GalleryFilters({
 
   function submit(e) {
     e.preventDefault();
-    router.push(
-      buildGalleryHref({
-        q: q.trim(),
-        year: year !== "all" ? year : undefined,
-        month: month !== "all" ? month : undefined,
-        category: initialCategory,
-      }),
-    );
+    const href = buildGalleryHref({
+      q: q.trim(),
+      year: year !== "all" ? year : undefined,
+      month: month !== "all" ? month : undefined,
+      category: initialCategory,
+    });
+    startTransition(() => {
+      router.push(href, { scroll: false });
+    });
   }
 
   return (
@@ -88,8 +92,8 @@ export function GalleryFilters({
         </SelectContent>
       </Select>
 
-      <Button type="submit" size="sm" className="h-9">
-        Search
+      <Button type="submit" size="sm" className="h-9" disabled={isPending}>
+        {isPending ? "Searching…" : "Search"}
       </Button>
       {hasActiveFilters ? (
         <Button
@@ -97,11 +101,14 @@ export function GalleryFilters({
           variant="ghost"
           size="sm"
           className="h-9"
+          disabled={isPending}
           onClick={() => {
             setQ("");
             setYear("all");
             setMonth("all");
-            router.push("/gallery");
+            startTransition(() => {
+              router.push("/gallery", { scroll: false });
+            });
           }}
         >
           Clear
