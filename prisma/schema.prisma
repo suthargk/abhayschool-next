@@ -29,6 +29,8 @@ model Profile {
   faculty           Faculty[]
   libraryBooks      LibraryBook[]
   academicPosts     AcademicPost[]
+  toppers           Topper[]
+  facilities        Facility[]
 
   @@map("profiles")
 }
@@ -191,4 +193,73 @@ model AcademicPost {
 
   @@index([status, publishedAt])
   @@map("academic_posts")
+}
+
+enum TopperClass {
+  CLASS_X
+  CLASS_XII
+}
+
+enum Stream {
+  SCIENCE
+  COMMERCE
+  ARTS
+}
+
+model Topper {
+  id            String        @id @default(cuid())
+  name          String
+  class         TopperClass
+  stream        Stream?
+  year          Int
+  rank          Int           @default(1)
+  percentage    Float
+  marksObtained Int?
+  marksTotal    Int?
+  photoUrl      String?
+  status        ContentStatus @default(DRAFT)
+  publishedAt   DateTime?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  authorId String  @db.Uuid
+  author   Profile @relation(fields: [authorId], references: [id])
+
+  @@index([status, year])
+  @@index([class, year, rank])
+  @@map("toppers")
+}
+
+enum FacilitySection {
+  OVERVIEW
+  SPORTS
+  SAFETY
+  FAQ
+}
+
+// A single model backs four sections of the public Facilities page,
+// distinguished by `section`. Field meaning shifts per section: for FAQ,
+// `title`/`summary` hold the question/answer; for OVERVIEW, `featured`
+// picks the subset shown in the large alternating "Featured Facilities"
+// blocks (using `description` and `imageUrl`).
+model Facility {
+  id          String          @id @default(cuid())
+  section     FacilitySection @default(OVERVIEW)
+  icon        String?
+  title       String
+  summary     String?
+  description String?
+  imageUrl    String?
+  featured    Boolean         @default(false)
+  position    Int             @default(0)
+  status      ContentStatus   @default(DRAFT)
+  publishedAt DateTime?
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  authorId String  @db.Uuid
+  author   Profile @relation(fields: [authorId], references: [id])
+
+  @@index([section, status, position])
+  @@map("facilities")
 }

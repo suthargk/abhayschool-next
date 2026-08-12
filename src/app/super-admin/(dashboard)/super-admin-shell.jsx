@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import {
   Bus,
+  Building2,
   GraduationCap,
   ImageIcon,
   LayoutDashboard,
@@ -30,6 +31,7 @@ const navSections = [
         icon: MessageSquareQuote,
       },
       { href: "/super-admin/about-us/faculty", label: "Faculty", icon: Users },
+      { href: "/super-admin/about-us/facilities", label: "Facilities", icon: Building2 },
       {
         href: "/super-admin/about-us/route-plan",
         label: "Route plan of school buses",

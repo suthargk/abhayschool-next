@@ -42,10 +42,12 @@ const Footer = () => {
                 <Link href="#">Faculty</Link>
               </li>
               <li className="text-sm text-zinc-50">
-                <Link href="#">Facilities</Link>
+                <Link href="/about/facilities">Facilities</Link>
               </li>
               <li className="text-sm text-zinc-50">
-                <Link href="/principal-message">Principal&apos;s Message</Link>
+                <Link href="/about/principal-message">
+                  Principal&apos;s Message
+                </Link>
               </li>
               <li className="text-sm text-zinc-50">
                 <Link href="#"> Route Plan of School Buses</Link>
@@ -75,7 +77,7 @@ const Footer = () => {
                 <Link href="#">Achievements</Link>
               </li>
               <li className="text-sm text-zinc-50">
-                <Link href="#">Toppers</Link>
+                <Link href="/achievements/toppers">Toppers</Link>
               </li>
             </ul>
           </div>
