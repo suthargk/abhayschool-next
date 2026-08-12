@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 
 import { Navbar } from "@/components/navbar";
 import { MobileNav } from "@/components/navbar/mobile-nav";
+import { Button } from "@/components/ui/button";
 import CustomizeSettingDialog from "@/components/customize-setting-dialog";
 import Footer from "@/app/landing/footer";
 
@@ -31,7 +32,10 @@ export function ConditionalSiteChrome({ children }) {
           />
         </Link>
         <Navbar />
-        <div className="col-start-3 flex justify-end">
+        <div className="col-start-3 flex items-center justify-end gap-2">
+          <Button asChild size="sm" className="hidden md:inline-flex">
+            <Link href="/#admissions">Apply Now</Link>
+          </Button>
           <MobileNav />
         </div>
       </div>

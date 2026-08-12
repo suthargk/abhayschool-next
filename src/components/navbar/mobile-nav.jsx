@@ -6,7 +6,7 @@ import { ChevronDown, Menu } from "lucide-react";
 
 import navigationCategory from "@/Helper/navigation";
 import { cn } from "@/lib/utils";
-import { Button } from "../ui/button";
+import { Button, buttonVariants } from "../ui/button";
 import {
   Sheet,
   SheetContent,
@@ -60,6 +60,15 @@ export function MobileNav() {
         </SheetHeader>
 
         <nav className="flex flex-1 flex-col px-5 pb-6 pt-14">
+          <SheetClose asChild>
+            <Link
+              href="/#admissions"
+              className={cn(buttonVariants(), "mb-4 w-full")}
+            >
+              Apply Now
+            </Link>
+          </SheetClose>
+
           <div className="flex flex-col">
             {links.map((category) => (
               <SheetClose asChild key={category.title}>

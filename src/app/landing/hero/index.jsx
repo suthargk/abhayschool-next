@@ -1,40 +1,55 @@
 import React from "react";
 
+import Link from "next/link";
 import Image from "next/image";
+// TODO: swap these placeholder illustrations for real campus/student photography or a short video.
 import webpImage from "../../../../public/peppa_hero.png";
 import peppaPigImage from "../../../../public/peppa_pig.png";
 import peppaPigFairyImage from "../../../../public/peppa_fairy.png";
-import peppaPigPartyImage from "../../../../public/peppa_party.png";
+
+import { Button } from "@/components/ui/button";
+import { GlitterBackground } from "@/components/backgrounds/glitter-background";
 
 const Hero = () => {
   return (
-    <div className="flex flex-col items-center gap-10">
-      <h1 className="flex flex-col text-center pt-24">
-        <span className="uppercase text-lg font-semibold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-[#555]/70 to-[#000] dark:from-[#555]/20 dark:to-[#fff]">
+    <div className="relative flex flex-col items-center gap-8">
+      <GlitterBackground preset="festive" sparkleCount={24} />
+      <div className="flex flex-col items-center gap-6 text-center pt-24">
+        <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#8371fa] dark:text-[#c25ff9]">
           Shri Abhay Nobles Senior Secondary School
-        </span>
-        <span className="text-6xl font-semibold ">
-          Excellence in{" "}
-          <span className="bg-clip-text text-transparent bg-gradient-to-b from-[#8371fa] to-[#c25ff9] ">
-            Education
+        </p>
+        <h1 className="flex flex-col">
+          <span className="text-6xl font-semibold">
+            Inspiring Minds.{" "}
+            <span className="bg-clip-text text-transparent bg-gradient-to-b from-[#8371fa] to-[#c25ff9]">
+              Building Futures.
+            </span>
           </span>
-        </span>
-        <span className="text-6xl py-2 text-violet-500 font-semibold bg-clip-text text-transparent bg-gradient-to-b from-[#df4fca] to-[#ed4492] ">
-          Passion for Learning.
-        </span>
-      </h1>
+        </h1>
+        <p className="max-w-2xl text-lg text-zinc-600 dark:text-zinc-400">
+          A nurturing learning environment where students discover their
+          potential, develop strong character, and prepare for a changing
+          world.
+        </p>
+
+        <div className="flex flex-wrap items-center justify-center gap-3">
+          <Button asChild size="lg">
+            <Link href="/about">Explore Our School</Link>
+          </Button>
+          <Button asChild size="lg" variant="outline">
+            <Link href="#admissions">Admissions 2026–27</Link>
+          </Button>
+        </div>
+
+        <p className="text-sm font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-500">
+          RBSE Affiliated • Classes Nursery–XII • Established 1998
+        </p>
+      </div>
+
       <div className="flex">
-        {/* <Image
-          src={peppaPigPartyImage}
-          alt="kids"
-          draggable={false}
-          width={300}
-          height={300}
-          className="self-end"
-        /> */}
         <Image
           src={webpImage}
-          alt="kids"
+          alt="Students at Shri Abhay Nobles Senior Secondary School"
           draggable={false}
           width={500}
           height={500}
@@ -42,19 +57,13 @@ const Hero = () => {
         <div className="flex flex-col justify-between">
           <Image
             src={peppaPigFairyImage}
-            alt="kids"
+            alt=""
             className="self-end"
             draggable={false}
             width={200}
             height={200}
           />
-          <Image
-            src={peppaPigImage}
-            alt="kids"
-            draggable={false}
-            width={200}
-            height={200}
-          />
+          <Image src={peppaPigImage} alt="" draggable={false} width={200} height={200} />
         </div>
       </div>
     </div>
