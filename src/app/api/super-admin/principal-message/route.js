@@ -31,12 +31,25 @@ export async function PUT(request) {
     return NextResponse.json({ error: "Content is required" }, { status: 400 });
   }
 
+  const trimmedOrNull = (value) =>
+    typeof value === "string" ? value.trim() || null : null;
+  const intOrNull = (value) => {
+    const n = Number.parseInt(value, 10);
+    return Number.isFinite(n) ? n : null;
+  };
+
   const data = {
-    principalName:
-      typeof body.principalName === "string" ? body.principalName.trim() || null : null,
+    principalName: trimmedOrNull(body.principalName),
+    designation: trimmedOrNull(body.designation),
+    quote: trimmedOrNull(body.quote),
     content: body.content,
     photoUrl: body.photoUrl || null,
     signatureUrl: body.signatureUrl || null,
+    principalSince: intOrNull(body.principalSince),
+    experienceYears: intOrNull(body.experienceYears),
+    qualification: trimmedOrNull(body.qualification),
+    interests: trimmedOrNull(body.interests),
+    videoUrl: trimmedOrNull(body.videoUrl),
   };
 
   const existing = await prisma.principalMessage.findFirst({

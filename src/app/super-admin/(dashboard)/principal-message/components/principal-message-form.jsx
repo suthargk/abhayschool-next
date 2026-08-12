@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { RichTextEditor } from "@/components/news-notices/rich-text-editor";
 
 export function PrincipalMessageForm({ initialItem, canPublish }) {
@@ -17,11 +18,26 @@ export function PrincipalMessageForm({ initialItem, canPublish }) {
   const [principalName, setPrincipalName] = useState(
     initialItem?.principalName ?? "",
   );
+  const [designation, setDesignation] = useState(
+    initialItem?.designation ?? "",
+  );
+  const [quote, setQuote] = useState(initialItem?.quote ?? "");
   const [content, setContent] = useState(initialItem?.content ?? "");
   const [photoUrl, setPhotoUrl] = useState(initialItem?.photoUrl ?? "");
   const [signatureUrl, setSignatureUrl] = useState(
     initialItem?.signatureUrl ?? "",
   );
+  const [principalSince, setPrincipalSince] = useState(
+    initialItem?.principalSince ?? "",
+  );
+  const [experienceYears, setExperienceYears] = useState(
+    initialItem?.experienceYears ?? "",
+  );
+  const [qualification, setQualification] = useState(
+    initialItem?.qualification ?? "",
+  );
+  const [interests, setInterests] = useState(initialItem?.interests ?? "");
+  const [videoUrl, setVideoUrl] = useState(initialItem?.videoUrl ?? "");
   const [status, setStatus] = useState(initialItem?.status ?? "DRAFT");
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [uploadingSignature, setUploadingSignature] = useState(false);
@@ -84,9 +100,16 @@ export function PrincipalMessageForm({ initialItem, canPublish }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           principalName,
+          designation,
+          quote,
           content,
           photoUrl,
           signatureUrl,
+          principalSince,
+          experienceYears,
+          qualification,
+          interests,
+          videoUrl,
         }),
       });
       const data = await res.json();
@@ -143,13 +166,35 @@ export function PrincipalMessageForm({ initialItem, canPublish }) {
         ) : null}
       </div>
 
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="space-y-2">
+          <Label htmlFor="principal-name">Principal&apos;s name</Label>
+          <Input
+            id="principal-name"
+            value={principalName}
+            onChange={(e) => setPrincipalName(e.target.value)}
+            placeholder="e.g. Dr. Jane Doe"
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="principal-designation">Designation</Label>
+          <Input
+            id="principal-designation"
+            value={designation}
+            onChange={(e) => setDesignation(e.target.value)}
+            placeholder="e.g. Principal, Shri Abhay Nobles Senior Secondary School"
+          />
+        </div>
+      </div>
+
       <div className="space-y-2">
-        <Label htmlFor="principal-name">Principal&apos;s name</Label>
-        <Input
-          id="principal-name"
-          value={principalName}
-          onChange={(e) => setPrincipalName(e.target.value)}
-          placeholder="e.g. Jane Doe"
+        <Label htmlFor="principal-quote">Hero quote</Label>
+        <Textarea
+          id="principal-quote"
+          value={quote}
+          onChange={(e) => setQuote(e.target.value)}
+          placeholder="A short line shown alongside the photo, e.g. “Education is not simply about achieving academic success…”"
+          rows={2}
         />
       </div>
 
@@ -234,7 +279,61 @@ export function PrincipalMessageForm({ initialItem, canPublish }) {
         <RichTextEditor
           content={content}
           onChange={setContent}
-          placeholder="Write the Principal's message here…"
+          placeholder="Dear Students, Parents, and Members of Our School Community, … Try covering: a welcome, your educational philosophy, character &amp; values, academics, and your vision for the future — using subheadings to break it up."
+        />
+      </div>
+
+      <div className="space-y-4 rounded-md border p-4">
+        <p className="text-sm font-medium">About the Principal (short profile)</p>
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+          <div className="space-y-2">
+            <Label htmlFor="principal-since">Principal since</Label>
+            <Input
+              id="principal-since"
+              type="number"
+              value={principalSince}
+              onChange={(e) => setPrincipalSince(e.target.value)}
+              placeholder="2021"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="principal-experience">Experience (years)</Label>
+            <Input
+              id="principal-experience"
+              type="number"
+              value={experienceYears}
+              onChange={(e) => setExperienceYears(e.target.value)}
+              placeholder="20"
+            />
+          </div>
+          <div className="col-span-2 space-y-2">
+            <Label htmlFor="principal-qualification">Qualification</Label>
+            <Input
+              id="principal-qualification"
+              value={qualification}
+              onChange={(e) => setQualification(e.target.value)}
+              placeholder="M.Ed., Ph.D. in Education"
+            />
+          </div>
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="principal-interests">Areas of interest</Label>
+          <Input
+            id="principal-interests"
+            value={interests}
+            onChange={(e) => setInterests(e.target.value)}
+            placeholder="Student development, educational leadership, STEM education"
+          />
+        </div>
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="principal-video">Video message URL (YouTube or Vimeo, optional)</Label>
+        <Input
+          id="principal-video"
+          value={videoUrl}
+          onChange={(e) => setVideoUrl(e.target.value)}
+          placeholder="https://www.youtube.com/watch?v=…"
         />
       </div>
 

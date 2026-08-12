@@ -3,13 +3,16 @@ import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { createClient } from "@/lib/supabase/server";
+import { FACULTY_CATEGORIES } from "@/data/faculty-categories";
 
 import { FACULTY_PHOTO_BUCKET } from "../upload/route";
 
-function sanitizeSubjects(subjects) {
-  if (!Array.isArray(subjects)) return [];
-  return subjects
-    .map((subject) => (typeof subject === "string" ? subject.trim() : ""))
+const FACULTY_CATEGORY_VALUES = FACULTY_CATEGORIES.map((c) => c.value);
+
+function sanitizeStringArray(values) {
+  if (!Array.isArray(values)) return [];
+  return values
+    .map((value) => (typeof value === "string" ? value.trim() : ""))
     .filter(Boolean);
 }
 
@@ -70,8 +73,20 @@ export async function PATCH(request, { params }) {
   if (body.department !== undefined) {
     data.department = typeof body.department === "string" ? body.department.trim() || null : null;
   }
+  if (body.category !== undefined) {
+    data.category = FACULTY_CATEGORY_VALUES.includes(body.category) ? body.category : "TEACHING";
+  }
   if (body.subjects !== undefined) {
-    data.subjects = sanitizeSubjects(body.subjects);
+    data.subjects = sanitizeStringArray(body.subjects);
+  }
+  if (body.grades !== undefined) {
+    data.grades = sanitizeStringArray(body.grades);
+  }
+  if (body.areasOfInterest !== undefined) {
+    data.areasOfInterest = sanitizeStringArray(body.areasOfInterest);
+  }
+  if (body.achievements !== undefined) {
+    data.achievements = sanitizeStringArray(body.achievements);
   }
   if (body.qualification !== undefined) {
     data.qualification =

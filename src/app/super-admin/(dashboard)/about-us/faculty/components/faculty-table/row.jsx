@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
+import { facultyCategoryLabel } from "@/data/faculty-categories";
 
 export function FacultyRow({
   item,
@@ -81,6 +82,9 @@ export function FacultyRow({
       </TableCell>
       <TableCell className="text-muted-foreground">{item.designation}</TableCell>
       <TableCell className="text-muted-foreground">{item.department || "—"}</TableCell>
+      <TableCell>
+        <Badge variant="secondary">{facultyCategoryLabel(item.category)}</Badge>
+      </TableCell>
       <TableCell>
         <Badge variant="outline">
           {item.status === "PUBLISHED" ? (

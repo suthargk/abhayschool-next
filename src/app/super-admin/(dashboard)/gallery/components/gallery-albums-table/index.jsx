@@ -146,6 +146,9 @@ export function GalleryAlbumsTable({
                 {visibleColumns.eventDate ? (
                   <TableHead>Event date</TableHead>
                 ) : null}
+                {visibleColumns.category ? (
+                  <TableHead>Category</TableHead>
+                ) : null}
                 {visibleColumns.status ? <TableHead>Status</TableHead> : null}
                 {visibleColumns.photos ? <TableHead>Photos</TableHead> : null}
                 {visibleColumns.author ? (

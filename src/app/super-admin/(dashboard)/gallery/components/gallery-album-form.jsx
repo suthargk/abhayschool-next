@@ -8,10 +8,19 @@ import { CalendarIcon, GripVertical, Loader2, Star, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { GALLERY_CATEGORIES } from "@/data/gallery-categories";
 import { cn } from "@/lib/utils";
 
 function toDate(value) {
@@ -27,6 +36,8 @@ export function GalleryAlbumForm({ initialItem }) {
   const [description, setDescription] = useState(initialItem?.description ?? "");
   const [eventDate, setEventDate] = useState(toDate(initialItem?.eventDate));
   const [coverImageUrl, setCoverImageUrl] = useState(initialItem?.coverImageUrl ?? "");
+  const [category, setCategory] = useState(initialItem?.category ?? "EVENTS");
+  const [featured, setFeatured] = useState(initialItem?.featured ?? false);
   const [images, setImages] = useState(
     () =>
       initialItem?.images?.map((image) => ({ key: image.id, url: image.imageUrl })) ?? []
@@ -103,6 +114,8 @@ export function GalleryAlbumForm({ initialItem }) {
       description,
       eventDate: eventDate ? eventDate.toISOString() : "",
       coverImageUrl,
+      category,
+      featured,
       images: images.map((image, index) => ({ url: image.url, position: index })),
     };
 
@@ -167,6 +180,35 @@ export function GalleryAlbumForm({ initialItem }) {
             />
           </PopoverContent>
         </Popover>
+      </div>
+
+      <div className="flex flex-wrap items-end gap-6">
+        <div className="space-y-2">
+          <Label htmlFor="category">Category</Label>
+          <Select value={category} onValueChange={setCategory}>
+            <SelectTrigger id="category" className="w-48">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {GALLERY_CATEGORIES.map((c) => (
+                <SelectItem key={c.value} value={c.value}>
+                  {c.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="flex items-center gap-2 pb-2.5">
+          <Checkbox
+            id="featured"
+            checked={featured}
+            onCheckedChange={(checked) => setFeatured(checked === true)}
+          />
+          <Label htmlFor="featured" className="font-normal">
+            Featured album
+          </Label>
+        </div>
       </div>
 
       <div className="space-y-2">

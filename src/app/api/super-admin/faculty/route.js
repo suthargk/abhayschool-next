@@ -2,11 +2,14 @@ import { NextResponse } from "next/server";
 
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { FACULTY_CATEGORIES } from "@/data/faculty-categories";
 
-function sanitizeSubjects(subjects) {
-  if (!Array.isArray(subjects)) return [];
-  return subjects
-    .map((subject) => (typeof subject === "string" ? subject.trim() : ""))
+const FACULTY_CATEGORY_VALUES = FACULTY_CATEGORIES.map((c) => c.value);
+
+function sanitizeStringArray(values) {
+  if (!Array.isArray(values)) return [];
+  return values
+    .map((value) => (typeof value === "string" ? value.trim() : ""))
     .filter(Boolean);
 }
 
@@ -48,7 +51,11 @@ export async function POST(request) {
       name: body.name.trim(),
       designation: body.designation.trim(),
       department: typeof body.department === "string" ? body.department.trim() || null : null,
-      subjects: sanitizeSubjects(body.subjects),
+      category: FACULTY_CATEGORY_VALUES.includes(body.category) ? body.category : "TEACHING",
+      subjects: sanitizeStringArray(body.subjects),
+      grades: sanitizeStringArray(body.grades),
+      areasOfInterest: sanitizeStringArray(body.areasOfInterest),
+      achievements: sanitizeStringArray(body.achievements),
       qualification:
         typeof body.qualification === "string" ? body.qualification.trim() || null : null,
       bio: typeof body.bio === "string" ? body.bio.trim() || null : null,

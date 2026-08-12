@@ -198,6 +198,7 @@ export function FacultyTable({ initialItems, canPublish }) {
                   <TableHead>Name</TableHead>
                   <TableHead>Designation</TableHead>
                   <TableHead>Department</TableHead>
+                  <TableHead>Category</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead className="w-10">
                     <span className="sr-only">Actions</span>

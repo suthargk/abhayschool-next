@@ -1,7 +1,14 @@
-import Image from "next/image";
-
 import { prisma } from "@/lib/prisma";
-import { ContentRenderer } from "@/components/news-notices/content-renderer";
+
+import { PrincipalHero } from "./components/principal-hero";
+import { PrincipalMessageSection } from "./components/principal-message-section";
+import { PrincipalPhilosophy } from "./components/principal-philosophy";
+import { PrincipalProfile } from "./components/principal-profile";
+import { PrincipalVision } from "./components/principal-vision";
+import { PrincipalParentPartnership } from "./components/principal-parent-partnership";
+import { PrincipalStudentMessage } from "./components/principal-student-message";
+import { PrincipalVideo } from "./components/principal-video";
+import { PrincipalExploreLinks } from "./components/principal-explore-links";
 
 export const revalidate = 60;
 
@@ -12,49 +19,28 @@ export default async function PrincipalMessagePage() {
   });
 
   return (
-    <div className="mx-auto max-w-3xl space-y-8 px-4 py-16 sm:px-6">
-      <h1 className="text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">
-        Principal&apos;s Message
-      </h1>
+    <div className="min-h-screen">
+      <PrincipalHero item={item} />
 
-      {item ? (
-        <div className="space-y-8">
-          {item.photoUrl ? (
-            <Image
-              src={item.photoUrl}
-              alt={item.principalName || "Principal"}
-              width={320}
-              height={320}
-              className="h-48 w-48 rounded-full border object-cover"
-              unoptimized
-            />
-          ) : null}
+      <div className="mx-auto max-w-6xl space-y-20 px-4 pb-16 pt-4 sm:px-6">
+        {item ? (
+          <>
+            <PrincipalMessageSection item={item} />
+            <PrincipalPhilosophy />
+            <PrincipalProfile item={item} />
+            <PrincipalVision />
+            <PrincipalParentPartnership />
+            <PrincipalStudentMessage />
+            <PrincipalVideo videoUrl={item.videoUrl} />
+          </>
+        ) : (
+          <p className="mx-auto max-w-3xl text-center text-muted-foreground">
+            The Principal&apos;s message will be published here soon.
+          </p>
+        )}
 
-          <ContentRenderer content={item.content} />
-
-          {item.signatureUrl || item.principalName ? (
-            <div className="space-y-1 pt-2">
-              {item.signatureUrl ? (
-                <Image
-                  src={item.signatureUrl}
-                  alt={item.principalName ? `${item.principalName}'s signature` : "Signature"}
-                  width={200}
-                  height={75}
-                  className="h-auto w-40 object-contain"
-                  unoptimized
-                />
-              ) : null}
-              {item.principalName ? (
-                <p className="text-lg font-medium">— {item.principalName}</p>
-              ) : null}
-            </div>
-          ) : null}
-        </div>
-      ) : (
-        <p className="text-muted-foreground">
-          The Principal&apos;s message will be published here soon.
-        </p>
-      )}
+        <PrincipalExploreLinks />
+      </div>
     </div>
   );
 }

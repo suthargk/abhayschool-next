@@ -14,12 +14,20 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+import { buildGalleryHref } from "../lib/query";
+
 const MONTHS = [
   "January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December",
 ];
 
-export function GalleryFilters({ initialQuery, initialYear, initialMonth, years }) {
+export function GalleryFilters({
+  initialQuery,
+  initialYear,
+  initialMonth,
+  initialCategory,
+  years,
+}) {
   const router = useRouter();
   const [q, setQ] = useState(initialQuery ?? "");
   const [year, setYear] = useState(initialYear ? String(initialYear) : "all");
@@ -29,12 +37,14 @@ export function GalleryFilters({ initialQuery, initialYear, initialMonth, years 
 
   function submit(e) {
     e.preventDefault();
-    const params = new URLSearchParams();
-    if (q.trim()) params.set("q", q.trim());
-    if (year !== "all") params.set("year", year);
-    if (month !== "all") params.set("month", month);
-    const qs = params.toString();
-    router.push(qs ? `/gallery?${qs}` : "/gallery");
+    router.push(
+      buildGalleryHref({
+        q: q.trim(),
+        year: year !== "all" ? year : undefined,
+        month: month !== "all" ? month : undefined,
+        category: initialCategory,
+      }),
+    );
   }
 
   return (

@@ -10,6 +10,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { FACULTY_CATEGORIES } from "@/data/faculty-categories";
+
+import { TagInput } from "./tag-input";
 
 export function FacultyForm({ initialItem, canPublish }) {
   const router = useRouter();
@@ -18,8 +28,11 @@ export function FacultyForm({ initialItem, canPublish }) {
   const [name, setName] = useState(initialItem?.name ?? "");
   const [designation, setDesignation] = useState(initialItem?.designation ?? "");
   const [department, setDepartment] = useState(initialItem?.department ?? "");
+  const [category, setCategory] = useState(initialItem?.category ?? "TEACHING");
   const [subjects, setSubjects] = useState(initialItem?.subjects ?? []);
-  const [subjectInput, setSubjectInput] = useState("");
+  const [grades, setGrades] = useState(initialItem?.grades ?? []);
+  const [areasOfInterest, setAreasOfInterest] = useState(initialItem?.areasOfInterest ?? []);
+  const [achievements, setAchievements] = useState(initialItem?.achievements ?? []);
   const [qualification, setQualification] = useState(initialItem?.qualification ?? "");
   const [bio, setBio] = useState(initialItem?.bio ?? "");
   const [experienceYears, setExperienceYears] = useState(
@@ -32,28 +45,6 @@ export function FacultyForm({ initialItem, canPublish }) {
   const [saving, setSaving] = useState(false);
   const [publishing, setPublishing] = useState(false);
   const [error, setError] = useState("");
-
-  function addSubject() {
-    const value = subjectInput.trim();
-    if (!value) return;
-    if (!subjects.includes(value)) {
-      setSubjects((prev) => [...prev, value]);
-    }
-    setSubjectInput("");
-  }
-
-  function removeSubject(subject) {
-    setSubjects((prev) => prev.filter((s) => s !== subject));
-  }
-
-  function handleSubjectKeyDown(e) {
-    if (e.key === "Enter" || e.key === ",") {
-      e.preventDefault();
-      addSubject();
-    } else if (e.key === "Backspace" && !subjectInput && subjects.length > 0) {
-      removeSubject(subjects[subjects.length - 1]);
-    }
-  }
 
   async function handlePhotoChange(e) {
     const file = e.target.files?.[0];
@@ -88,7 +79,11 @@ export function FacultyForm({ initialItem, canPublish }) {
       name,
       designation,
       department,
+      category,
       subjects,
+      grades,
+      areasOfInterest,
+      achievements,
       qualification,
       bio,
       experienceYears: experienceYears === "" ? null : Number(experienceYears),
@@ -221,6 +216,24 @@ export function FacultyForm({ initialItem, canPublish }) {
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-2">
+          <Label htmlFor="faculty-category">Category</Label>
+          <Select value={category} onValueChange={setCategory}>
+            <SelectTrigger id="faculty-category">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {FACULTY_CATEGORIES.map((c) => (
+                <SelectItem key={c.value} value={c.value}>
+                  {c.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <p className="text-xs text-muted-foreground">
+            Controls which section of the public Faculty page this person appears in.
+          </p>
+        </div>
+        <div className="space-y-2">
           <Label htmlFor="faculty-department">Department</Label>
           <Input
             id="faculty-department"
@@ -229,45 +242,36 @@ export function FacultyForm({ initialItem, canPublish }) {
             placeholder="e.g. Science"
           />
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="faculty-experience">Years of experience</Label>
-          <Input
-            id="faculty-experience"
-            type="number"
-            min="0"
-            value={experienceYears}
-            onChange={(e) => setExperienceYears(e.target.value)}
-            placeholder="e.g. 8"
-          />
-        </div>
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="faculty-subjects">Subjects taught</Label>
-        <div className="flex flex-wrap items-center gap-1.5 rounded-md border p-2">
-          {subjects.map((subject) => (
-            <Badge key={subject} variant="secondary" className="gap-1">
-              {subject}
-              <button
-                type="button"
-                onClick={() => removeSubject(subject)}
-                className="rounded-full hover:text-destructive"
-              >
-                <X className="size-3" />
-              </button>
-            </Badge>
-          ))}
-          <input
-            id="faculty-subjects"
-            value={subjectInput}
-            onChange={(e) => setSubjectInput(e.target.value)}
-            onKeyDown={handleSubjectKeyDown}
-            onBlur={addSubject}
-            placeholder={subjects.length === 0 ? "Type a subject and press Enter" : ""}
-            className="min-w-[120px] flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
-          />
-        </div>
+        <Label htmlFor="faculty-experience">Years of experience</Label>
+        <Input
+          id="faculty-experience"
+          type="number"
+          min="0"
+          value={experienceYears}
+          onChange={(e) => setExperienceYears(e.target.value)}
+          placeholder="e.g. 8"
+          className="max-w-xs"
+        />
       </div>
+
+      <TagInput
+        id="faculty-subjects"
+        label="Subjects taught"
+        values={subjects}
+        onChange={setSubjects}
+        placeholder="Type a subject and press Enter"
+      />
+
+      <TagInput
+        id="faculty-grades"
+        label="Classes / grades taught"
+        values={grades}
+        onChange={setGrades}
+        placeholder="e.g. VIII, IX, X"
+      />
 
       <div className="space-y-2">
         <Label htmlFor="faculty-qualification">Qualification</Label>
@@ -278,6 +282,22 @@ export function FacultyForm({ initialItem, canPublish }) {
           placeholder="e.g. M.Sc, B.Ed"
         />
       </div>
+
+      <TagInput
+        id="faculty-areas-of-interest"
+        label="Areas of interest"
+        values={areasOfInterest}
+        onChange={setAreasOfInterest}
+        placeholder="e.g. STEM education, Mathematics competitions"
+      />
+
+      <TagInput
+        id="faculty-achievements"
+        label="Achievements & certifications"
+        values={achievements}
+        onChange={setAchievements}
+        placeholder="e.g. Best Teacher Award 2023"
+      />
 
       <div className="space-y-2">
         <Label htmlFor="faculty-email">Email</Label>

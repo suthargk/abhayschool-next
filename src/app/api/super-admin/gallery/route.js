@@ -3,6 +3,9 @@ import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { generateUniqueGallerySlug } from "@/lib/slug";
+import { GALLERY_CATEGORIES } from "@/data/gallery-categories";
+
+const CATEGORY_VALUES = GALLERY_CATEGORIES.map((c) => c.value);
 
 export async function GET() {
   try {
@@ -45,6 +48,8 @@ export async function POST(request) {
       description: typeof body.description === "string" ? body.description.trim() : "",
       eventDate: new Date(body.eventDate),
       coverImageUrl: body.coverImageUrl || null,
+      category: CATEGORY_VALUES.includes(body.category) ? body.category : "EVENTS",
+      featured: body.featured === true,
       authorId: profile.id,
       images: {
         create: images.map((image, index) => ({

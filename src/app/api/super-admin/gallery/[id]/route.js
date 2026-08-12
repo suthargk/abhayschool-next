@@ -4,8 +4,11 @@ import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { generateUniqueGallerySlug } from "@/lib/slug";
 import { createClient } from "@/lib/supabase/server";
+import { GALLERY_CATEGORIES } from "@/data/gallery-categories";
 
 import { GALLERY_IMAGE_BUCKET } from "../upload/route";
+
+const CATEGORY_VALUES = GALLERY_CATEGORIES.map((c) => c.value);
 
 function storagePathFromUrl(url) {
   const marker = `/public/${GALLERY_IMAGE_BUCKET}/`;
@@ -67,6 +70,12 @@ export async function PATCH(request, { params }) {
   }
   if (body.coverImageUrl !== undefined) {
     data.coverImageUrl = body.coverImageUrl || null;
+  }
+  if (body.category !== undefined && CATEGORY_VALUES.includes(body.category)) {
+    data.category = body.category;
+  }
+  if (body.featured !== undefined) {
+    data.featured = body.featured === true;
   }
 
   const images = Array.isArray(body.images) ? body.images : null;

@@ -1,31 +1,28 @@
 import Link from "next/link";
-import Image from "next/image";
-import { format } from "date-fns";
-import { ImageOff } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
 import { prisma } from "@/lib/prisma";
-import peppaPigImage from "../../../public/peppa_pig.png";
+import { Button } from "@/components/ui/button";
+import { GALLERY_CATEGORIES } from "@/data/gallery-categories";
 
+import { GalleryHero } from "./components/gallery-hero";
+import { GalleryCategoryFilters } from "./components/gallery-category-filters";
 import { GalleryFilters } from "./components/gallery-filters";
+import { FeaturedAlbum } from "./components/featured-album";
+import { LatestMoments } from "./components/latest-moments";
+import { AlbumGrid } from "./components/album-grid";
+import { YearArchive } from "./components/year-archive";
+import { GalleryCta } from "./components/gallery-cta";
+import { buildGalleryHref } from "./lib/query";
 
 const PAGE_SIZE = 12;
-
-function buildHref({ q, year, month, page }) {
-  const params = new URLSearchParams();
-  if (q) params.set("q", q);
-  if (year) params.set("year", String(year));
-  if (month) params.set("month", String(month));
-  if (page && page > 1) params.set("page", String(page));
-  const qs = params.toString();
-  return qs ? `/gallery?${qs}` : "/gallery";
-}
+const CATEGORY_VALUES = GALLERY_CATEGORIES.map((c) => c.value);
 
 export default async function GalleryPage({ searchParams }) {
   const params = await searchParams;
   const q = typeof params.q === "string" ? params.q.trim() : "";
   const year = Number(params.year) || null;
   const month = Number(params.month) || null;
+  const category = CATEGORY_VALUES.includes(params.category) ? params.category : null;
   const page = Math.max(1, Number(params.page) || 1);
 
   const where = {
@@ -46,9 +43,10 @@ export default async function GalleryPage({ searchParams }) {
           },
         }
       : {}),
+    ...(category ? { category } : {}),
   };
 
-  const [matching, allEventDates] = await Promise.all([
+  const [matching, allEventDates, featuredAlbum, recentAlbums] = await Promise.all([
     prisma.galleryAlbum.findMany({
       where,
       orderBy: { eventDate: "desc" },
@@ -58,7 +56,21 @@ export default async function GalleryPage({ searchParams }) {
       where: { status: "PUBLISHED" },
       select: { eventDate: true },
     }),
+    prisma.galleryAlbum.findFirst({
+      where: { status: "PUBLISHED", featured: true },
+      orderBy: { eventDate: "desc" },
+      include: { _count: { select: { images: true } } },
+    }),
+    prisma.galleryAlbum.findMany({
+      where: { status: "PUBLISHED" },
+      orderBy: { eventDate: "desc" },
+      take: 9,
+      include: { _count: { select: { images: true } } },
+    }),
   ]);
+
+  const featured = featuredAlbum ?? recentAlbums[0] ?? null;
+  const latestMoments = recentAlbums.filter((a) => a.id !== featured?.id).slice(0, 8);
 
   const filtered = month
     ? matching.filter((album) => new Date(album.eventDate).getUTCMonth() + 1 === month)
@@ -72,111 +84,83 @@ export default async function GalleryPage({ searchParams }) {
     new Set(allEventDates.map((a) => new Date(a.eventDate).getUTCFullYear())),
   ).sort((a, b) => b - a);
 
+  const yearCounts = years.map((y) => ({
+    year: y,
+    count: allEventDates.filter((a) => new Date(a.eventDate).getUTCFullYear() === y).length,
+  }));
+
+  const isFiltered = Boolean(q || year || month || category);
+
   return (
-    <div className="mx-auto max-w-5xl space-y-10 px-4 py-16 sm:px-6">
-      <div className="flex items-center justify-between gap-6">
-        <div className="space-y-2">
-          <h1 className="text-4xl font-semibold tracking-tight">Gallery</h1>
-          <p className="text-muted-foreground">
-            Photos from events and moments across the school year.
-          </p>
-        </div>
-        <Image
-          src={peppaPigImage}
-          alt=""
-          width={300}
-          height={206}
-          className="hidden h-auto w-28 shrink-0 rotate-3 select-none drop-shadow-xl sm:block sm:w-36"
-          priority
-        />
-      </div>
+    <div className="space-y-16 px-4 pb-16 sm:px-6">
+      <GalleryHero />
 
-      <GalleryFilters
-        initialQuery={q}
-        initialYear={year}
-        initialMonth={month}
-        years={years}
-      />
+      <div className="mx-auto max-w-5xl space-y-16">
+        {!isFiltered ? <FeaturedAlbum album={featured} /> : null}
+        {!isFiltered ? <LatestMoments albums={latestMoments} /> : null}
 
-      {albums.length === 0 ? (
-        <div className="flex flex-col items-center gap-3 rounded-lg border border-dashed p-10 text-center">
-          <Image
-            src={peppaPigImage}
-            alt=""
-            width={300}
-            height={206}
-            className="h-auto w-24 -rotate-2 select-none drop-shadow-md"
+        <section id="gallery-albums" className="scroll-mt-24 space-y-6">
+          <div className="space-y-2 text-center">
+            <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
+              Photo Albums
+            </h2>
+            <p className="text-muted-foreground">
+              Browse every album from our campus and events.
+            </p>
+          </div>
+
+          <GalleryCategoryFilters q={q} year={year} month={month} category={category} />
+          <GalleryFilters
+            initialQuery={q}
+            initialYear={year}
+            initialMonth={month}
+            initialCategory={category}
+            years={years}
           />
-          <p className="text-sm text-muted-foreground">
-            {total === 0 && !q && !year && !month
-              ? "No albums published yet. Check back soon!"
-              : "No albums match your search."}
-          </p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {albums.map((album) => (
-            <Link
-              key={album.id}
-              href={`/gallery/${album.slug}`}
-              className="group overflow-hidden rounded-lg border transition-shadow hover:shadow-md"
-            >
-              <div className="relative aspect-[4/3] bg-muted">
-                {album.coverImageUrl ? (
-                  <Image
-                    src={album.coverImageUrl}
-                    alt=""
-                    fill
-                    className="object-cover transition-transform group-hover:scale-105"
-                    unoptimized
-                  />
-                ) : (
-                  <div className="flex h-full w-full items-center justify-center">
-                    <ImageOff className="size-6 text-muted-foreground" />
-                  </div>
-                )}
-              </div>
-              <div className="space-y-1 p-4">
-                <p className="text-sm text-muted-foreground">
-                  {format(new Date(album.eventDate), "MMMM d, yyyy")}
-                </p>
-                <h2 className="text-lg font-semibold leading-snug">
-                  {album.title}
-                </h2>
-                <p className="text-xs text-muted-foreground">
-                  {album._count.images} photo{album._count.images === 1 ? "" : "s"}
-                </p>
-              </div>
-            </Link>
-          ))}
-        </div>
-      )}
 
-      {totalPages > 1 ? (
-        <div className="flex items-center justify-between border-t pt-6 text-sm">
-          <Button
-            asChild
-            variant="outline"
-            size="sm"
-            disabled={page <= 1}
-            className={page <= 1 ? "pointer-events-none opacity-50" : ""}
-          >
-            <Link href={buildHref({ q, year, month, page: page - 1 })}>← Previous</Link>
-          </Button>
-          <span className="text-muted-foreground">
-            Page {page} of {totalPages}
-          </span>
-          <Button
-            asChild
-            variant="outline"
-            size="sm"
-            disabled={page >= totalPages}
-            className={page >= totalPages ? "pointer-events-none opacity-50" : ""}
-          >
-            <Link href={buildHref({ q, year, month, page: page + 1 })}>Next →</Link>
-          </Button>
-        </div>
-      ) : null}
+          <AlbumGrid
+            albums={albums}
+            emptyMessage={
+              total === 0 && !isFiltered
+                ? "No albums published yet. Check back soon!"
+                : "No albums match your search."
+            }
+          />
+
+          {totalPages > 1 ? (
+            <div className="flex items-center justify-between border-t pt-6 text-sm">
+              <Button
+                asChild
+                variant="outline"
+                size="sm"
+                disabled={page <= 1}
+                className={page <= 1 ? "pointer-events-none opacity-50" : ""}
+              >
+                <Link href={buildGalleryHref({ q, year, month, category, page: page - 1 })}>
+                  ← Previous
+                </Link>
+              </Button>
+              <span className="text-muted-foreground">
+                Page {page} of {totalPages}
+              </span>
+              <Button
+                asChild
+                variant="outline"
+                size="sm"
+                disabled={page >= totalPages}
+                className={page >= totalPages ? "pointer-events-none opacity-50" : ""}
+              >
+                <Link href={buildGalleryHref({ q, year, month, category, page: page + 1 })}>
+                  Next →
+                </Link>
+              </Button>
+            </div>
+          ) : null}
+        </section>
+
+        <YearArchive years={yearCounts} />
+        <GalleryCta />
+      </div>
     </div>
   );
 }

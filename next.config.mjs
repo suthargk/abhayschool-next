@@ -12,6 +12,11 @@ const nextConfig = {
         destination: "/achievements/toppers",
         permanent: true,
       },
+      {
+        source: "/faculty",
+        destination: "/about/faculty",
+        permanent: true,
+      },
     ];
   },
 };

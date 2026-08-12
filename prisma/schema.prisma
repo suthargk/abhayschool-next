@@ -66,39 +66,58 @@ model NewsNotice {
   @@map("news_notices")
 }
 
+enum GalleryCategory {
+  CAMPUS
+  EVENTS
+  SPORTS
+  ACADEMICS
+  ACTIVITIES
+  CELEBRATIONS
+  TRIPS
+}
+
 model GalleryAlbum {
-  id            String        @id @default(cuid())
+  id            String          @id @default(cuid())
   title         String
-  slug          String        @unique
+  slug          String          @unique
   description   String
   eventDate     DateTime
   coverImageUrl String?
-  status        ContentStatus @default(DRAFT)
+  category      GalleryCategory @default(EVENTS)
+  featured      Boolean         @default(false)
+  status        ContentStatus   @default(DRAFT)
   publishedAt   DateTime?
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
 
   authorId String  @db.Uuid
   author   Profile @relation(fields: [authorId], references: [id])
 
   images GalleryImage[]
 
-  @@index([status, eventDate])
+  @@index([status, category, eventDate])
   @@map("gallery_albums")
 }
 
 // Singleton content: the school always has exactly one Principal's Message
 // (fetched via findFirst), not a list of records.
 model PrincipalMessage {
-  id            String        @id @default(cuid())
-  principalName String?
-  content       Json
-  photoUrl      String?
-  signatureUrl  String?
-  status        ContentStatus @default(DRAFT)
-  publishedAt   DateTime?
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
+  id              String        @id @default(cuid())
+  principalName   String?
+  designation     String?
+  quote           String?
+  content         Json
+  photoUrl        String?
+  signatureUrl    String?
+  principalSince  Int?
+  experienceYears Int?
+  qualification   String?
+  interests       String?
+  videoUrl        String?
+  status          ContentStatus @default(DRAFT)
+  publishedAt     DateTime?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
 
   authorId String  @db.Uuid
   author   Profile @relation(fields: [authorId], references: [id])
@@ -118,27 +137,38 @@ model GalleryImage {
   @@map("gallery_images")
 }
 
+enum FacultyCategory {
+  LEADERSHIP
+  TEACHING
+  SUPPORT
+}
+
 model Faculty {
-  id              String        @id @default(cuid())
+  id              String          @id @default(cuid())
   name            String
   designation     String
   department      String?
-  subjects        String[]      @default([])
+  category        FacultyCategory @default(TEACHING)
+  subjects        String[]        @default([])
+  grades          String[]        @default([])
+  areasOfInterest String[]        @default([])
+  achievements    String[]        @default([])
   qualification   String?
   bio             String?
   experienceYears Int?
   email           String?
   photoUrl        String?
-  position        Int           @default(0)
-  status          ContentStatus @default(DRAFT)
+  position        Int             @default(0)
+  status          ContentStatus   @default(DRAFT)
   publishedAt     DateTime?
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
 
   authorId String  @db.Uuid
   author   Profile @relation(fields: [authorId], references: [id])
 
   @@index([status, position])
+  @@index([status, category, position])
   @@map("faculty")
 }
 

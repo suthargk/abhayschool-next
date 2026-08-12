@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { format } from "date-fns";
-import { Check, Circle, CircleDashed, ImageOff, MoreHorizontal } from "lucide-react";
+import { Check, Circle, CircleDashed, ImageOff, MoreHorizontal, Star } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { TableCell, TableRow } from "@/components/ui/table";
+import { galleryCategoryLabel } from "@/data/gallery-categories";
 
 export function GalleryAlbumRow({
   item,
@@ -57,11 +58,19 @@ export function GalleryAlbumRow({
             )}
           </span>
           {item.title}
+          {item.featured ? (
+            <Star className="size-3.5 shrink-0 fill-amber-400 text-amber-400" />
+          ) : null}
         </Link>
       </TableCell>
       {visibleColumns.eventDate ? (
         <TableCell className="text-muted-foreground">
           {format(new Date(item.eventDate), "MMM d, yyyy")}
+        </TableCell>
+      ) : null}
+      {visibleColumns.category ? (
+        <TableCell>
+          <Badge variant="secondary">{galleryCategoryLabel(item.category)}</Badge>
         </TableCell>
       ) : null}
       {visibleColumns.status ? (

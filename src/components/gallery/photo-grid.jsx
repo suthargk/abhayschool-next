@@ -7,6 +7,8 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
+const ASPECTS = ["aspect-square", "aspect-[3/4]", "aspect-[4/3]", "aspect-square"];
+
 export function GalleryPhotoGrid({ images, albumTitle }) {
   const [openIndex, setOpenIndex] = useState(null);
   const open = openIndex !== null;
@@ -33,13 +35,13 @@ export function GalleryPhotoGrid({ images, albumTitle }) {
 
   return (
     <>
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+      <div className="columns-2 gap-3 sm:columns-3">
         {images.map((image, index) => (
           <button
             key={image.id}
             type="button"
             onClick={() => setOpenIndex(index)}
-            className="relative aspect-square overflow-hidden rounded-md border transition-opacity hover:opacity-90"
+            className={`relative mb-3 block w-full overflow-hidden rounded-md border transition-opacity hover:opacity-90 break-inside-avoid ${ASPECTS[index % ASPECTS.length]}`}
           >
             <Image
               src={image.imageUrl}
