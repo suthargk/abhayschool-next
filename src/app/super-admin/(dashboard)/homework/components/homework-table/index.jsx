@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -13,12 +14,12 @@ import {
 } from "@/components/ui/table";
 
 import { COLUMNS } from "./columns";
-import { NewsNoticesDeleteDialog } from "./delete-dialog";
-import { NewsNoticesPaginationBar } from "./pagination-bar";
-import { NewsNoticeRow } from "./table-row";
-import { NewsNoticesTableToolbar } from "./toolbar";
+import { HomeworkDeleteDialog } from "./delete-dialog";
+import { HomeworkPaginationBar } from "./pagination-bar";
+import { HomeworkRow } from "./table-row";
+import { HomeworkTableToolbar } from "./toolbar";
 
-export function NewsNoticesTable({
+export function HomeworkTable({
   items,
   canPublish,
   search,
@@ -65,7 +66,7 @@ export function NewsNoticesTable({
   async function togglePublish(item) {
     setPendingId(item.id);
     try {
-      await fetch(`/api/super-admin/news-notices/${item.id}/publish`, {
+      await fetch(`/api/super-admin/homework/${item.id}/publish`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ publish: item.status !== "PUBLISHED" }),
@@ -79,7 +80,7 @@ export function NewsNoticesTable({
   async function archiveItem(item) {
     setPendingId(item.id);
     try {
-      await fetch(`/api/super-admin/news-notices/${item.id}/publish`, {
+      await fetch(`/api/super-admin/homework/${item.id}/publish`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: "ARCHIVED" }),
@@ -103,20 +104,35 @@ export function NewsNoticesTable({
 
   async function confirmDelete() {
     if (!deleteTarget) return;
+    const { ids, label } = deleteTarget;
     setDeleting(true);
     try {
-      await Promise.all(
-        deleteTarget.ids.map((id) =>
-          fetch(`/api/super-admin/news-notices/${id}`, { method: "DELETE" })
+      await toast
+        .promise(
+          Promise.all(
+            ids.map(async (id) => {
+              const res = await fetch(`/api/super-admin/homework/${id}`, {
+                method: "DELETE",
+              });
+              if (!res.ok) throw new Error("Delete failed");
+            })
+          ),
+          {
+            loading: `Deleting ${label}…`,
+            success: `Deleted ${label}`,
+            error: `Failed to delete ${label}`,
+          }
         )
-      );
+        .unwrap();
       setSelectedIds((prev) => {
         const next = new Set(prev);
-        deleteTarget.ids.forEach((id) => next.delete(id));
+        ids.forEach((id) => next.delete(id));
         return next;
       });
       setDeleteTarget(null);
       router.refresh();
+    } catch {
+      // toast.promise already surfaced the error
     } finally {
       setDeleting(false);
     }
@@ -127,7 +143,7 @@ export function NewsNoticesTable({
 
   return (
     <div className="space-y-3">
-      <NewsNoticesTableToolbar
+      <HomeworkTableToolbar
         search={search}
         canPublish={canPublish}
         selectedCount={selectedIds.size}
@@ -138,9 +154,7 @@ export function NewsNoticesTable({
 
       {items.length === 0 ? (
         <p className="rounded-md border border-dashed p-8 text-center text-sm text-muted-foreground">
-          {total === 0
-            ? "No news or notices yet."
-            : "No results match your search."}
+          {total === 0 ? "No homework yet." : "No results match your search."}
         </p>
       ) : (
         <div className="rounded-md border">
@@ -157,12 +171,11 @@ export function NewsNoticesTable({
                   </TableHead>
                 ) : null}
                 <TableHead>Title</TableHead>
-                {visibleColumns.type ? <TableHead>Type</TableHead> : null}
+                {visibleColumns.class ? <TableHead>Class</TableHead> : null}
+                {visibleColumns.subject ? <TableHead>Subject</TableHead> : null}
                 {visibleColumns.status ? <TableHead>Status</TableHead> : null}
+                {visibleColumns.due ? <TableHead>Due</TableHead> : null}
                 {visibleColumns.author ? <TableHead>Author</TableHead> : null}
-                {visibleColumns.created ? (
-                  <TableHead>Created</TableHead>
-                ) : null}
                 <TableHead className="w-10">
                   <span className="sr-only">Actions</span>
                 </TableHead>
@@ -170,7 +183,7 @@ export function NewsNoticesTable({
             </TableHeader>
             <TableBody>
               {items.map((item) => (
-                <NewsNoticeRow
+                <HomeworkRow
                   key={item.id}
                   item={item}
                   canPublish={canPublish}
@@ -188,7 +201,7 @@ export function NewsNoticesTable({
         </div>
       )}
 
-      <NewsNoticesPaginationBar
+      <HomeworkPaginationBar
         search={search}
         page={page}
         totalPages={totalPages}
@@ -196,7 +209,7 @@ export function NewsNoticesTable({
         pageSize={pageSize}
       />
 
-      <NewsNoticesDeleteDialog
+      <HomeworkDeleteDialog
         target={deleteTarget}
         deleting={deleting}
         onOpenChange={(open) => {

@@ -1,9 +1,9 @@
 export const COLUMNS = [
-  { key: "type", label: "Type", defaultVisible: true },
-  { key: "category", label: "Category", defaultVisible: true },
+  { key: "class", label: "Class", defaultVisible: true },
+  { key: "subject", label: "Subject", defaultVisible: true },
   { key: "status", label: "Status", defaultVisible: true },
+  { key: "due", label: "Due", defaultVisible: true },
   { key: "author", label: "Author", defaultVisible: true },
-  { key: "created", label: "Created", defaultVisible: true },
 ];
 
 export function buildHref({ q, page }) {
@@ -11,7 +11,5 @@ export function buildHref({ q, page }) {
   if (q) params.set("q", q);
   if (page && page > 1) params.set("page", String(page));
   const qs = params.toString();
-  return qs
-    ? `/super-admin/news-notices?${qs}`
-    : "/super-admin/news-notices";
+  return qs ? `/super-admin/homework?${qs}` : "/super-admin/homework";
 }

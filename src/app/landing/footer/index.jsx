@@ -62,7 +62,7 @@ const Footer = () => {
                 <Link href="#">Blog</Link>
               </li>
               <li className="text-sm text-zinc-50">
-                <Link href="#">Homework</Link>
+                <Link href="/homework">Homework</Link>
               </li>
               <li className="text-sm text-zinc-50">
                 <Link href="/news-notices">News & Notices</Link>

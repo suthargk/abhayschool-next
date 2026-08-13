@@ -2,15 +2,7 @@
 
 import Link from "next/link";
 import { format } from "date-fns";
-import {
-  Archive,
-  Check,
-  Circle,
-  CircleDashed,
-  MoreHorizontal,
-  Pin,
-  Sparkles,
-} from "lucide-react";
+import { Archive, Check, Circle, CircleDashed, MoreHorizontal } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -23,15 +15,15 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { TableCell, TableRow } from "@/components/ui/table";
-import { categoryLabel } from "@/lib/news-notices/categories";
+import { libraryClassLabel } from "@/data/library-classes";
 
 const STATUS_META = {
-  PUBLISHED: { label: "Published", icon: "published" },
-  DRAFT: { label: "Draft", icon: "draft" },
-  ARCHIVED: { label: "Archived", icon: "archived" },
+  PUBLISHED: { label: "Published" },
+  DRAFT: { label: "Draft" },
+  ARCHIVED: { label: "Archived" },
 };
 
-export function NewsNoticeRow({
+export function HomeworkRow({
   item,
   canPublish,
   visibleColumns,
@@ -47,6 +39,7 @@ export function NewsNoticeRow({
     item.status === "PUBLISHED" &&
     item.publishedAt &&
     new Date(item.publishedAt) > new Date();
+
   return (
     <TableRow>
       {canPublish ? (
@@ -59,31 +52,21 @@ export function NewsNoticeRow({
         </TableCell>
       ) : null}
       <TableCell className="font-medium">
-        <div className="flex items-center gap-1.5">
-          {item.pinned ? (
-            <Pin className="size-3.5 shrink-0 text-amber-500" />
-          ) : null}
-          {item.featured ? (
-            <Sparkles className="size-3.5 shrink-0 text-violet-500" />
-          ) : null}
-          <Link
-            href={`/super-admin/news-notices/${item.id}/edit`}
-            className="hover:text-primary hover:underline"
-          >
-            {item.title}
-          </Link>
-        </div>
+        <Link
+          href={`/super-admin/homework/${item.id}/edit`}
+          className="hover:text-primary hover:underline"
+        >
+          {item.title}
+        </Link>
       </TableCell>
-      {visibleColumns.type ? (
-        <TableCell>
-          <Badge variant="outline">
-            {item.type === "NEWS" ? "News" : "Notice"}
-          </Badge>
+      {visibleColumns.class ? (
+        <TableCell className="text-muted-foreground">
+          {libraryClassLabel(item.class)}
         </TableCell>
       ) : null}
-      {visibleColumns.category ? (
+      {visibleColumns.subject ? (
         <TableCell className="text-muted-foreground">
-          {categoryLabel(item.category)}
+          {item.subject}
         </TableCell>
       ) : null}
       {visibleColumns.status ? (
@@ -109,14 +92,14 @@ export function NewsNoticeRow({
           </Badge>
         </TableCell>
       ) : null}
+      {visibleColumns.due ? (
+        <TableCell className="text-muted-foreground">
+          {format(new Date(item.dueDate), "MMM d, yyyy")}
+        </TableCell>
+      ) : null}
       {visibleColumns.author ? (
         <TableCell className="text-muted-foreground">
           {item.author?.email}
-        </TableCell>
-      ) : null}
-      {visibleColumns.created ? (
-        <TableCell className="text-muted-foreground">
-          {format(new Date(item.createdAt), "MMM d, yyyy")}
         </TableCell>
       ) : null}
       <TableCell>
@@ -134,9 +117,7 @@ export function NewsNoticeRow({
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem asChild>
-              <Link href={`/super-admin/news-notices/${item.id}/edit`}>
-                Edit
-              </Link>
+              <Link href={`/super-admin/homework/${item.id}/edit`}>Edit</Link>
             </DropdownMenuItem>
             {canPublish ? (
               <>

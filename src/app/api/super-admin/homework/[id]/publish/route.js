@@ -3,7 +3,7 @@ import { revalidateTag } from "next/cache";
 
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { NEWS_NOTICES_CACHE_TAG } from "@/lib/news-notices/cached-queries";
+import { HOMEWORK_CACHE_TAG } from "@/lib/homework/cached-queries";
 
 export async function POST(request, { params }) {
   try {
@@ -15,7 +15,7 @@ export async function POST(request, { params }) {
   const { id } = await params;
   const body = await request.json().catch(() => ({}));
 
-  const existing = await prisma.newsNotice.findUnique({ where: { id } });
+  const existing = await prisma.homework.findUnique({ where: { id } });
   if (!existing) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
@@ -32,9 +32,9 @@ export async function POST(request, { params }) {
     };
   }
 
-  const item = await prisma.newsNotice.update({ where: { id }, data });
+  const item = await prisma.homework.update({ where: { id }, data });
 
-  revalidateTag(NEWS_NOTICES_CACHE_TAG);
+  revalidateTag(HOMEWORK_CACHE_TAG);
 
   return NextResponse.json({ item });
 }

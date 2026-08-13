@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { useTheme } from "next-themes";
+import { Toaster } from "sonner";
 
 import { ModeToggle } from "@/components/mode-toggle";
 import { Button } from "@/components/ui/button";
@@ -48,6 +50,11 @@ const navSections = [
         label: "News & Notices",
         icon: Megaphone,
       },
+      {
+        href: "/super-admin/homework",
+        label: "Homework",
+        icon: GraduationCap,
+      },
     ],
   },
   {
@@ -64,11 +71,6 @@ const navSections = [
         href: "/super-admin/achievements/toppers",
         label: "Toppers",
         icon: Trophy,
-      },
-      {
-        href: "/super-admin/achievements/homework",
-        label: "Homework",
-        icon: GraduationCap,
       },
     ],
   },
@@ -97,6 +99,7 @@ function NavLink({ href, label, icon: Icon }) {
 
 export function SuperAdminShell({ children }) {
   const router = useRouter();
+  const { resolvedTheme } = useTheme();
 
   async function handleLogout() {
     await fetch("/api/super-admin/logout", { method: "POST" });
@@ -106,6 +109,7 @@ export function SuperAdminShell({ children }) {
 
   return (
     <div className="flex min-h-screen bg-background">
+      <Toaster richColors theme={resolvedTheme} position="top-right" />
       <aside className="flex w-64 shrink-0 flex-col border-r bg-card">
         <div className="flex h-14 items-center justify-between gap-2 border-b px-4">
           <Link

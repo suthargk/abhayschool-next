@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { format } from "date-fns";
-import { ArrowUpRight, Megaphone, Newspaper } from "lucide-react";
+import { ArrowUpRight, Megaphone, Newspaper, Pin } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
@@ -35,13 +35,23 @@ export const NewsCard = ({ item, featured }) => {
       >
         <Icon className="size-4" />
       </div>
-      <span
-        className={cn(
-          "shrink-0 rounded-full px-2.5 py-1 text-xs font-medium",
-          meta.badge,
-        )}
-      >
-        {meta.label}
+      <span className="flex shrink-0 items-center gap-1.5">
+        {item.pinned ? (
+          <Pin
+            className={cn(
+              "size-3.5",
+              hasImage ? "text-white" : "text-amber-500",
+            )}
+          />
+        ) : null}
+        <span
+          className={cn(
+            "rounded-full px-2.5 py-1 text-xs font-medium",
+            meta.badge,
+          )}
+        >
+          {meta.label}
+        </span>
       </span>
     </div>
   );

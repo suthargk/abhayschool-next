@@ -3,11 +3,8 @@ import { revalidateTag } from "next/cache";
 
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { generateUniqueSlug } from "@/lib/slug";
-import { CATEGORIES } from "@/lib/news-notices/categories";
-import { NEWS_NOTICES_CACHE_TAG } from "@/lib/news-notices/cached-queries";
-
-const CATEGORY_VALUES = CATEGORIES.map((c) => c.value);
+import { LIBRARY_CLASS_VALUES } from "@/data/library-classes";
+import { HOMEWORK_CACHE_TAG } from "@/lib/homework/cached-queries";
 
 function parseAttachments(attachments) {
   if (!Array.isArray(attachments)) return [];
@@ -29,7 +26,7 @@ export async function GET(request, { params }) {
   }
 
   const { id } = await params;
-  const item = await prisma.newsNotice.findUnique({
+  const item = await prisma.homework.findUnique({
     where: { id },
     include: { attachments: true },
   });
@@ -48,7 +45,7 @@ export async function PATCH(request, { params }) {
   }
 
   const { id } = await params;
-  const existing = await prisma.newsNotice.findUnique({ where: { id } });
+  const existing = await prisma.homework.findUnique({ where: { id } });
   if (!existing) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
@@ -62,47 +59,26 @@ export async function PATCH(request, { params }) {
 
   if (typeof body.title === "string" && body.title.trim()) {
     data.title = body.title.trim();
-    if (data.title !== existing.title) {
-      data.slug = await generateUniqueSlug(data.title, id);
-    }
   }
-  if (body.type !== undefined) {
-    if (!["NEWS", "NOTICE"].includes(body.type)) {
-      return NextResponse.json({ error: "Invalid type" }, { status: 400 });
+  if (body.class !== undefined) {
+    if (!LIBRARY_CLASS_VALUES.includes(body.class)) {
+      return NextResponse.json({ error: "Invalid class" }, { status: 400 });
     }
-    data.type = body.type;
+    data.class = body.class;
   }
-  if (typeof body.summary === "string") data.summary = body.summary.trim();
+  if (typeof body.subject === "string" && body.subject.trim()) {
+    data.subject = body.subject.trim();
+  }
   if (body.content !== undefined) data.content = body.content;
-  if (body.coverImageUrl !== undefined) {
-    data.coverImageUrl = body.coverImageUrl || null;
+  if (body.teacherName !== undefined) {
+    data.teacherName =
+      typeof body.teacherName === "string" ? body.teacherName.trim() || null : null;
   }
-  if (body.category !== undefined) {
-    if (!CATEGORY_VALUES.includes(body.category)) {
-      return NextResponse.json({ error: "Invalid category" }, { status: 400 });
-    }
-    data.category = body.category;
+  if (body.assignedDate !== undefined) {
+    data.assignedDate = body.assignedDate ? new Date(body.assignedDate) : existing.assignedDate;
   }
-  if (body.pinned !== undefined) data.pinned = Boolean(body.pinned);
-  if (body.featured !== undefined) data.featured = Boolean(body.featured);
-  if (body.academicYear !== undefined) {
-    data.academicYear =
-      typeof body.academicYear === "string" && body.academicYear.trim()
-        ? body.academicYear.trim()
-        : null;
-  }
-  if (body.expiresAt !== undefined) {
-    data.expiresAt = body.expiresAt ? new Date(body.expiresAt) : null;
-  }
-  if (body.eventDate !== undefined) {
-    data.eventDate = body.eventDate ? new Date(body.eventDate) : null;
-  }
-  if (body.eventTime !== undefined) {
-    data.eventTime =
-      typeof body.eventTime === "string" ? body.eventTime.trim() || null : null;
-  }
-  if (body.venue !== undefined) {
-    data.venue = typeof body.venue === "string" ? body.venue.trim() || null : null;
+  if (body.dueDate !== undefined) {
+    data.dueDate = body.dueDate ? new Date(body.dueDate) : existing.dueDate;
   }
   if (body.attachments !== undefined) {
     data.attachments = {
@@ -111,13 +87,13 @@ export async function PATCH(request, { params }) {
     };
   }
 
-  const item = await prisma.newsNotice.update({
+  const item = await prisma.homework.update({
     where: { id },
     data,
     include: { attachments: true },
   });
 
-  revalidateTag(NEWS_NOTICES_CACHE_TAG);
+  revalidateTag(HOMEWORK_CACHE_TAG);
 
   return NextResponse.json({ item });
 }
@@ -130,14 +106,14 @@ export async function DELETE(request, { params }) {
   }
 
   const { id } = await params;
-  const existing = await prisma.newsNotice.findUnique({ where: { id } });
+  const existing = await prisma.homework.findUnique({ where: { id } });
   if (!existing) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
-  await prisma.newsNotice.delete({ where: { id } });
+  await prisma.homework.delete({ where: { id } });
 
-  revalidateTag(NEWS_NOTICES_CACHE_TAG);
+  revalidateTag(HOMEWORK_CACHE_TAG);
 
   return NextResponse.json({ ok: true });
 }

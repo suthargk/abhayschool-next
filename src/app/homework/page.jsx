@@ -1,62 +1,127 @@
-import React from "react";
-import { columns } from "./components/custom-table/columns";
-import CustomTable from "./components/custom-table";
+import { Suspense } from "react";
 
-const created_at = new Date();
-const date = created_at.getDate();
-const month = created_at.getMonth();
-const year = created_at.getFullYear();
+import { prisma } from "@/lib/prisma";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  getHomeworkClasses,
+  getHomeworkSubjects,
+  getHomeworkSummaryCounts,
+} from "@/lib/homework/cached-queries";
 
-const data = [
-  {
-    id: 1,
-    title:
-      "Thank you for reaching out. I am available at any time for a phone interview",
-    created_at: `${date}/${month}/${year}`,
-    subject: "English",
-  },
-  {
-    id: 2,
-    title:
-      "Please let me know a time that works best for you, and I will ensure I am available.",
-    created_at: `${date}/${month}/${year}`,
-    subject: "Hindi",
-  },
-  {
-    id: 3,
-    title:
-      "You are the finest, loveliest, tenderest, and most beautiful person I have ever known—and even that is an understatement",
-    created_at: `${date}/${month}/${year}`,
-    subject: "Physics",
-  },
-  {
-    id: 4,
-    title:
-      "All the world, there is no heart for me like yours. In all the world, there is no love for you like mine.",
-    created_at: `${date}/${month}/${year}`,
-    subject: "Mathematics",
-  },
-  {
-    id: 5,
-    title:
-      "You have bewitched me, body and soul, and I love, I love, I love you.",
-    created_at: `${date}/${month}/${year}`,
-    subject: "English",
-  },
-  {
-    id: 6,
-    title: "Every moment spent with you is like a beautiful dream come true.",
-    created_at: `${date}/${month}/${year}`,
-    subject: "Hindi",
-  },
-];
+import { PAGE_SIZE, RANGE_OPTIONS, rangeBounds } from "./constants";
+import { HomeworkHero } from "./components/homework-hero";
+import { HomeworkExplorer } from "./components/explorer";
 
-const HomeworkPage = () => {
+export default function HomeworkPage({ searchParams }) {
   return (
-    <div className="m-0 p-4 pt-[100px] md:p-10 lg:p-20 lg:pt-[102px] md:pt-[102px] md:ml-[270px] bg-zinc-50 dark:bg-zinc-900">
-      <CustomTable data={data} columns={columns} />
+    <div className="space-y-10 px-4 pb-16 sm:px-6">
+      <HomeworkHero />
+
+      <div
+        id="homework-list"
+        className="mx-auto max-w-5xl scroll-mt-24 space-y-8"
+      >
+        <Suspense fallback={<HomeworkResultsSkeleton />}>
+          <HomeworkResults searchParams={searchParams} />
+        </Suspense>
+      </div>
     </div>
   );
-};
+}
 
-export default HomeworkPage;
+async function HomeworkResults({ searchParams }) {
+  const params = await searchParams;
+  const q = typeof params.q === "string" ? params.q.trim() : "";
+  const classFilter = typeof params.class === "string" ? params.class : "ALL";
+  const subject = typeof params.subject === "string" ? params.subject : "ALL";
+  const range = RANGE_OPTIONS.some((r) => r.value === params.range)
+    ? params.range
+    : "THIS_WEEK";
+  const page = Math.max(1, Number(params.page) || 1);
+
+  const now = new Date();
+  const bounds = rangeBounds(range, now);
+
+  const where = {
+    status: "PUBLISHED",
+    publishedAt: { lte: now },
+    ...(bounds ? { dueDate: { gte: bounds[0], lt: bounds[1] } } : {}),
+    ...(classFilter !== "ALL" ? { class: classFilter } : {}),
+    ...(subject !== "ALL" ? { subject } : {}),
+    ...(q
+      ? {
+          OR: [
+            { title: { contains: q, mode: "insensitive" } },
+            { teacherName: { contains: q, mode: "insensitive" } },
+          ],
+        }
+      : {}),
+  };
+
+  const [items, total, counts, classOptions, subjectOptions] =
+    await Promise.all([
+      prisma.homework.findMany({
+        where,
+        orderBy: { dueDate: "asc" },
+        skip: (page - 1) * PAGE_SIZE,
+        take: PAGE_SIZE,
+        include: { attachments: true },
+      }),
+      prisma.homework.count({ where }),
+      getHomeworkSummaryCounts(),
+      getHomeworkClasses(),
+      getHomeworkSubjects(),
+    ]);
+
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  const showingFrom = total === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
+  const showingTo = Math.min(page * PAGE_SIZE, total);
+
+  return (
+    <HomeworkExplorer
+      q={q}
+      classFilter={classFilter}
+      subject={subject}
+      range={range}
+      page={page}
+      items={items}
+      total={total}
+      totalPages={totalPages}
+      showingFrom={showingFrom}
+      showingTo={showingTo}
+      counts={counts}
+      classOptions={classOptions}
+      subjectOptions={subjectOptions}
+    />
+  );
+}
+
+function HomeworkResultsSkeleton() {
+  return (
+    <div className="space-y-8">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <Skeleton key={i} className="h-20 w-full rounded-xl" />
+        ))}
+      </div>
+      <div className="space-y-4">
+        <div className="flex flex-wrap gap-2">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <Skeleton key={i} className="h-8 w-24 rounded-md" />
+          ))}
+        </div>
+        <div className="flex flex-wrap gap-3">
+          <Skeleton className="h-11 w-full max-w-xs" />
+          <Skeleton className="h-11 w-44" />
+          <Skeleton className="h-11 w-44" />
+          <Skeleton className="h-11 w-24" />
+        </div>
+      </div>
+      <div className="space-y-2">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <Skeleton key={i} className="h-20 w-full rounded-xl" />
+        ))}
+      </div>
+    </div>
+  );
+}

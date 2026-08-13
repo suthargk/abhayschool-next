@@ -1,25 +1,12 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 
-import { prisma } from "@/lib/prisma";
+import { getHomepageNewsNotices } from "@/lib/news-notices/cached-queries";
 
 import { NewsCard } from "./news-card";
 
 const NewsNotices = async () => {
-  const items = await prisma.newsNotice.findMany({
-    where: { status: "PUBLISHED" },
-    orderBy: { publishedAt: "desc" },
-    take: 5,
-    select: {
-      id: true,
-      slug: true,
-      type: true,
-      title: true,
-      summary: true,
-      publishedAt: true,
-      coverImageUrl: true,
-    },
-  });
+  const items = await getHomepageNewsNotices();
 
   const [featured, ...rest] = items;
 
@@ -62,7 +49,7 @@ const NewsNotices = async () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <NewsCard item={featured} featured />
             <div className="grid grid-cols-1 gap-5">
-              {rest.slice(0, 4).map((item) => (
+              {rest.slice(0, 5).map((item) => (
                 <NewsCard key={item.id} item={item} />
               ))}
             </div>

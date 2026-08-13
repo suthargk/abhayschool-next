@@ -31,6 +31,7 @@ model Profile {
   academicPosts     AcademicPost[]
   toppers           Topper[]
   facilities        Facility[]
+  homework          Homework[]
 
   @@map("profiles")
 }
@@ -43,27 +44,68 @@ enum ContentType {
 enum ContentStatus {
   DRAFT
   PUBLISHED
+  ARCHIVED
+}
+
+enum ContentCategory {
+  ACADEMIC
+  ADMISSIONS
+  EXAMINATION
+  EVENTS
+  SPORTS
+  HOLIDAYS
+  TRANSPORT
+  PARENT_INFORMATION
+  ACHIEVEMENTS
+  GENERAL
 }
 
 model NewsNotice {
-  id            String        @id @default(cuid())
+  id            String          @id @default(cuid())
   type          ContentType
+  category      ContentCategory @default(GENERAL)
   title         String
-  slug          String        @unique
+  slug          String          @unique
   summary       String
   content       Json
   coverImageUrl String?
-  status        ContentStatus @default(DRAFT)
+  status        ContentStatus   @default(DRAFT)
+  pinned        Boolean         @default(false)
+  featured      Boolean         @default(false)
+  academicYear  String?
   publishedAt   DateTime?
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
+  expiresAt     DateTime?
+  eventDate     DateTime?
+  eventTime     String?
+  venue         String?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
 
   authorId String  @db.Uuid
   author   Profile @relation(fields: [authorId], references: [id])
 
+  attachments Attachment[]
+
   @@index([status, publishedAt])
   @@index([type, status, publishedAt])
+  @@index([category])
+  @@index([academicYear])
   @@map("news_notices")
+}
+
+model Attachment {
+  id       String  @id @default(cuid())
+  fileName String
+  fileUrl  String
+  fileType String?
+  fileSize Int?
+
+  createdAt DateTime @default(now())
+
+  newsNoticeId String
+  newsNotice   NewsNotice @relation(fields: [newsNoticeId], references: [id], onDelete: Cascade)
+
+  @@map("news_notice_attachments")
 }
 
 enum GalleryCategory {
@@ -204,6 +246,45 @@ model LibraryBook {
 
   @@index([class, status, position])
   @@map("library_books")
+}
+
+model Homework {
+  id           String        @id @default(cuid())
+  class        LibraryClass
+  subject      String
+  title        String
+  content      Json
+  teacherName  String?
+  status       ContentStatus @default(DRAFT)
+  assignedDate DateTime
+  dueDate      DateTime
+  publishedAt  DateTime?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  authorId String  @db.Uuid
+  author   Profile @relation(fields: [authorId], references: [id])
+
+  attachments HomeworkAttachment[]
+
+  @@index([status, dueDate])
+  @@index([class, subject, status])
+  @@map("homework")
+}
+
+model HomeworkAttachment {
+  id       String  @id @default(cuid())
+  fileName String
+  fileUrl  String
+  fileType String?
+  fileSize Int?
+
+  createdAt DateTime @default(now())
+
+  homeworkId String
+  homework   Homework @relation(fields: [homeworkId], references: [id], onDelete: Cascade)
+
+  @@map("homework_attachments")
 }
 
 model AcademicPost {

@@ -3,12 +3,8 @@ import { revalidateTag } from "next/cache";
 
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { generateUniqueSlug } from "@/lib/slug";
-import { CATEGORIES } from "@/lib/news-notices/categories";
-import { currentAcademicYear } from "@/lib/news-notices/academic-year";
-import { NEWS_NOTICES_CACHE_TAG } from "@/lib/news-notices/cached-queries";
-
-const CATEGORY_VALUES = CATEGORIES.map((c) => c.value);
+import { LIBRARY_CLASS_VALUES } from "@/data/library-classes";
+import { HOMEWORK_CACHE_TAG } from "@/lib/homework/cached-queries";
 
 export async function GET() {
   try {
@@ -17,7 +13,7 @@ export async function GET() {
     return NextResponse.json({ error: "Forbidden" }, { status: error.status ?? 403 });
   }
 
-  const items = await prisma.newsNotice.findMany({
+  const items = await prisma.homework.findMany({
     orderBy: { createdAt: "desc" },
     include: { author: { select: { email: true } }, attachments: true },
   });
@@ -49,41 +45,36 @@ export async function POST(request) {
   if (!body || typeof body.title !== "string" || !body.title.trim()) {
     return NextResponse.json({ error: "Title is required" }, { status: 400 });
   }
-  if (!["NEWS", "NOTICE"].includes(body.type)) {
-    return NextResponse.json({ error: "Invalid type" }, { status: 400 });
+  if (!LIBRARY_CLASS_VALUES.includes(body.class)) {
+    return NextResponse.json({ error: "Invalid class" }, { status: 400 });
   }
-  if (body.category !== undefined && !CATEGORY_VALUES.includes(body.category)) {
-    return NextResponse.json({ error: "Invalid category" }, { status: 400 });
+  if (typeof body.subject !== "string" || !body.subject.trim()) {
+    return NextResponse.json({ error: "Subject is required" }, { status: 400 });
+  }
+  if (!body.assignedDate || !body.dueDate) {
+    return NextResponse.json(
+      { error: "Assigned date and due date are required" },
+      { status: 400 },
+    );
   }
 
-  const slug = await generateUniqueSlug(body.title);
-
-  const item = await prisma.newsNotice.create({
+  const item = await prisma.homework.create({
     data: {
-      type: body.type,
-      category: body.category ?? "GENERAL",
+      class: body.class,
+      subject: body.subject.trim(),
       title: body.title.trim(),
-      slug,
-      summary: typeof body.summary === "string" ? body.summary.trim() : "",
       content: body.content ?? null,
-      coverImageUrl: body.coverImageUrl || null,
-      pinned: Boolean(body.pinned),
-      featured: Boolean(body.featured),
-      academicYear:
-        typeof body.academicYear === "string" && body.academicYear.trim()
-          ? body.academicYear.trim()
-          : currentAcademicYear(),
-      expiresAt: body.expiresAt ? new Date(body.expiresAt) : null,
-      eventDate: body.eventDate ? new Date(body.eventDate) : null,
-      eventTime: typeof body.eventTime === "string" ? body.eventTime.trim() || null : null,
-      venue: typeof body.venue === "string" ? body.venue.trim() || null : null,
+      teacherName:
+        typeof body.teacherName === "string" ? body.teacherName.trim() || null : null,
+      assignedDate: new Date(body.assignedDate),
+      dueDate: new Date(body.dueDate),
       authorId: profile.id,
       attachments: { create: parseAttachments(body.attachments) },
     },
     include: { attachments: true },
   });
 
-  revalidateTag(NEWS_NOTICES_CACHE_TAG);
+  revalidateTag(HOMEWORK_CACHE_TAG);
 
   return NextResponse.json({ item }, { status: 201 });
 }
