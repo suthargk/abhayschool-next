@@ -1,7 +1,9 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import { Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { TableSkeleton } from "@/components/table-skeleton";
 import { getCurrentProfile } from "@/lib/auth";
 import { parsePageSize } from "@/lib/pagination";
 import { prisma } from "@/lib/prisma";
@@ -12,33 +14,10 @@ const DEFAULT_PAGE_SIZE = 10;
 
 export default async function SuperAdminGalleryPage({ searchParams }) {
   const params = await searchParams;
-  const profile = await getCurrentProfile();
 
   const q = typeof params.q === "string" ? params.q.trim() : "";
   const page = Math.max(1, Number(params.page) || 1);
   const pageSize = parsePageSize(params.pageSize, DEFAULT_PAGE_SIZE);
-
-  const where = q
-    ? {
-        OR: [
-          { title: { contains: q, mode: "insensitive" } },
-          { author: { email: { contains: q, mode: "insensitive" } } },
-        ],
-      }
-    : {};
-
-  const [items, total] = await Promise.all([
-    prisma.galleryAlbum.findMany({
-      where,
-      orderBy: { eventDate: "desc" },
-      include: { author: { select: { email: true } }, _count: { select: { images: true } } },
-      skip: (page - 1) * pageSize,
-      take: pageSize,
-    }),
-    prisma.galleryAlbum.count({ where }),
-  ]);
-
-  const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
   return (
     <div className="space-y-6">
@@ -57,16 +36,47 @@ export default async function SuperAdminGalleryPage({ searchParams }) {
         </Button>
       </div>
 
-      <GalleryAlbumsTable
-        items={items}
-        canPublish={profile?.role === "ADMIN"}
-        search={q}
-        page={page}
-        totalPages={totalPages}
-        total={total}
-        pageSize={pageSize}
-        defaultPageSize={DEFAULT_PAGE_SIZE}
-      />
+      <Suspense fallback={<TableSkeleton />}>
+        <GalleryAlbumsSection q={q} page={page} pageSize={pageSize} />
+      </Suspense>
     </div>
+  );
+}
+
+async function GalleryAlbumsSection({ q, page, pageSize }) {
+  const where = q
+    ? {
+        OR: [
+          { title: { contains: q, mode: "insensitive" } },
+          { author: { email: { contains: q, mode: "insensitive" } } },
+        ],
+      }
+    : {};
+
+  const [items, total, profile] = await Promise.all([
+    prisma.galleryAlbum.findMany({
+      where,
+      orderBy: { eventDate: "desc" },
+      include: { author: { select: { email: true } }, _count: { select: { images: true } } },
+      skip: (page - 1) * pageSize,
+      take: pageSize,
+    }),
+    prisma.galleryAlbum.count({ where }),
+    getCurrentProfile(),
+  ]);
+
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+
+  return (
+    <GalleryAlbumsTable
+      items={items}
+      canPublish={profile?.role === "ADMIN"}
+      search={q}
+      page={page}
+      totalPages={totalPages}
+      total={total}
+      pageSize={pageSize}
+      defaultPageSize={DEFAULT_PAGE_SIZE}
+    />
   );
 }

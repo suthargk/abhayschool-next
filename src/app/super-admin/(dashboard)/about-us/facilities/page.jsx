@@ -1,7 +1,9 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import { Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { TableSkeleton } from "@/components/table-skeleton";
 import { getCurrentProfile } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
@@ -13,15 +15,6 @@ const SECTIONS = ["OVERVIEW", "SPORTS", "SAFETY", "FAQ"];
 export default async function SuperAdminFacilitiesPage({ searchParams }) {
   const params = await searchParams;
   const section = SECTIONS.includes(params.section) ? params.section : "OVERVIEW";
-
-  const [items, profile] = await Promise.all([
-    prisma.facility.findMany({
-      where: { section },
-      orderBy: { position: "asc" },
-      include: { author: { select: { email: true } } },
-    }),
-    getCurrentProfile(),
-  ]);
 
   return (
     <div className="space-y-6">
@@ -42,7 +35,22 @@ export default async function SuperAdminFacilitiesPage({ searchParams }) {
 
       <FacilitySectionTabs active={section} />
 
-      <FacilityTable initialItems={items} canPublish={profile?.role === "ADMIN"} />
+      <Suspense key={section} fallback={<TableSkeleton />}>
+        <FacilitiesSection section={section} />
+      </Suspense>
     </div>
   );
+}
+
+async function FacilitiesSection({ section }) {
+  const [items, profile] = await Promise.all([
+    prisma.facility.findMany({
+      where: { section },
+      orderBy: { position: "asc" },
+      include: { author: { select: { email: true } } },
+    }),
+    getCurrentProfile(),
+  ]);
+
+  return <FacilityTable initialItems={items} canPublish={profile?.role === "ADMIN"} />;
 }

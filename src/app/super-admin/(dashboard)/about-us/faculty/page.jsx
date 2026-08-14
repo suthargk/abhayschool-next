@@ -1,21 +1,15 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import { Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { TableSkeleton } from "@/components/table-skeleton";
 import { getCurrentProfile } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 import { FacultyTable } from "./components/faculty-table";
 
-export default async function SuperAdminFacultyPage() {
-  const [items, profile] = await Promise.all([
-    prisma.faculty.findMany({
-      orderBy: { position: "asc" },
-      include: { author: { select: { email: true } } },
-    }),
-    getCurrentProfile(),
-  ]);
-
+export default function SuperAdminFacultyPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -33,7 +27,21 @@ export default async function SuperAdminFacultyPage() {
         </Button>
       </div>
 
-      <FacultyTable initialItems={items} canPublish={profile?.role === "ADMIN"} />
+      <Suspense fallback={<TableSkeleton />}>
+        <FacultySection />
+      </Suspense>
     </div>
   );
+}
+
+async function FacultySection() {
+  const [items, profile] = await Promise.all([
+    prisma.faculty.findMany({
+      orderBy: { position: "asc" },
+      include: { author: { select: { email: true } } },
+    }),
+    getCurrentProfile(),
+  ]);
+
+  return <FacultyTable initialItems={items} canPublish={profile?.role === "ADMIN"} />;
 }

@@ -148,11 +148,14 @@ export function HomeworkTable({
     <div className="space-y-3">
       <HomeworkTableToolbar
         search={search}
+        pageSize={pageSize}
+        defaultPageSize={defaultPageSize}
         canPublish={canPublish}
         selectedCount={selectedIds.size}
         visibleColumns={visibleColumns}
         onToggleColumn={toggleColumn}
         onBulkDelete={requestBulkDelete}
+        onPendingChange={setPaginationPending}
       />
 
       {items.length === 0 ? (

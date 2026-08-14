@@ -2,12 +2,12 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Loader2, Search } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 import { DataTablePagination } from "@/components/data-table-pagination";
+import { DataTableSearch } from "@/components/data-table-search";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 import { TopperDeleteDialog } from "./delete-dialog";
@@ -100,20 +100,15 @@ export function TopperTable({
   return (
     <div className="space-y-3">
       <div className="flex flex-wrap items-center gap-2">
-        <form
+        <DataTableSearch
+          basePath="/super-admin/achievements/toppers"
+          defaultValue={search}
+          pageSize={pageSize}
+          defaultPageSize={defaultPageSize}
+          placeholder="Search by name or year..."
           className="relative w-full max-w-sm"
-          action="/super-admin/achievements/toppers"
-          method="GET"
-        >
-          <Search className="pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            type="search"
-            name="q"
-            defaultValue={search}
-            placeholder="Search by name or year..."
-            className="pl-8"
-          />
-        </form>
+          onPendingChange={setPaginationPending}
+        />
         {canPublish && selected.size > 0 ? (
           <div className="flex items-center gap-2">
             <span className="text-sm text-muted-foreground">{selected.size} selected</span>

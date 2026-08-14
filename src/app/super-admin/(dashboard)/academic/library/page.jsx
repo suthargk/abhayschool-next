@@ -1,16 +1,12 @@
+import { Suspense } from "react";
+
+import { TableSkeleton } from "@/components/table-skeleton";
 import { getCurrentProfile } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 import { LibraryAdmin } from "./components/library-admin";
 
-export default async function SuperAdminLibraryPage() {
-  const [items, profile] = await Promise.all([
-    prisma.libraryBook.findMany({
-      orderBy: [{ class: "asc" }, { position: "asc" }],
-    }),
-    getCurrentProfile(),
-  ]);
-
+export default function SuperAdminLibraryPage() {
   return (
     <div className="space-y-6">
       <div className="space-y-1">
@@ -20,7 +16,20 @@ export default async function SuperAdminLibraryPage() {
         </p>
       </div>
 
-      <LibraryAdmin initialItems={items} canPublish={profile?.role === "ADMIN"} />
+      <Suspense fallback={<TableSkeleton />}>
+        <LibrarySection />
+      </Suspense>
     </div>
   );
+}
+
+async function LibrarySection() {
+  const [items, profile] = await Promise.all([
+    prisma.libraryBook.findMany({
+      orderBy: [{ class: "asc" }, { position: "asc" }],
+    }),
+    getCurrentProfile(),
+  ]);
+
+  return <LibraryAdmin initialItems={items} canPublish={profile?.role === "ADMIN"} />;
 }

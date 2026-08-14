@@ -132,11 +132,14 @@ export function NewsNoticesTable({
     <div className="space-y-3">
       <NewsNoticesTableToolbar
         search={search}
+        pageSize={pageSize}
+        defaultPageSize={defaultPageSize}
         canPublish={canPublish}
         selectedCount={selectedIds.size}
         visibleColumns={visibleColumns}
         onToggleColumn={toggleColumn}
         onBulkDelete={requestBulkDelete}
+        onPendingChange={setPaginationPending}
       />
 
       {items.length === 0 ? (
@@ -167,6 +170,7 @@ export function NewsNoticesTable({
                   ) : null}
                   <TableHead>Title</TableHead>
                   {visibleColumns.type ? <TableHead>Type</TableHead> : null}
+                  {visibleColumns.category ? <TableHead>Category</TableHead> : null}
                   {visibleColumns.status ? <TableHead>Status</TableHead> : null}
                   {visibleColumns.author ? <TableHead>Author</TableHead> : null}
                   {visibleColumns.created ? (

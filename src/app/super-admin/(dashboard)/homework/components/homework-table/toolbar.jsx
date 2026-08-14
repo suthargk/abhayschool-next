@@ -1,7 +1,8 @@
 "use client";
 
-import { Search, SlidersHorizontal } from "lucide-react";
+import { SlidersHorizontal } from "lucide-react";
 
+import { DataTableSearch } from "@/components/data-table-search";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -11,34 +12,31 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
 
 import { COLUMNS } from "./columns";
 
 export function HomeworkTableToolbar({
   search,
+  pageSize,
+  defaultPageSize,
   canPublish,
   selectedCount,
   visibleColumns,
   onToggleColumn,
   onBulkDelete,
+  onPendingChange,
 }) {
   return (
     <div className="flex flex-wrap items-center justify-between gap-2">
-      <form
+      <DataTableSearch
+        basePath="/super-admin/homework"
+        defaultValue={search}
+        pageSize={pageSize}
+        defaultPageSize={defaultPageSize}
+        placeholder="Search by title, subject, or teacher..."
         className="relative w-full min-w-[200px] flex-1 sm:max-w-sm"
-        action="/super-admin/homework"
-        method="GET"
-      >
-        <Search className="pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-        <Input
-          type="search"
-          name="q"
-          defaultValue={search}
-          placeholder="Search by title, subject, or teacher..."
-          className="pl-8"
-        />
-      </form>
+        onPendingChange={onPendingChange}
+      />
 
       <div className="flex flex-wrap items-center gap-2">
         {canPublish && selectedCount > 0 ? (

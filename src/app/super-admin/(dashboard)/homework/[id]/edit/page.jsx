@@ -1,7 +1,9 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 
+import { FormSkeleton } from "@/components/form-skeleton";
 import { Button } from "@/components/ui/button";
 import { prisma } from "@/lib/prisma";
 
@@ -9,12 +11,6 @@ import { HomeworkForm } from "../../components/homework-form";
 
 export default async function EditHomeworkPage({ params }) {
   const { id } = await params;
-  const item = await prisma.homework.findUnique({
-    where: { id },
-    include: { attachments: true },
-  });
-
-  if (!item) notFound();
 
   return (
     <div className="space-y-6">
@@ -27,7 +23,20 @@ export default async function EditHomeworkPage({ params }) {
         </Button>
         <h1 className="text-2xl font-semibold tracking-tight">Edit</h1>
       </div>
-      <HomeworkForm initialItem={item} />
+      <Suspense fallback={<FormSkeleton />}>
+        <EditHomeworkSection id={id} />
+      </Suspense>
     </div>
   );
+}
+
+async function EditHomeworkSection({ id }) {
+  const item = await prisma.homework.findUnique({
+    where: { id },
+    include: { attachments: true },
+  });
+
+  if (!item) notFound();
+
+  return <HomeworkForm initialItem={item} />;
 }
