@@ -24,9 +24,9 @@ export function GalleryAlbumsTableToolbar({
   onBulkDelete,
 }) {
   return (
-    <div className="flex items-center justify-between gap-2">
+    <div className="flex flex-wrap items-center justify-between gap-2">
       <form
-        className="relative w-full max-w-sm"
+        className="relative w-full min-w-[200px] flex-1 sm:max-w-sm"
         action="/super-admin/gallery"
         method="GET"
       >
@@ -40,7 +40,7 @@ export function GalleryAlbumsTableToolbar({
         />
       </form>
 
-      <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         {canPublish && selectedCount > 0 ? (
           <>
             <span className="text-sm text-muted-foreground">

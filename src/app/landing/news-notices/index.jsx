@@ -3,7 +3,7 @@ import { ArrowUpRight } from "lucide-react";
 
 import { getHomepageNewsNotices } from "@/lib/news-notices/cached-queries";
 
-import { NewsCard } from "./news-card";
+import { FeaturedNewsCard, NewsCard } from "./news-card";
 
 const NewsNotices = async () => {
   const items = await getHomepageNewsNotices();
@@ -46,9 +46,9 @@ const NewsNotices = async () => {
             No news or notices yet.
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            <NewsCard item={featured} featured />
-            <div className="grid grid-cols-1 gap-5">
+          <div className="space-y-5">
+            <FeaturedNewsCard item={featured} />
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               {rest.slice(0, 5).map((item) => (
                 <NewsCard key={item.id} item={item} />
               ))}

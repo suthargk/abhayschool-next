@@ -226,7 +226,7 @@ export function GalleryAlbumForm({ initialItem }) {
         <Label>Photos</Label>
 
         {images.length > 0 ? (
-          <div className="grid grid-cols-3 gap-3 sm:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
             {images.map((image, index) => (
               <div
                 key={image.key}

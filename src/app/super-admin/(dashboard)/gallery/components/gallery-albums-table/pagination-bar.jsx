@@ -20,7 +20,7 @@ export function GalleryAlbumsPaginationBar({
   const rangeEnd = Math.min(page * pageSize, total);
 
   return (
-    <div className="flex items-center justify-between">
+    <div className="flex flex-wrap items-center justify-between gap-2">
       <p className="text-sm text-muted-foreground">
         Showing {rangeStart}-{rangeEnd} of {total}
       </p>

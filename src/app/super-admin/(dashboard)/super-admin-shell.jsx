@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
@@ -7,6 +8,7 @@ import { Toaster } from "sonner";
 
 import { ModeToggle } from "@/components/mode-toggle";
 import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import {
   Bus,
@@ -17,6 +19,7 @@ import {
   Library,
   LogOut,
   Megaphone,
+  Menu,
   MessageSquareQuote,
   Newspaper,
   Trophy,
@@ -97,9 +100,63 @@ function NavLink({ href, label, icon: Icon }) {
   );
 }
 
+function SidebarContent({ onLogout, onNavigate, inSheet }) {
+  return (
+    <>
+      <div
+        className={cn(
+          "flex h-14 items-center justify-between gap-2 border-b pl-4",
+          inSheet ? "pr-12" : "pr-4"
+        )}
+      >
+        <Link
+          href="/super-admin"
+          className="flex items-center gap-2 text-sm font-semibold"
+          onClick={onNavigate}
+        >
+          <LayoutDashboard className="size-4" />
+          Super admin
+        </Link>
+        <ModeToggle />
+      </div>
+      <nav className="flex-1 space-y-4 overflow-y-auto p-3">
+        <div onClick={onNavigate}>
+          <NavLink href="/super-admin" label="Dashboard" icon={LayoutDashboard} />
+        </div>
+        {navSections.map((section) => (
+          <div key={section.title ?? section.items[0].href} className="space-y-1">
+            {section.title ? (
+              <p className="px-3 pb-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                {section.title}
+              </p>
+            ) : null}
+            <div className="space-y-0.5" onClick={onNavigate}>
+              {section.items.map((item) => (
+                <NavLink key={item.href} {...item} />
+              ))}
+            </div>
+          </div>
+        ))}
+      </nav>
+      <div className="border-t p-3">
+        <Button
+          type="button"
+          variant="outline"
+          className="w-full justify-start gap-2"
+          onClick={onLogout}
+        >
+          <LogOut className="size-4" />
+          Log out
+        </Button>
+      </div>
+    </>
+  );
+}
+
 export function SuperAdminShell({ children }) {
   const router = useRouter();
   const { resolvedTheme } = useTheme();
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   async function handleLogout() {
     await fetch("/api/super-admin/logout", { method: "POST" });
@@ -110,55 +167,39 @@ export function SuperAdminShell({ children }) {
   return (
     <div className="flex min-h-screen bg-background">
       <Toaster richColors theme={resolvedTheme} position="top-right" />
-      <aside className="flex w-64 shrink-0 flex-col border-r bg-card">
-        <div className="flex h-14 items-center justify-between gap-2 border-b px-4">
-          <Link
-            href="/super-admin"
-            className="flex items-center gap-2 text-sm font-semibold"
-          >
-            <LayoutDashboard className="size-4" />
-            Super admin
-          </Link>
-          <ModeToggle />
-        </div>
-        <nav className="flex-1 space-y-4 overflow-y-auto p-3">
-          <div>
-            <NavLink href="/super-admin" label="Dashboard" icon={LayoutDashboard} />
-          </div>
-          {navSections.map((section) => (
-            <div key={section.title ?? section.items[0].href} className="space-y-1">
-              {section.title ? (
-                <p className="px-3 pb-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                  {section.title}
-                </p>
-              ) : null}
-              <div className="space-y-0.5">
-                {section.items.map((item) => (
-                  <NavLink key={item.href} {...item} />
-                ))}
-              </div>
-            </div>
-          ))}
-        </nav>
-        <div className="border-t p-3">
+      <aside className="hidden w-64 shrink-0 flex-col border-r bg-card md:flex">
+        <SidebarContent onLogout={handleLogout} />
+      </aside>
+      <Sheet open={mobileNavOpen} onOpenChange={setMobileNavOpen}>
+        <SheetContent
+          side="left"
+          className="flex w-64 max-w-[80vw] flex-col gap-0 p-0"
+        >
+          <SheetTitle className="sr-only">Navigation</SheetTitle>
+          <SidebarContent
+            onLogout={handleLogout}
+            onNavigate={() => setMobileNavOpen(false)}
+            inSheet
+          />
+        </SheetContent>
+      </Sheet>
+      <div className="flex min-w-0 flex-1 flex-col">
+        <header className="flex h-14 items-center gap-2 border-b px-4 sm:px-6">
           <Button
             type="button"
-            variant="outline"
-            className="w-full justify-start gap-2"
-            onClick={handleLogout}
+            variant="ghost"
+            size="icon"
+            className="shrink-0 md:hidden"
+            onClick={() => setMobileNavOpen(true)}
           >
-            <LogOut className="size-4" />
-            Log out
+            <Menu className="size-5" />
+            <span className="sr-only">Open navigation</span>
           </Button>
-        </div>
-      </aside>
-      <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex h-14 items-center border-b px-6">
-          <p className="text-sm text-muted-foreground">
+          <p className="truncate text-sm text-muted-foreground">
             School administration dashboard
           </p>
         </header>
-        <main className="flex-1 p-6">{children}</main>
+        <main className="flex-1 overflow-x-hidden p-4 sm:p-6">{children}</main>
       </div>
     </div>
   );
