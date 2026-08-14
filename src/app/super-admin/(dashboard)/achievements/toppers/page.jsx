@@ -3,11 +3,12 @@ import { Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { getCurrentProfile } from "@/lib/auth";
+import { parsePageSize } from "@/lib/pagination";
 import { prisma } from "@/lib/prisma";
 
 import { TopperTable } from "./components/topper-table";
 
-const PAGE_SIZE = 20;
+const DEFAULT_PAGE_SIZE = 20;
 
 export default async function SuperAdminToppersPage({ searchParams }) {
   const params = await searchParams;
@@ -15,6 +16,7 @@ export default async function SuperAdminToppersPage({ searchParams }) {
 
   const q = typeof params.q === "string" ? params.q.trim() : "";
   const page = Math.max(1, Number(params.page) || 1);
+  const pageSize = parsePageSize(params.pageSize, DEFAULT_PAGE_SIZE);
 
   const yearFilter = /^\d+$/.test(q) ? Number(q) : null;
   const where = q
@@ -30,13 +32,13 @@ export default async function SuperAdminToppersPage({ searchParams }) {
     prisma.topper.findMany({
       where,
       orderBy: [{ year: "desc" }, { class: "asc" }, { rank: "asc" }],
-      skip: (page - 1) * PAGE_SIZE,
-      take: PAGE_SIZE,
+      skip: (page - 1) * pageSize,
+      take: pageSize,
     }),
     prisma.topper.count({ where }),
   ]);
 
-  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
   return (
     <div className="space-y-6">
@@ -62,7 +64,8 @@ export default async function SuperAdminToppersPage({ searchParams }) {
         page={page}
         totalPages={totalPages}
         total={total}
-        pageSize={PAGE_SIZE}
+        pageSize={pageSize}
+        defaultPageSize={DEFAULT_PAGE_SIZE}
       />
     </div>
   );

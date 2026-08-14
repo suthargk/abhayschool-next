@@ -2,8 +2,10 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
+import { DataTablePagination } from "@/components/data-table-pagination";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Table,
@@ -15,7 +17,6 @@ import {
 
 import { COLUMNS } from "./columns";
 import { HomeworkDeleteDialog } from "./delete-dialog";
-import { HomeworkPaginationBar } from "./pagination-bar";
 import { HomeworkRow } from "./table-row";
 import { HomeworkTableToolbar } from "./toolbar";
 
@@ -27,6 +28,7 @@ export function HomeworkTable({
   totalPages,
   total,
   pageSize,
+  defaultPageSize,
 }) {
   const router = useRouter();
   const [pendingId, setPendingId] = useState(null);
@@ -36,6 +38,7 @@ export function HomeworkTable({
   const [selectedIds, setSelectedIds] = useState(() => new Set());
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [deleting, setDeleting] = useState(false);
+  const [paginationPending, setPaginationPending] = useState(false);
 
   useEffect(() => {
     setSelectedIds(new Set());
@@ -157,56 +160,66 @@ export function HomeworkTable({
           {total === 0 ? "No homework yet." : "No results match your search."}
         </p>
       ) : (
-        <div className="rounded-md border">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                {canPublish ? (
+        <div className="relative rounded-md border">
+          {paginationPending ? (
+            <div className="absolute inset-0 z-10 flex items-center justify-center bg-background/60">
+              <Loader2 className="size-6 animate-spin text-muted-foreground" />
+            </div>
+          ) : null}
+          <div className="max-h-[560px] overflow-y-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  {canPublish ? (
+                    <TableHead className="w-10">
+                      <Checkbox
+                        checked={allSelected ? true : someSelected ? "indeterminate" : false}
+                        onCheckedChange={toggleSelectAll}
+                        aria-label="Select all rows"
+                      />
+                    </TableHead>
+                  ) : null}
+                  <TableHead>Title</TableHead>
+                  {visibleColumns.class ? <TableHead>Class</TableHead> : null}
+                  {visibleColumns.subject ? <TableHead>Subject</TableHead> : null}
+                  {visibleColumns.status ? <TableHead>Status</TableHead> : null}
+                  {visibleColumns.due ? <TableHead>Due</TableHead> : null}
+                  {visibleColumns.author ? <TableHead>Author</TableHead> : null}
                   <TableHead className="w-10">
-                    <Checkbox
-                      checked={allSelected ? true : someSelected ? "indeterminate" : false}
-                      onCheckedChange={toggleSelectAll}
-                      aria-label="Select all rows"
-                    />
+                    <span className="sr-only">Actions</span>
                   </TableHead>
-                ) : null}
-                <TableHead>Title</TableHead>
-                {visibleColumns.class ? <TableHead>Class</TableHead> : null}
-                {visibleColumns.subject ? <TableHead>Subject</TableHead> : null}
-                {visibleColumns.status ? <TableHead>Status</TableHead> : null}
-                {visibleColumns.due ? <TableHead>Due</TableHead> : null}
-                {visibleColumns.author ? <TableHead>Author</TableHead> : null}
-                <TableHead className="w-10">
-                  <span className="sr-only">Actions</span>
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {items.map((item) => (
-                <HomeworkRow
-                  key={item.id}
-                  item={item}
-                  canPublish={canPublish}
-                  visibleColumns={visibleColumns}
-                  pending={pendingId === item.id}
-                  selected={selectedIds.has(item.id)}
-                  onToggleSelected={() => toggleSelected(item.id)}
-                  onTogglePublish={() => togglePublish(item)}
-                  onArchive={() => archiveItem(item)}
-                  onDelete={() => requestDelete(item)}
-                />
-              ))}
-            </TableBody>
-          </Table>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {items.map((item) => (
+                  <HomeworkRow
+                    key={item.id}
+                    item={item}
+                    canPublish={canPublish}
+                    visibleColumns={visibleColumns}
+                    pending={pendingId === item.id}
+                    selected={selectedIds.has(item.id)}
+                    onToggleSelected={() => toggleSelected(item.id)}
+                    onTogglePublish={() => togglePublish(item)}
+                    onArchive={() => archiveItem(item)}
+                    onDelete={() => requestDelete(item)}
+                  />
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         </div>
       )}
 
-      <HomeworkPaginationBar
+      <DataTablePagination
+        basePath="/super-admin/homework"
+        onPendingChange={setPaginationPending}
         search={search}
         page={page}
         totalPages={totalPages}
         total={total}
         pageSize={pageSize}
+        defaultPageSize={defaultPageSize}
       />
 
       <HomeworkDeleteDialog

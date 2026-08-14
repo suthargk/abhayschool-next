@@ -1,30 +1,54 @@
 "use client";
 
-import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 import { Toaster } from "sonner";
 
 import { ModeToggle } from "@/components/mode-toggle";
-import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
-import { cn } from "@/lib/utils";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Separator } from "@/components/ui/separator";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarHeader,
+  SidebarInset,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
 import {
   Bus,
   Building2,
+  ChevronsUpDown,
+  ExternalLink,
   GraduationCap,
   ImageIcon,
   LayoutDashboard,
   Library,
   LogOut,
   Megaphone,
-  Menu,
   MessageSquareQuote,
   Newspaper,
   Trophy,
   Users,
 } from "lucide-react";
+
+const DASHBOARD_ITEM = { href: "/super-admin", label: "Dashboard", icon: LayoutDashboard };
 
 const navSections = [
   {
@@ -79,84 +103,44 @@ const navSections = [
   },
 ];
 
+const ALL_NAV_ITEMS = [
+  DASHBOARD_ITEM,
+  ...navSections.flatMap((section) => section.items),
+].sort((a, b) => b.href.length - a.href.length);
+
+function getPageTitle(pathname) {
+  const match = ALL_NAV_ITEMS.find(
+    (item) => pathname === item.href || pathname?.startsWith(`${item.href}/`)
+  );
+  return match?.label ?? "Dashboard";
+}
+
+function getInitials(email) {
+  if (!email) return "SA";
+  return email.slice(0, 2).toUpperCase();
+}
+
 function NavLink({ href, label, icon: Icon }) {
   const pathname = usePathname();
   const active =
     pathname === href || (href !== "/super-admin" && pathname?.startsWith(href));
 
   return (
-    <Link
-      href={href}
-      className={cn(
-        "flex items-center gap-2 rounded-md px-3 py-2 text-sm transition-colors",
-        active
-          ? "bg-primary text-primary-foreground"
-          : "text-muted-foreground hover:bg-muted hover:text-foreground"
-      )}
-    >
-      <Icon className="size-4 shrink-0" />
-      <span>{label}</span>
-    </Link>
-  );
-}
-
-function SidebarContent({ onLogout, onNavigate, inSheet }) {
-  return (
-    <>
-      <div
-        className={cn(
-          "flex h-14 items-center justify-between gap-2 border-b pl-4",
-          inSheet ? "pr-12" : "pr-4"
-        )}
-      >
-        <Link
-          href="/super-admin"
-          className="flex items-center gap-2 text-sm font-semibold"
-          onClick={onNavigate}
-        >
-          <LayoutDashboard className="size-4" />
-          Super admin
+    <SidebarMenuItem>
+      <SidebarMenuButton asChild isActive={active} tooltip={label}>
+        <Link href={href}>
+          <Icon />
+          <span>{label}</span>
         </Link>
-        <ModeToggle />
-      </div>
-      <nav className="flex-1 space-y-4 overflow-y-auto p-3">
-        <div onClick={onNavigate}>
-          <NavLink href="/super-admin" label="Dashboard" icon={LayoutDashboard} />
-        </div>
-        {navSections.map((section) => (
-          <div key={section.title ?? section.items[0].href} className="space-y-1">
-            {section.title ? (
-              <p className="px-3 pb-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                {section.title}
-              </p>
-            ) : null}
-            <div className="space-y-0.5" onClick={onNavigate}>
-              {section.items.map((item) => (
-                <NavLink key={item.href} {...item} />
-              ))}
-            </div>
-          </div>
-        ))}
-      </nav>
-      <div className="border-t p-3">
-        <Button
-          type="button"
-          variant="outline"
-          className="w-full justify-start gap-2"
-          onClick={onLogout}
-        >
-          <LogOut className="size-4" />
-          Log out
-        </Button>
-      </div>
-    </>
+      </SidebarMenuButton>
+    </SidebarMenuItem>
   );
 }
 
-export function SuperAdminShell({ children }) {
+export function SuperAdminShell({ children, profile }) {
   const router = useRouter();
+  const pathname = usePathname();
   const { resolvedTheme } = useTheme();
-  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   async function handleLogout() {
     await fetch("/api/super-admin/logout", { method: "POST" });
@@ -165,42 +149,127 @@ export function SuperAdminShell({ children }) {
   }
 
   return (
-    <div className="flex min-h-screen bg-background">
+    <SidebarProvider>
       <Toaster richColors theme={resolvedTheme} position="top-right" />
-      <aside className="hidden w-64 shrink-0 flex-col border-r bg-card md:flex">
-        <SidebarContent onLogout={handleLogout} />
-      </aside>
-      <Sheet open={mobileNavOpen} onOpenChange={setMobileNavOpen}>
-        <SheetContent
-          side="left"
-          className="flex w-64 max-w-[80vw] flex-col gap-0 p-0"
-        >
-          <SheetTitle className="sr-only">Navigation</SheetTitle>
-          <SidebarContent
-            onLogout={handleLogout}
-            onNavigate={() => setMobileNavOpen(false)}
-            inSheet
-          />
-        </SheetContent>
-      </Sheet>
-      <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex h-14 items-center gap-2 border-b px-4 sm:px-6">
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            className="shrink-0 md:hidden"
-            onClick={() => setMobileNavOpen(true)}
-          >
-            <Menu className="size-5" />
-            <span className="sr-only">Open navigation</span>
-          </Button>
-          <p className="truncate text-sm text-muted-foreground">
-            School administration dashboard
-          </p>
+      <Sidebar collapsible="icon">
+        <SidebarHeader>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton size="lg" asChild>
+                <Link href="/super-admin">
+                  <div className="flex aspect-square size-8 shrink-0 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+                    <Image
+                      src="/images/logo.png"
+                      alt=""
+                      width={32}
+                      height={32}
+                      className="size-6 object-contain"
+                    />
+                  </div>
+                  <div className="grid flex-1 text-left text-sm leading-tight">
+                    <span className="truncate font-semibold">Abhay Nobles</span>
+                    <span className="truncate text-xs text-sidebar-foreground/70">
+                      Super admin
+                    </span>
+                  </div>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarHeader>
+        <SidebarContent>
+          <SidebarGroup>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                <NavLink {...DASHBOARD_ITEM} />
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+          {navSections.map((section) => (
+            <SidebarGroup key={section.title ?? section.items[0].href}>
+              {section.title ? (
+                <SidebarGroupLabel>{section.title}</SidebarGroupLabel>
+              ) : null}
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {section.items.map((item) => (
+                    <NavLink key={item.href} {...item} />
+                  ))}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          ))}
+        </SidebarContent>
+        <SidebarFooter>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <SidebarMenuButton
+                    size="lg"
+                    className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+                  >
+                    <Avatar className="size-8 rounded-lg">
+                      <AvatarFallback className="rounded-lg">
+                        {getInitials(profile?.email)}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="grid flex-1 text-left text-sm leading-tight">
+                      <span className="truncate font-medium">
+                        {profile?.role === "ADMIN" ? "Admin" : "Editor"}
+                      </span>
+                      <span className="truncate text-xs text-sidebar-foreground/70">
+                        {profile?.email ?? "Signed in"}
+                      </span>
+                    </div>
+                    <ChevronsUpDown className="ml-auto size-4" />
+                  </SidebarMenuButton>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  side="right"
+                  align="end"
+                  sideOffset={8}
+                  className="w-56"
+                >
+                  <DropdownMenuItem asChild>
+                    <Link href="/" target="_blank" rel="noopener noreferrer">
+                      <ExternalLink className="size-4" />
+                      View public site
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleLogout}>
+                    <LogOut className="size-4" />
+                    Log out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarFooter>
+      </Sidebar>
+      <SidebarInset className="h-dvh overflow-hidden">
+        <header className="flex h-14 shrink-0 items-center gap-2 border-b px-4 sm:px-6">
+          <SidebarTrigger className="-ml-1" />
+          <Separator orientation="vertical" className="h-4" />
+          <h1 className="truncate text-sm font-medium">{getPageTitle(pathname)}</h1>
+          <div className="ml-auto flex items-center gap-1">
+            <Link
+              href="/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex size-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              aria-label="View public site"
+            >
+              <ExternalLink className="size-4" />
+            </Link>
+            <ModeToggle />
+          </div>
         </header>
-        <main className="flex-1 overflow-x-hidden p-4 sm:p-6">{children}</main>
-      </div>
-    </div>
+        <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-6">
+          {children}
+        </div>
+      </SidebarInset>
+    </SidebarProvider>
   );
 }

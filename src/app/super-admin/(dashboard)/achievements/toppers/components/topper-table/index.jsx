@@ -2,23 +2,33 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Search } from "lucide-react";
+import { Loader2, Search } from "lucide-react";
 
+import { DataTablePagination } from "@/components/data-table-pagination";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 import { TopperDeleteDialog } from "./delete-dialog";
-import { TopperPaginationBar } from "./pagination-bar";
 import { TopperRow } from "./row";
 
-export function TopperTable({ items, canPublish, search, page, totalPages, total, pageSize }) {
+export function TopperTable({
+  items,
+  canPublish,
+  search,
+  page,
+  totalPages,
+  total,
+  pageSize,
+  defaultPageSize,
+}) {
   const router = useRouter();
   const [pendingId, setPendingId] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [deleting, setDeleting] = useState(false);
   const [selected, setSelected] = useState(() => new Set());
+  const [paginationPending, setPaginationPending] = useState(false);
 
   useEffect(() => {
     setSelected(new Set());
@@ -122,55 +132,65 @@ export function TopperTable({ items, canPublish, search, page, totalPages, total
           {total === 0 ? "No toppers yet." : "No results match your search."}
         </p>
       ) : (
-        <div className="rounded-md border">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                {canPublish ? (
-                  <TableHead className="w-8">
-                    <Checkbox
-                      checked={allSelected ? true : someSelected ? "indeterminate" : false}
-                      onCheckedChange={(checked) => toggleSelectAll(Boolean(checked))}
-                      aria-label="Select all"
-                    />
+        <div className="relative rounded-md border">
+          {paginationPending ? (
+            <div className="absolute inset-0 z-10 flex items-center justify-center bg-background/60">
+              <Loader2 className="size-6 animate-spin text-muted-foreground" />
+            </div>
+          ) : null}
+          <div className="max-h-[560px] overflow-y-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  {canPublish ? (
+                    <TableHead className="w-8">
+                      <Checkbox
+                        checked={allSelected ? true : someSelected ? "indeterminate" : false}
+                        onCheckedChange={(checked) => toggleSelectAll(Boolean(checked))}
+                        aria-label="Select all"
+                      />
+                    </TableHead>
+                  ) : null}
+                  <TableHead>Name</TableHead>
+                  <TableHead>Year</TableHead>
+                  <TableHead>Class</TableHead>
+                  <TableHead>Stream</TableHead>
+                  <TableHead>Rank</TableHead>
+                  <TableHead>Percentage</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead className="w-10">
+                    <span className="sr-only">Actions</span>
                   </TableHead>
-                ) : null}
-                <TableHead>Name</TableHead>
-                <TableHead>Year</TableHead>
-                <TableHead>Class</TableHead>
-                <TableHead>Stream</TableHead>
-                <TableHead>Rank</TableHead>
-                <TableHead>Percentage</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="w-10">
-                  <span className="sr-only">Actions</span>
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {items.map((item) => (
-                <TopperRow
-                  key={item.id}
-                  item={item}
-                  canPublish={canPublish}
-                  pending={pendingId === item.id}
-                  selected={selected.has(item.id)}
-                  onToggleSelect={(checked) => toggleSelected(item.id, checked)}
-                  onTogglePublish={() => togglePublish(item)}
-                  onDelete={() => requestDelete(item)}
-                />
-              ))}
-            </TableBody>
-          </Table>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {items.map((item) => (
+                  <TopperRow
+                    key={item.id}
+                    item={item}
+                    canPublish={canPublish}
+                    pending={pendingId === item.id}
+                    selected={selected.has(item.id)}
+                    onToggleSelect={(checked) => toggleSelected(item.id, checked)}
+                    onTogglePublish={() => togglePublish(item)}
+                    onDelete={() => requestDelete(item)}
+                  />
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         </div>
       )}
 
-      <TopperPaginationBar
+      <DataTablePagination
+        basePath="/super-admin/achievements/toppers"
+        onPendingChange={setPaginationPending}
         search={search}
         page={page}
         totalPages={totalPages}
         total={total}
         pageSize={pageSize}
+        defaultPageSize={defaultPageSize}
       />
 
       <TopperDeleteDialog

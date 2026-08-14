@@ -2,7 +2,9 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { Loader2 } from "lucide-react";
 
+import { DataTablePagination } from "@/components/data-table-pagination";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Table,
@@ -11,10 +13,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { cn } from "@/lib/utils";
 
 import { COLUMNS } from "./columns";
 import { AcademicPostsDeleteDialog } from "./delete-dialog";
-import { AcademicPostsPaginationBar } from "./pagination-bar";
 import { AcademicPostRow } from "./table-row";
 import { AcademicPostsTableToolbar } from "./toolbar";
 
@@ -26,6 +28,7 @@ export function AcademicPostsTable({
   totalPages,
   total,
   pageSize,
+  defaultPageSize,
 }) {
   const router = useRouter();
   const [pendingId, setPendingId] = useState(null);
@@ -35,6 +38,7 @@ export function AcademicPostsTable({
   const [selectedIds, setSelectedIds] = useState(() => new Set());
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [deleting, setDeleting] = useState(false);
+  const [paginationPending, setPaginationPending] = useState(false);
 
   useEffect(() => {
     setSelectedIds(new Set());
@@ -129,55 +133,65 @@ export function AcademicPostsTable({
             : "No results match your search."}
         </p>
       ) : (
-        <div className="rounded-md border">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                {canPublish ? (
+        <div className="relative rounded-md border">
+          {paginationPending ? (
+            <div className="absolute inset-0 z-10 flex items-center justify-center bg-background/60">
+              <Loader2 className="size-6 animate-spin text-muted-foreground" />
+            </div>
+          ) : null}
+          <div className="max-h-[560px] overflow-y-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  {canPublish ? (
+                    <TableHead className="w-10">
+                      <Checkbox
+                        checked={allSelected ? true : someSelected ? "indeterminate" : false}
+                        onCheckedChange={toggleSelectAll}
+                        aria-label="Select all rows"
+                      />
+                    </TableHead>
+                  ) : null}
+                  <TableHead>Title</TableHead>
+                  {visibleColumns.status ? <TableHead>Status</TableHead> : null}
+                  {visibleColumns.author ? <TableHead>Author</TableHead> : null}
+                  {visibleColumns.created ? (
+                    <TableHead>Created</TableHead>
+                  ) : null}
                   <TableHead className="w-10">
-                    <Checkbox
-                      checked={allSelected ? true : someSelected ? "indeterminate" : false}
-                      onCheckedChange={toggleSelectAll}
-                      aria-label="Select all rows"
-                    />
+                    <span className="sr-only">Actions</span>
                   </TableHead>
-                ) : null}
-                <TableHead>Title</TableHead>
-                {visibleColumns.status ? <TableHead>Status</TableHead> : null}
-                {visibleColumns.author ? <TableHead>Author</TableHead> : null}
-                {visibleColumns.created ? (
-                  <TableHead>Created</TableHead>
-                ) : null}
-                <TableHead className="w-10">
-                  <span className="sr-only">Actions</span>
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {items.map((item) => (
-                <AcademicPostRow
-                  key={item.id}
-                  item={item}
-                  canPublish={canPublish}
-                  visibleColumns={visibleColumns}
-                  pending={pendingId === item.id}
-                  selected={selectedIds.has(item.id)}
-                  onToggleSelected={() => toggleSelected(item.id)}
-                  onTogglePublish={() => togglePublish(item)}
-                  onDelete={() => requestDelete(item)}
-                />
-              ))}
-            </TableBody>
-          </Table>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {items.map((item) => (
+                  <AcademicPostRow
+                    key={item.id}
+                    item={item}
+                    canPublish={canPublish}
+                    visibleColumns={visibleColumns}
+                    pending={pendingId === item.id}
+                    selected={selectedIds.has(item.id)}
+                    onToggleSelected={() => toggleSelected(item.id)}
+                    onTogglePublish={() => togglePublish(item)}
+                    onDelete={() => requestDelete(item)}
+                  />
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         </div>
       )}
 
-      <AcademicPostsPaginationBar
+      <DataTablePagination
+        basePath="/super-admin/academic/blog"
+        onPendingChange={setPaginationPending}
         search={search}
         page={page}
         totalPages={totalPages}
         total={total}
         pageSize={pageSize}
+        defaultPageSize={defaultPageSize}
       />
 
       <AcademicPostsDeleteDialog
