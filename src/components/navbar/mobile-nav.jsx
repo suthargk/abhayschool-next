@@ -1,12 +1,25 @@
 "use client";
 
 import * as React from "react";
+import Image from "next/image";
 import Link from "next/link";
-import { ChevronDown, Menu } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { useTheme } from "next-themes";
+import { motion } from "framer-motion";
+import { Globe, Menu, Monitor, Moon, Sun } from "lucide-react";
 
 import navigationCategory from "@/Helper/navigation";
+import { LANGUAGES } from "@/Helper/languages";
 import { cn } from "@/lib/utils";
 import { Button, buttonVariants } from "../ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
 import {
   Sheet,
   SheetContent,
@@ -16,21 +29,55 @@ import {
   SheetClose,
 } from "../ui/sheet";
 
-export function MobileNav() {
-  const [open, setOpen] = React.useState(false);
-  const [openSections, setOpenSections] = React.useState(() => new Set());
+const listVariants = {
+  open: { transition: { staggerChildren: 0.04, delayChildren: 0.05 } },
+};
 
-  const toggleSection = (title) => {
-    setOpenSections((prev) => {
-      const next = new Set(prev);
-      if (next.has(title)) {
-        next.delete(title);
-      } else {
-        next.add(title);
-      }
-      return next;
-    });
-  };
+const itemVariants = {
+  closed: { opacity: 0, x: 12 },
+  open: { opacity: 1, x: 0 },
+};
+
+function getSubHref(category, subCategory, index) {
+  return index === 0 ? subCategory.href : category.href + subCategory.href;
+}
+
+function NavPill({ href, isActive, children }) {
+  return (
+    <SheetClose asChild>
+      <Link
+        href={href}
+        className={cn(
+          "block rounded-full px-4 py-3 text-[15px] transition-colors",
+          isActive
+            ? "bg-violet-100 font-medium text-violet-900 dark:bg-violet-500/15 dark:text-violet-200"
+            : "text-foreground/80 hover:bg-muted/60"
+        )}
+      >
+        {children}
+      </Link>
+    </SheetClose>
+  );
+}
+
+export function MobileNav() {
+  const pathname = usePathname();
+  const { theme, setTheme } = useTheme();
+  const [open, setOpen] = React.useState(false);
+  const [pendingTheme, setPendingTheme] = React.useState(theme);
+  const [pendingLanguage, setPendingLanguage] = React.useState(
+    LANGUAGES[0].value
+  );
+
+  React.useEffect(() => {
+    setPendingTheme(theme);
+  }, [theme]);
+
+  React.useEffect(() => {
+    if (typeof window === "undefined") return;
+    const storedLanguage = localStorage.getItem("language");
+    if (storedLanguage) setPendingLanguage(storedLanguage);
+  }, []);
 
   const links = navigationCategory.filter(
     (category) => !category.subCategories.length
@@ -38,6 +85,11 @@ export function MobileNav() {
   const sections = navigationCategory.filter(
     (category) => category.subCategories.length
   );
+
+  const handleApplyPreferences = () => {
+    localStorage.setItem("language", pendingLanguage);
+    setTheme(pendingTheme);
+  };
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -53,92 +105,152 @@ export function MobileNav() {
       </SheetTrigger>
       <SheetContent
         side="right"
-        className="flex w-full flex-col overflow-y-auto border-zinc-800 bg-zinc-950 p-0 text-zinc-100 sm:max-w-sm"
+        className="flex h-full w-full flex-col gap-0 overflow-hidden border-l-0 bg-background p-0 text-foreground sm:max-w-full"
       >
         <SheetHeader className="sr-only">
           <SheetTitle>Menu</SheetTitle>
         </SheetHeader>
 
-        <nav className="flex flex-1 flex-col px-5 pb-6 pt-14">
+        <div className="flex shrink-0 items-center gap-2.5 px-5 pb-2 pt-5">
+          <Image
+            src="/images/logo.png"
+            alt="Shri Abhay Nobles Senior Secondary School"
+            width={32}
+            height={32}
+            className="h-8 w-8"
+          />
+        </div>
+
+        <nav className="flex flex-1 flex-col overflow-y-auto px-5 pb-4 pt-2">
+          <motion.div
+            className="flex flex-col"
+            variants={listVariants}
+            initial="closed"
+            animate="open"
+          >
+            {links.map((category) => (
+              <motion.div key={category.title} variants={itemVariants}>
+                <NavPill
+                  href={category.href}
+                  isActive={pathname === category.href}
+                >
+                  {category.title}
+                </NavPill>
+              </motion.div>
+            ))}
+
+            {sections.map((category) => (
+              <motion.div
+                key={category.title}
+                variants={itemVariants}
+                className="mt-6"
+              >
+                <div className="mb-1 px-4 text-sm font-semibold text-foreground">
+                  {category.title}
+                </div>
+                {category.subCategories.map((subCategory, index) => {
+                  const href = getSubHref(category, subCategory, index);
+
+                  return (
+                    <NavPill
+                      key={subCategory.title}
+                      href={href}
+                      isActive={pathname === href}
+                    >
+                      {subCategory.title}
+                    </NavPill>
+                  );
+                })}
+              </motion.div>
+            ))}
+
+            <motion.div
+              variants={itemVariants}
+              className="mt-6 border-t border-border pt-6"
+            >
+              <div className="mb-1 px-4 text-sm font-semibold text-foreground">
+                Preferences
+              </div>
+
+              <div className="flex items-center gap-3 px-4 py-2.5">
+                <Globe className="h-[18px] w-[18px] shrink-0 text-muted-foreground" />
+                <Select
+                  value={pendingLanguage}
+                  onValueChange={setPendingLanguage}
+                >
+                  <SelectTrigger className="h-9 flex-1 border-none bg-muted/60 shadow-none">
+                    <SelectValue placeholder="Language" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {LANGUAGES.map((language) => (
+                      <SelectItem key={language.id} value={language.value}>
+                        {language.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="flex items-center gap-3 px-4 py-2.5">
+                {pendingTheme === "dark" ? (
+                  <Moon className="h-[18px] w-[18px] shrink-0 text-muted-foreground" />
+                ) : pendingTheme === "light" ? (
+                  <Sun className="h-[18px] w-[18px] shrink-0 text-muted-foreground" />
+                ) : (
+                  <Monitor className="h-[18px] w-[18px] shrink-0 text-muted-foreground" />
+                )}
+                <ToggleGroup
+                  type="single"
+                  value={pendingTheme}
+                  onValueChange={(value) => value && setPendingTheme(value)}
+                  className="flex-1 justify-start gap-2"
+                >
+                  <ToggleGroupItem
+                    value="light"
+                    className="flex-1"
+                    aria-label="Light mode"
+                  >
+                    Light
+                  </ToggleGroupItem>
+                  <ToggleGroupItem
+                    value="dark"
+                    className="flex-1"
+                    aria-label="Dark mode"
+                  >
+                    Dark
+                  </ToggleGroupItem>
+                  <ToggleGroupItem
+                    value="system"
+                    className="flex-1"
+                    aria-label="System theme"
+                  >
+                    System
+                  </ToggleGroupItem>
+                </ToggleGroup>
+              </div>
+
+              <Button
+                size="sm"
+                variant="secondary"
+                onClick={handleApplyPreferences}
+                className="mx-4 mt-1 w-[calc(100%-2rem)]"
+              >
+                Apply
+              </Button>
+            </motion.div>
+          </motion.div>
+        </nav>
+
+        <div className="shrink-0 border-t border-border bg-background px-5 py-4">
           <SheetClose asChild>
             <Link
               href="/#admissions"
-              className={cn(buttonVariants(), "mb-4 w-full")}
+              className={cn(buttonVariants({ size: "lg" }), "w-full")}
             >
               Apply Now
             </Link>
           </SheetClose>
-
-          <div className="flex flex-col">
-            {links.map((category) => (
-              <SheetClose asChild key={category.title}>
-                <Link
-                  href={category.href}
-                  className="py-3 text-[15px] text-zinc-300 transition-colors hover:text-white"
-                >
-                  {category.title}
-                </Link>
-              </SheetClose>
-            ))}
-          </div>
-
-          <div className="my-3 border-t border-zinc-800" />
-
-          <div className="flex flex-col">
-            {sections.map((category) => {
-              const isOpen = openSections.has(category.title);
-              const Icon = category.icon;
-
-              return (
-                <div key={category.title}>
-                  <button
-                    type="button"
-                    onClick={() => toggleSection(category.title)}
-                    aria-expanded={isOpen}
-                    className="flex w-full items-center justify-between py-3 text-left text-[15px] text-zinc-300 transition-colors hover:text-white"
-                  >
-                    <span className="flex items-center gap-2">
-                      {Icon ? <Icon className="h-4 w-4 text-zinc-500" /> : null}
-                      {category.title}
-                    </span>
-                    <ChevronDown
-                      className={cn(
-                        "h-4 w-4 text-zinc-500 transition-transform duration-200",
-                        isOpen && "rotate-180"
-                      )}
-                    />
-                  </button>
-
-                  {isOpen ? (
-                    <div className="flex flex-col gap-4 pb-4 pl-1">
-                      {category.subCategories.map((subCategory, index) => {
-                        const href =
-                          index === 0
-                            ? subCategory.href
-                            : category.href + subCategory.href;
-
-                        return (
-                          <SheetClose asChild key={subCategory.title}>
-                            <Link href={href} className="block">
-                              <span className="block text-sm text-zinc-200">
-                                {subCategory.title}
-                              </span>
-                              {subCategory.description ? (
-                                <span className="mt-0.5 block text-xs leading-snug text-zinc-500">
-                                  {subCategory.description}
-                                </span>
-                              ) : null}
-                            </Link>
-                          </SheetClose>
-                        );
-                      })}
-                    </div>
-                  ) : null}
-                </div>
-              );
-            })}
-          </div>
-        </nav>
+        </div>
       </SheetContent>
     </Sheet>
   );
