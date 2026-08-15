@@ -37,6 +37,7 @@ import {
   ChevronsUpDown,
   ExternalLink,
   GraduationCap,
+  HelpCircle,
   ImageIcon,
   LayoutDashboard,
   Library,
@@ -44,6 +45,7 @@ import {
   Megaphone,
   MessageSquareQuote,
   Newspaper,
+  Quote,
   Trophy,
   Users,
 } from "lucide-react";
@@ -51,6 +53,17 @@ import {
 const DASHBOARD_ITEM = { href: "/super-admin", label: "Dashboard", icon: LayoutDashboard };
 
 const navSections = [
+  {
+    title: "Homepage",
+    items: [
+      { href: "/super-admin/homepage/faq", label: "FAQ", icon: HelpCircle },
+      {
+        href: "/super-admin/homepage/testimonials",
+        label: "Testimonials",
+        icon: Quote,
+      },
+    ],
+  },
   {
     title: "About us",
     items: [

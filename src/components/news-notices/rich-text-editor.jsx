@@ -1,7 +1,9 @@
 "use client";
 
+import { useRef, useState } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import Placeholder from "@tiptap/extension-placeholder";
+import { toast } from "sonner";
 import {
   Bold,
   Italic,
@@ -13,14 +15,36 @@ import {
   Quote,
   LinkIcon,
   ImageIcon,
+  Loader2,
   Minus,
   Undo,
   Redo,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { tiptapExtensions } from "@/components/news-notices/tiptap-extensions";
+
+async function uploadContentImage(file) {
+  const formData = new FormData();
+  formData.append("file", file);
+  const res = await fetch("/api/super-admin/content-images/upload", {
+    method: "POST",
+    body: formData,
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || "Upload failed");
+  return data.url;
+}
 
 function ToolbarButton({ onClick, active, disabled, label, children }) {
   return (
@@ -40,7 +64,53 @@ function ToolbarButton({ onClick, active, disabled, label, children }) {
 }
 
 function Toolbar({ editor }) {
+  const fileInputRef = useRef(null);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [linkDialogOpen, setLinkDialogOpen] = useState(false);
+  const [linkUrl, setLinkUrl] = useState("");
+
   if (!editor) return null;
+
+  function openLinkDialog() {
+    setLinkUrl(editor.getAttributes("link").href || "");
+    setLinkDialogOpen(true);
+  }
+
+  function applyLink() {
+    const url = linkUrl.trim();
+    if (url) {
+      editor
+        .chain()
+        .focus()
+        .extendMarkRange("link")
+        .setLink({ href: url })
+        .run();
+    } else {
+      editor.chain().focus().extendMarkRange("link").unsetLink().run();
+    }
+    setLinkDialogOpen(false);
+  }
+
+  function removeLink() {
+    editor.chain().focus().extendMarkRange("link").unsetLink().run();
+    setLinkDialogOpen(false);
+  }
+
+  async function handleImageFileChange(e) {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+
+    setUploadingImage(true);
+    try {
+      const url = await uploadContentImage(file);
+      editor.chain().focus().setImage({ src: url }).run();
+    } catch (err) {
+      toast.error(err.message || "Image upload failed");
+    } finally {
+      setUploadingImage(false);
+    }
+  }
 
   return (
     <div className="flex flex-wrap items-center gap-0.5 border-b p-1">
@@ -107,32 +177,78 @@ function Toolbar({ editor }) {
       <ToolbarButton
         label="Link"
         active={editor.isActive("link")}
-        onClick={() => {
-          const previousUrl = editor.getAttributes("link").href;
-          const url = window.prompt("URL", previousUrl || "https://");
-          if (url === null) return;
-          if (url === "") {
-            editor.chain().focus().extendMarkRange("link").unsetLink().run();
-            return;
-          }
-          editor
-            .chain()
-            .focus()
-            .extendMarkRange("link")
-            .setLink({ href: url })
-            .run();
-        }}
+        onClick={openLinkDialog}
       >
         <LinkIcon className="size-4" />
       </ToolbarButton>
+      <Dialog open={linkDialogOpen} onOpenChange={setLinkDialogOpen}>
+        <DialogContent
+          className="sm:max-w-sm"
+          onOpenAutoFocus={(e) => {
+            e.preventDefault();
+            e.currentTarget.querySelector("input")?.focus();
+          }}
+        >
+          <DialogHeader>
+            <DialogTitle>Insert link</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-2">
+            <Label htmlFor="rte-link-url">URL</Label>
+            <Input
+              id="rte-link-url"
+              type="url"
+              placeholder="https://"
+              value={linkUrl}
+              onChange={(e) => setLinkUrl(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  applyLink();
+                }
+              }}
+            />
+          </div>
+          <DialogFooter>
+            {editor.isActive("link") && (
+              <Button
+                type="button"
+                variant="ghost"
+                className="mr-auto"
+                onClick={removeLink}
+              >
+                Remove link
+              </Button>
+            )}
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setLinkDialogOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button type="button" onClick={applyLink}>
+              Apply
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/png,image/jpeg,image/webp,image/gif"
+        className="hidden"
+        onChange={handleImageFileChange}
+      />
       <ToolbarButton
         label="Image"
-        onClick={() => {
-          const url = window.prompt("Image URL");
-          if (url) editor.chain().focus().setImage({ src: url }).run();
-        }}
+        disabled={uploadingImage}
+        onClick={() => fileInputRef.current?.click()}
       >
-        <ImageIcon className="size-4" />
+        {uploadingImage ? (
+          <Loader2 className="size-4 animate-spin" />
+        ) : (
+          <ImageIcon className="size-4" />
+        )}
       </ToolbarButton>
       <ToolbarButton
         label="Horizontal divider"

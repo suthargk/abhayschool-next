@@ -22,7 +22,7 @@ import { StatsStrip } from "./stats-strip";
 import { Welcome } from "./welcome";
 import CampusHighlights from "./campus-highlights";
 import NewsNotices from "./news-notices";
-import Testinomials from "./testinomials";
+import Testimonials from "./testimonials";
 import FrequentlyAskQuestions from "./frequently-ask-questions";
 import { AdmissionsCta } from "./admissions-cta";
 
@@ -100,6 +100,26 @@ async function LandingToppers() {
       <div className="text-center">
         <Button asChild size="lg" variant="outline">
           <Link href="/achievements/toppers">View All Achievements →</Link>
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+async function LandingTestimonials() {
+  const testimonials = await prisma.testimonial.findMany({
+    where: { status: "PUBLISHED" },
+    orderBy: [{ position: "asc" }],
+  });
+
+  if (testimonials.length === 0) return null;
+
+  return (
+    <div className="space-y-6">
+      <Testimonials items={testimonials} />
+      <div className="text-center">
+        <Button asChild size="lg" variant="outline">
+          <Link href="/testimonials">View All Testimonials →</Link>
         </Button>
       </div>
     </div>
@@ -187,6 +207,44 @@ function ToppersSkeleton() {
   );
 }
 
+function TestimonialsSkeleton() {
+  return (
+    <div className="flex flex-col lg:flex-row gap-8 lg:gap-10 p-6 sm:p-10 md:p-16 lg:p-20 pb-0 lg:justify-between">
+      <div className="w-full lg:w-96 space-y-3">
+        <Skeleton className="h-4 w-32" />
+        <Skeleton className="h-9 w-48" />
+        <Skeleton className="h-4 w-full" />
+        <Skeleton className="h-4 w-3/4" />
+      </div>
+      <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 lg:w-[700px]">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <Skeleton key={i} className="h-40 rounded-2xl" />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function FaqSkeleton() {
+  return (
+    <div className="flex flex-col gap-10 items-center px-4">
+      <div className="space-y-2 text-center">
+        <Skeleton className="mx-auto h-8 w-72" />
+        <Skeleton className="mx-auto h-5 w-96" />
+      </div>
+      <div className="flex flex-col lg:flex-row gap-4 sm:px-10 md:px-20 lg:px-36 w-full">
+        {Array.from({ length: 2 }).map((_, col) => (
+          <div key={col} className="w-full lg:w-1/2 space-y-4">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <Skeleton key={i} className="h-14 w-full rounded-lg" />
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function NewsNoticesSkeleton() {
   return (
     <div className="mx-auto w-full max-w-5xl space-y-5">
@@ -244,9 +302,13 @@ export default function LandingPage() {
           <LandingGallery />
         </Suspense>
 
-        <Testinomials />
+        <Suspense fallback={<TestimonialsSkeleton />}>
+          <LandingTestimonials />
+        </Suspense>
 
-        <FrequentlyAskQuestions />
+        <Suspense fallback={<FaqSkeleton />}>
+          <FrequentlyAskQuestions />
+        </Suspense>
 
         <AdmissionsCta />
       </div>

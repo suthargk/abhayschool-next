@@ -1,9 +1,8 @@
 "use client";
-// import Text from "@components/common/Text";
+
 import { keyframes, styled } from "@stitches/react";
-import React, { useState } from "react";
-import TestinomialItem from "./testinomial-item";
-import testinomialsData from "../../../Helper/testinomial";
+import React from "react";
+import TestimonialItem from "./testimonial-item";
 
 const moveUp = keyframes({
   "0%": {
@@ -14,8 +13,7 @@ const moveUp = keyframes({
   },
 });
 
-const Testinomials = () => {
-  const [testinomialData, setTestinomialData] = useState(testinomialsData);
+const Testimonials = ({ items }) => {
   return (
     <section className="flex flex-col lg:flex-row gap-8 lg:gap-10 p-6 sm:p-10 md:p-16 lg:p-20 pb-0 lg:justify-between">
       <div className="w-full lg:w-96 flex flex-col gap-4 shrink-0">
@@ -37,10 +35,10 @@ const Testinomials = () => {
           }}
           className="grid auto-rows-auto grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-8 lg:gap-16 mb-4 sm:mb-8 lg:mb-16"
         >
-          {testinomialData.map((testinomial) => {
+          {items.map((testimonial) => {
             return (
-              <div key={testinomial.img} className="">
-                <TestinomialItem testinomial={testinomial}></TestinomialItem>
+              <div key={testimonial.id}>
+                <TestimonialItem testimonial={testimonial}></TestimonialItem>
               </div>
             );
           })}
@@ -52,10 +50,10 @@ const Testinomials = () => {
           }}
           className="grid auto-rows-auto grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-8 lg:gap-16"
         >
-          {testinomialData.map((testinomial) => {
+          {items.map((testimonial) => {
             return (
-              <div key={testinomial.img} className="">
-                <TestinomialItem testinomial={testinomial}></TestinomialItem>
+              <div key={`${testimonial.id}-repeat`}>
+                <TestimonialItem testimonial={testimonial}></TestimonialItem>
               </div>
             );
           })}
@@ -65,37 +63,4 @@ const Testinomials = () => {
   );
 };
 
-export default Testinomials;
-
-{
-  /* <Section>
-      <SectionContainer>
-        <Main>
-          <TestinomialsContainer>
-            <Cards>
-              {testinomialData.map((testinomial) => {
-                return (
-                  <Card key={testinomial.img}>
-                    <TestinomialItem
-                      testinomial={testinomial}
-                    ></TestinomialItem>
-                  </Card>
-                );
-              })}
-            </Cards>
-            <Cards>
-              {testinomialData.map((testinomial) => {
-                return (
-                  <Card key={testinomial.img}>
-                    <TestinomialItem
-                      testinomial={testinomial}
-                    ></TestinomialItem>
-                  </Card>
-                );
-              })}
-            </Cards>
-          </TestinomialsContainer>
-        </Main>
-      </SectionContainer>
-    </Section> */
-}
+export default Testimonials;

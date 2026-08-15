@@ -45,7 +45,7 @@ async function HomeworkResults({ searchParams }) {
   const where = {
     status: "PUBLISHED",
     publishedAt: { lte: now },
-    ...(bounds ? { dueDate: { gte: bounds[0], lt: bounds[1] } } : {}),
+    ...(bounds ? { assignedDate: { gte: bounds[0], lt: bounds[1] } } : {}),
     ...(classFilter !== "ALL" ? { class: classFilter } : {}),
     ...(subject !== "ALL" ? { subject } : {}),
     ...(q

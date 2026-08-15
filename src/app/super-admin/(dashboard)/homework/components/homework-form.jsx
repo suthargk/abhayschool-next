@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FileText, Loader2, Paperclip, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -51,6 +51,33 @@ export function HomeworkForm({ initialItem }) {
   const [uploadingAttachment, setUploadingAttachment] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+
+  const [teachers, setTeachers] = useState([]);
+  const [loadingTeachers, setLoadingTeachers] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    async function loadTeachers() {
+      try {
+        const res = await fetch("/api/super-admin/faculty");
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Failed to load teachers");
+        if (!cancelled) {
+          setTeachers(
+            (data.items ?? []).filter((f) => f.category === "TEACHING"),
+          );
+        }
+      } catch {
+        // Non-fatal: teacher dropdown falls back to just the current value.
+      } finally {
+        if (!cancelled) setLoadingTeachers(false);
+      }
+    }
+    loadTeachers();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   async function handleAttachmentChange(e) {
     const file = e.target.files?.[0];
@@ -181,12 +208,29 @@ export function HomeworkForm({ initialItem }) {
 
       <div className="space-y-2">
         <Label htmlFor="teacher-name">Teacher</Label>
-        <Input
-          id="teacher-name"
-          value={teacherName}
-          onChange={(e) => setTeacherName(e.target.value)}
-          placeholder="Mrs. Priya Sharma"
-        />
+        <Select
+          value={teacherName || undefined}
+          onValueChange={setTeacherName}
+          disabled={loadingTeachers}
+        >
+          <SelectTrigger id="teacher-name">
+            <SelectValue
+              placeholder={
+                loadingTeachers ? "Loading teachers…" : "Select a teacher"
+              }
+            />
+          </SelectTrigger>
+          <SelectContent>
+            {teacherName && !teachers.some((t) => t.name === teacherName) ? (
+              <SelectItem value={teacherName}>{teacherName}</SelectItem>
+            ) : null}
+            {teachers.map((t) => (
+              <SelectItem key={t.id} value={t.name}>
+                {t.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       <div className="grid gap-6 sm:grid-cols-2">

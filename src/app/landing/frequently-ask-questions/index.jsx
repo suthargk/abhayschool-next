@@ -4,8 +4,40 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { prisma } from "@/lib/prisma";
 
-const FrequentlyAskQuestions = () => {
+function FaqColumn({ items }) {
+  return (
+    <Accordion type="multiple" collapsible="true" className="w-full lg:w-1/2">
+      {items.map((item) => (
+        <AccordionItem
+          key={item.id}
+          value={item.id}
+          className="bg-zinc-100 mb-4 py-2.5 px-5 rounded-lg dark:bg-zinc-800 [&[data-state=open]]:bg-violet-100 [&[data-state=open]]:dark:bg-zinc-700"
+        >
+          <AccordionTrigger className="text-lg sm:text-xl lg:text-2xl text-left [&[data-state=open]]:text-violet-900 [&[data-state=open]]:dark:text-zinc-50">
+            {item.question}
+          </AccordionTrigger>
+          <AccordionContent className="text-base sm:text-lg text-violet-800 dark:text-zinc-200 animate-fade-up-from-top whitespace-pre-line">
+            {item.answer}
+          </AccordionContent>
+        </AccordionItem>
+      ))}
+    </Accordion>
+  );
+}
+
+const FrequentlyAskQuestions = async () => {
+  const faqs = await prisma.faq.findMany({
+    where: { status: "PUBLISHED" },
+    orderBy: { position: "asc" },
+  });
+
+  if (faqs.length === 0) return null;
+
+  const leftColumn = faqs.filter((_, index) => index % 2 === 0);
+  const rightColumn = faqs.filter((_, index) => index % 2 === 1);
+
   return (
     <section className="flex flex-col gap-10 items-center px-4">
       <div>
@@ -18,83 +50,8 @@ const FrequentlyAskQuestions = () => {
         </div>
       </div>
       <div className="flex flex-col lg:flex-row gap-4 sm:px-10 md:px-20 lg:px-36 w-full">
-        <Accordion type="multiple" collapsible="true" className="w-full lg:w-1/2">
-          <AccordionItem
-            value="item-1"
-            className="bg-zinc-100 mb-4 py-2.5 px-5 rounded-lg dark:bg-zinc-800 [&[data-state=open]]:bg-violet-100 [&[data-state=open]]:dark:bg-zinc-700"
-          >
-            <AccordionTrigger className="text-lg sm:text-xl lg:text-2xl [&[data-state=open]]:text-violet-900 [&[data-state=open]]:dark:text-zinc-50">
-              Is it accessible?
-            </AccordionTrigger>
-            <AccordionContent className="text-base sm:text-lg text-violet-800 dark:text-zinc-200 animate-fade-up-from-top">
-              Yes. It adheres to the WAI-ARIA design pattern.
-            </AccordionContent>
-          </AccordionItem>
-          <AccordionItem
-            value="item-2"
-            className="bg-zinc-100 mb-4 py-2.5 px-5 rounded-lg dark:bg-zinc-800 [&[data-state=open]]:bg-violet-100 [&[data-state=open]]:dark:bg-zinc-700"
-          >
-            <AccordionTrigger className="text-lg sm:text-xl lg:text-2xl [&[data-state=open]]:text-violet-900 [&[data-state=open]]:dark:text-zinc-50">
-              Is it styled?
-            </AccordionTrigger>
-            <AccordionContent className="text-base sm:text-lg text-violet-800 dark:text-zinc-200 animate-fade-up-from-top">
-              Yes. It comes with default styles that matches the other
-              components&apos; aesthetic.
-            </AccordionContent>
-          </AccordionItem>
-          <AccordionItem
-            value="item-3"
-            className="bg-zinc-100 mb-4 py-2.5 px-5 rounded-lg dark:bg-zinc-800 [&[data-state=open]]:bg-violet-100 [&[data-state=open]]:dark:bg-zinc-700"
-          >
-            <AccordionTrigger className="text-lg sm:text-xl lg:text-2xl [&[data-state=open]]:text-violet-900 [&[data-state=open]]:dark:text-zinc-50">
-              Is it animated?
-            </AccordionTrigger>
-            <AccordionContent className="text-base sm:text-lg text-violet-800 dark:text-zinc-200 animate-fade-up-from-top">
-              Yes. It&apos;s animated by default, but you can disable it if you
-              prefer. Yes. It&apos;s animated by default, but you can disable it
-              if you prefer. Yes. It&apos;s animated by default, but you can
-              disable it if you prefer.
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
-
-        <Accordion type="multiple" collapsible="true" className="w-full lg:w-1/2">
-          <AccordionItem
-            value="item-1"
-            className="bg-zinc-100 mb-4 py-2.5 px-5 rounded-lg dark:bg-zinc-800 [&[data-state=open]]:bg-violet-100 [&[data-state=open]]:dark:bg-zinc-700"
-          >
-            <AccordionTrigger className="text-lg sm:text-xl lg:text-2xl [&[data-state=open]]:text-violet-900 [&[data-state=open]]:dark:text-zinc-50">
-              Is it accessible?
-            </AccordionTrigger>
-            <AccordionContent className="text-base sm:text-lg text-violet-800 dark:text-zinc-200 animate-fade-up-from-top">
-              Yes. It adheres to the WAI-ARIA design pattern.
-            </AccordionContent>
-          </AccordionItem>
-          <AccordionItem
-            value="item-2"
-            className="bg-zinc-100 mb-4 py-2.5 px-5 rounded-lg dark:bg-zinc-800 [&[data-state=open]]:bg-violet-100 [&[data-state=open]]:dark:bg-zinc-700"
-          >
-            <AccordionTrigger className="text-lg sm:text-xl lg:text-2xl [&[data-state=open]]:text-violet-900 [&[data-state=open]]:dark:text-zinc-50">
-              Is it styled?
-            </AccordionTrigger>
-            <AccordionContent className="text-base sm:text-lg text-violet-800 dark:text-zinc-200 animate-fade-up-from-top">
-              Yes. It comes with default styles that matches the other
-              components&apos; aesthetic.
-            </AccordionContent>
-          </AccordionItem>
-          <AccordionItem
-            value="item-3"
-            className="bg-zinc-100 mb-4 py-2.5 px-5 rounded-lg dark:bg-zinc-800 [&[data-state=open]]:bg-violet-100 [&[data-state=open]]:dark:bg-zinc-700"
-          >
-            <AccordionTrigger className="text-lg sm:text-xl lg:text-2xl [&[data-state=open]]:text-violet-900 [&[data-state=open]]:dark:text-zinc-50">
-              Is it animated?
-            </AccordionTrigger>
-            <AccordionContent className="text-base sm:text-lg text-violet-800 dark:text-zinc-200 animate-fade-up-from-top">
-              Yes. It&apos;s animated by default, but you can disable it if you
-              prefer.
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
+        <FaqColumn items={leftColumn} />
+        {rightColumn.length > 0 ? <FaqColumn items={rightColumn} /> : null}
       </div>
     </section>
   );

@@ -32,6 +32,8 @@ model Profile {
   toppers           Topper[]
   facilities        Facility[]
   homework          Homework[]
+  faqs              Faq[]
+  testimonials      Testimonial[]
 
   @@map("profiles")
 }
@@ -373,4 +375,51 @@ model Facility {
 
   @@index([section, status, position])
   @@map("facilities")
+}
+
+// Homepage "Frequently Asked Questions" section.
+model Faq {
+  id          String        @id @default(cuid())
+  question    String
+  answer      String
+  position    Int           @default(0)
+  status      ContentStatus @default(DRAFT)
+  publishedAt DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  authorId String  @db.Uuid
+  author   Profile @relation(fields: [authorId], references: [id])
+
+  @@index([status, position])
+  @@map("faqs")
+}
+
+enum TestimonialSource {
+  ADMIN
+  PARENT
+}
+
+// Homepage "Testimonials" marquee section. Parent-submitted testimonials
+// (source: PARENT) come in as DRAFT via the public OTP-verified form and
+// have no author profile; they wait for an admin to review and publish.
+model Testimonial {
+  id          String            @id @default(cuid())
+  name        String
+  designation String?
+  quote       String
+  photoUrl    String?
+  phone       String?
+  source      TestimonialSource @default(ADMIN)
+  position    Int               @default(0)
+  status      ContentStatus     @default(DRAFT)
+  publishedAt DateTime?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  authorId String?  @db.Uuid
+  author   Profile? @relation(fields: [authorId], references: [id])
+
+  @@index([status, position])
+  @@map("testimonials")
 }
