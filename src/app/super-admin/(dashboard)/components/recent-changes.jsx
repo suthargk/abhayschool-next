@@ -2,6 +2,7 @@ import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
 import {
   Building2,
+  ClipboardList,
   GraduationCap,
   HelpCircle,
   ImageIcon,
@@ -220,6 +221,25 @@ const SOURCES = [
       }),
     titleOf: (item) => item.principalName || "Principal's Message",
   },
+  {
+    kind: "Admissions",
+    icon: ClipboardList,
+    hrefFor: (id) => `/super-admin/admissions/${id}`,
+    fetch: () =>
+      prisma.admissionEnquiry.findMany({
+        orderBy: { updatedAt: "desc" },
+        take: PER_MODEL_LIMIT,
+        select: {
+          id: true,
+          studentName: true,
+          parentName: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+      }),
+    titleOf: (item) => item.studentName,
+    subtitleOf: (item) => item.parentName,
+  },
 ];
 
 async function getRecentChanges() {
@@ -232,7 +252,7 @@ async function getRecentChanges() {
         icon: source.icon,
         href: source.hrefFor(item.id),
         title: source.titleOf(item),
-        authorEmail: item.author?.email,
+        authorEmail: source.subtitleOf ? source.subtitleOf(item) : item.author?.email,
         updatedAt: item.updatedAt,
         isNew:
           Math.abs(

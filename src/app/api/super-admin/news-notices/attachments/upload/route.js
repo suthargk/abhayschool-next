@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 
 import { requireRole } from "@/lib/auth";
-import { createClient } from "@/lib/supabase/server";
+import { uploadToS3 } from "@/lib/s3";
 
-export const ATTACHMENT_BUCKET = "news-notices-attachments";
+export const ATTACHMENT_PREFIX = "news-notices-attachments";
 
 const MAX_BYTES = 10 * 1024 * 1024;
 const ALLOWED_TYPES = [
@@ -43,24 +43,15 @@ export async function POST(request) {
     );
   }
 
-  const supabase = await createClient();
-  const ext = file.name.split(".").pop() || "bin";
-  const path = `${crypto.randomUUID()}.${ext}`;
-
-  const { error: uploadError } = await supabase.storage
-    .from(ATTACHMENT_BUCKET)
-    .upload(path, file, { contentType: file.type });
-
-  if (uploadError) {
-    return NextResponse.json({ error: uploadError.message }, { status: 500 });
+  let url;
+  try {
+    url = await uploadToS3(ATTACHMENT_PREFIX, file);
+  } catch (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  const {
-    data: { publicUrl },
-  } = supabase.storage.from(ATTACHMENT_BUCKET).getPublicUrl(path);
-
   return NextResponse.json({
-    url: publicUrl,
+    url,
     fileName: file.name,
     fileType: file.type,
     fileSize: file.size,

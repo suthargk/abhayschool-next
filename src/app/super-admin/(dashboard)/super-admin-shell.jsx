@@ -35,6 +35,7 @@ import {
   Bus,
   Building2,
   ChevronsUpDown,
+  ClipboardList,
   ExternalLink,
   GraduationCap,
   HelpCircle,
@@ -51,8 +52,13 @@ import {
 } from "lucide-react";
 
 const DASHBOARD_ITEM = { href: "/super-admin", label: "Dashboard", icon: LayoutDashboard };
+const ADMISSIONS_HREF = "/super-admin/admissions";
 
 const navSections = [
+  {
+    title: null,
+    items: [{ href: ADMISSIONS_HREF, label: "Admissions", icon: ClipboardList }],
+  },
   {
     title: "Homepage",
     items: [
@@ -133,7 +139,7 @@ function getInitials(email) {
   return email.slice(0, 2).toUpperCase();
 }
 
-function NavLink({ href, label, icon: Icon }) {
+function NavLink({ href, label, icon: Icon, badge }) {
   const pathname = usePathname();
   const active =
     pathname === href || (href !== "/super-admin" && pathname?.startsWith(href));
@@ -144,13 +150,18 @@ function NavLink({ href, label, icon: Icon }) {
         <Link href={href}>
           <Icon />
           <span>{label}</span>
+          {badge ? (
+            <span className="ml-auto flex size-5 shrink-0 items-center justify-center rounded-full bg-primary text-[10px] font-medium text-primary-foreground">
+              {badge > 99 ? "99+" : badge}
+            </span>
+          ) : null}
         </Link>
       </SidebarMenuButton>
     </SidebarMenuItem>
   );
 }
 
-export function SuperAdminShell({ children, profile }) {
+export function SuperAdminShell({ children, profile, newAdmissionsCount = 0 }) {
   const router = useRouter();
   const pathname = usePathname();
   const { resolvedTheme } = useTheme();
@@ -206,7 +217,11 @@ export function SuperAdminShell({ children, profile }) {
               <SidebarGroupContent>
                 <SidebarMenu>
                   {section.items.map((item) => (
-                    <NavLink key={item.href} {...item} />
+                    <NavLink
+                      key={item.href}
+                      {...item}
+                      badge={item.href === ADMISSIONS_HREF ? newAdmissionsCount : undefined}
+                    />
                   ))}
                 </SidebarMenu>
               </SidebarGroupContent>

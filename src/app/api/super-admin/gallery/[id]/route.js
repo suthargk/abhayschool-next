@@ -3,18 +3,10 @@ import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { generateUniqueGallerySlug } from "@/lib/slug";
-import { createClient } from "@/lib/supabase/server";
+import { deleteFromS3 } from "@/lib/s3";
 import { GALLERY_CATEGORIES } from "@/data/gallery-categories";
 
-import { GALLERY_IMAGE_BUCKET } from "../upload/route";
-
 const CATEGORY_VALUES = GALLERY_CATEGORIES.map((c) => c.value);
-
-function storagePathFromUrl(url) {
-  const marker = `/public/${GALLERY_IMAGE_BUCKET}/`;
-  const index = url.indexOf(marker);
-  return index === -1 ? null : url.slice(index + marker.length);
-}
 
 export async function GET(request, { params }) {
   try {
@@ -119,13 +111,10 @@ export async function DELETE(request, { params }) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
-  const paths = existing.images
-    .map((image) => storagePathFromUrl(image.imageUrl))
-    .filter(Boolean);
+  const urls = existing.images.map((image) => image.imageUrl).filter(Boolean);
 
-  if (paths.length > 0) {
-    const supabase = await createClient();
-    await supabase.storage.from(GALLERY_IMAGE_BUCKET).remove(paths);
+  if (urls.length > 0) {
+    await deleteFromS3(urls);
   }
 
   await prisma.galleryAlbum.delete({ where: { id } });

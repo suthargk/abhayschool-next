@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { format } from "date-fns";
 import { CalendarIcon, X } from "lucide-react";
 
@@ -8,14 +9,16 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 
-export function DatePicker({ value, onChange, placeholder = "Pick a date" }) {
+export function DatePicker({ id, value, onChange, placeholder = "Pick a date", ...calendarProps }) {
+  const [open, setOpen] = useState(false);
   const date = value ? new Date(value) : undefined;
 
   return (
     <div className="flex items-center gap-1.5">
-      <Popover>
+      <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
+            id={id}
             type="button"
             variant="outline"
             className={cn(
@@ -31,8 +34,13 @@ export function DatePicker({ value, onChange, placeholder = "Pick a date" }) {
           <Calendar
             mode="single"
             selected={date}
-            onSelect={(d) => onChange(d ? d.toISOString() : null)}
-            initialFocus
+            defaultMonth={date}
+            autoFocus
+            {...calendarProps}
+            onSelect={(d) => {
+              onChange(d ? d.toISOString() : null);
+              setOpen(false);
+            }}
           />
         </PopoverContent>
       </Popover>

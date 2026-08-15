@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 
 import { requireRole } from "@/lib/auth";
-import { createClient } from "@/lib/supabase/server";
+import { uploadToS3 } from "@/lib/s3";
 
-export const FACILITY_PHOTO_BUCKET = "facility-photos";
+export const FACILITY_PHOTO_PREFIX = "facility-photos";
 
 const MAX_BYTES = 5 * 1024 * 1024;
 const ALLOWED_TYPES = ["image/png", "image/jpeg", "image/webp", "image/gif"];
@@ -34,21 +34,12 @@ export async function POST(request) {
     );
   }
 
-  const supabase = await createClient();
-  const ext = file.name.split(".").pop() || "bin";
-  const path = `${crypto.randomUUID()}.${ext}`;
-
-  const { error: uploadError } = await supabase.storage
-    .from(FACILITY_PHOTO_BUCKET)
-    .upload(path, file, { contentType: file.type });
-
-  if (uploadError) {
-    return NextResponse.json({ error: uploadError.message }, { status: 500 });
+  let url;
+  try {
+    url = await uploadToS3(FACILITY_PHOTO_PREFIX, file);
+  } catch (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  const {
-    data: { publicUrl },
-  } = supabase.storage.from(FACILITY_PHOTO_BUCKET).getPublicUrl(path);
-
-  return NextResponse.json({ url: publicUrl });
+  return NextResponse.json({ url });
 }

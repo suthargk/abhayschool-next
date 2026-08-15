@@ -2,15 +2,7 @@ import { NextResponse } from "next/server";
 
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { createClient } from "@/lib/supabase/server";
-
-import { TESTIMONIAL_PHOTO_BUCKET } from "../upload/route";
-
-function storagePathFromUrl(url) {
-  const marker = `/public/${TESTIMONIAL_PHOTO_BUCKET}/`;
-  const index = url.indexOf(marker);
-  return index === -1 ? null : url.slice(index + marker.length);
-}
+import { deleteFromS3 } from "@/lib/s3";
 
 export async function GET(request, { params }) {
   try {
@@ -89,11 +81,7 @@ export async function DELETE(request, { params }) {
   }
 
   if (existing.photoUrl) {
-    const path = storagePathFromUrl(existing.photoUrl);
-    if (path) {
-      const supabase = await createClient();
-      await supabase.storage.from(TESTIMONIAL_PHOTO_BUCKET).remove([path]);
-    }
+    await deleteFromS3([existing.photoUrl]);
   }
 
   await prisma.testimonial.delete({ where: { id } });

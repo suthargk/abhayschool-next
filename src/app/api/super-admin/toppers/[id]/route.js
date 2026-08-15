@@ -2,18 +2,10 @@ import { NextResponse } from "next/server";
 
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { createClient } from "@/lib/supabase/server";
-
-import { TOPPER_PHOTO_BUCKET } from "../upload/route";
+import { deleteFromS3 } from "@/lib/s3";
 
 const VALID_CLASSES = ["CLASS_X", "CLASS_XII"];
 const VALID_STREAMS = ["SCIENCE", "COMMERCE", "ARTS"];
-
-function storagePathFromUrl(url) {
-  const marker = `/public/${TOPPER_PHOTO_BUCKET}/`;
-  const index = url.indexOf(marker);
-  return index === -1 ? null : url.slice(index + marker.length);
-}
 
 export async function GET(request, { params }) {
   try {
@@ -141,11 +133,7 @@ export async function DELETE(request, { params }) {
   }
 
   if (existing.photoUrl) {
-    const path = storagePathFromUrl(existing.photoUrl);
-    if (path) {
-      const supabase = await createClient();
-      await supabase.storage.from(TOPPER_PHOTO_BUCKET).remove([path]);
-    }
+    await deleteFromS3([existing.photoUrl]);
   }
 
   await prisma.topper.delete({ where: { id } });

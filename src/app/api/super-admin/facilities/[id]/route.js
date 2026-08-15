@@ -2,17 +2,9 @@ import { NextResponse } from "next/server";
 
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { createClient } from "@/lib/supabase/server";
-
-import { FACILITY_PHOTO_BUCKET } from "../upload/route";
+import { deleteFromS3 } from "@/lib/s3";
 
 const SECTIONS = ["OVERVIEW", "SPORTS", "SAFETY", "FAQ"];
-
-function storagePathFromUrl(url) {
-  const marker = `/public/${FACILITY_PHOTO_BUCKET}/`;
-  const index = url.indexOf(marker);
-  return index === -1 ? null : url.slice(index + marker.length);
-}
 
 export async function GET(request, { params }) {
   try {
@@ -101,11 +93,7 @@ export async function DELETE(request, { params }) {
   }
 
   if (existing.imageUrl) {
-    const path = storagePathFromUrl(existing.imageUrl);
-    if (path) {
-      const supabase = await createClient();
-      await supabase.storage.from(FACILITY_PHOTO_BUCKET).remove([path]);
-    }
+    await deleteFromS3([existing.imageUrl]);
   }
 
   await prisma.facility.delete({ where: { id } });

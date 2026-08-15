@@ -11,13 +11,13 @@ const BLOB_PRESETS = {
 
 const SPARKLE_COLORS = ["#f7b100", "#c25ff9", "#ed4492", "#8371fa"];
 
-function Sparkle({ index }) {
+function Sparkle({ index, colors }) {
   const left = (index * 37) % 100;
   const top = (index * 53) % 100;
   const size = 3 + (index % 3) * 2;
   const delay = (index % 9) * 0.3;
   const duration = 2.2 + (index % 4) * 0.6;
-  const color = SPARKLE_COLORS[index % SPARKLE_COLORS.length];
+  const color = colors[index % colors.length];
 
   return (
     <motion.span
@@ -46,8 +46,11 @@ export function GlitterBackground({
   preset = "violet",
   sparkleCount = 16,
   className,
+  colors,
+  sparkleColors,
 }) {
-  const blobColors = BLOB_PRESETS[preset] ?? BLOB_PRESETS.violet;
+  const blobColors = colors ?? BLOB_PRESETS[preset] ?? BLOB_PRESETS.violet;
+  const dotColors = sparkleColors ?? SPARKLE_COLORS;
 
   return (
     <div
@@ -68,7 +71,7 @@ export function GlitterBackground({
       />
 
       {Array.from({ length: sparkleCount }).map((_, i) => (
-        <Sparkle key={i} index={i} />
+        <Sparkle key={i} index={i} colors={dotColors} />
       ))}
     </div>
   );

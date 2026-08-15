@@ -395,6 +395,36 @@ model Faq {
   @@map("faqs")
 }
 
+enum AdmissionStatus {
+  NEW
+  CONTACTED
+  CLOSED
+}
+
+// Public admission enquiries submitted from the website's "Apply for
+// Admission" form. Purely inbound (no author) — reviewed by an admin who
+// moves it through the status lifecycle. `status: NEW` doubles as the
+// "unread" flag shown in the admin panel notification badge.
+model AdmissionEnquiry {
+  id              String          @id @default(cuid())
+  studentName     String
+  dateOfBirth     DateTime?
+  gender          String?
+  classAppliedFor String
+  parentName      String
+  phone           String
+  email           String?
+  address         String?
+  previousSchool  String?
+  message         String?
+  status          AdmissionStatus @default(NEW)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  @@index([status, createdAt])
+  @@map("admission_enquiries")
+}
+
 enum TestimonialSource {
   ADMIN
   PARENT

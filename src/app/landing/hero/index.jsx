@@ -9,12 +9,22 @@ import peppaPigFairyImage from "../../../../public/peppa_fairy.png";
 
 import { Button } from "@/components/ui/button";
 import { GlitterBackground } from "@/components/backgrounds/glitter-background";
+import { FestivalBanner } from "@/components/festival-banner";
+import { getActiveFestival } from "@/lib/festival";
 
 const Hero = () => {
+  const festival = getActiveFestival();
+
   return (
     <div className="relative flex flex-col items-center gap-8">
-      <GlitterBackground preset="festive" sparkleCount={24} />
+      <GlitterBackground
+        preset="festive"
+        colors={festival?.blobColors}
+        sparkleColors={festival?.sparkleColors}
+        sparkleCount={24}
+      />
       <div className="flex flex-col items-center gap-6 text-center pt-24">
+        <FestivalBanner />
         <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#8371fa] dark:text-[#c25ff9]">
           Shri Abhay Nobles Senior Secondary School
         </p>

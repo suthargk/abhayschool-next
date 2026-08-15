@@ -19,10 +19,10 @@ export function AdmissionsCta() {
       </p>
       <div className="flex flex-wrap items-center justify-center gap-3">
         <Button asChild size="lg">
-          <Link href="#admissions">Apply for Admission</Link>
+          <Link href="/admissions">Apply for Admission</Link>
         </Button>
         <Button asChild size="lg" variant="outline">
-          <Link href="#admissions">Book a Campus Visit</Link>
+          <Link href="/admissions">Book a Campus Visit</Link>
         </Button>
       </div>
     </section>

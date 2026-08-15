@@ -2,10 +2,8 @@ import { NextResponse } from "next/server";
 
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { createClient } from "@/lib/supabase/server";
+import { deleteFromS3 } from "@/lib/s3";
 import { FACULTY_CATEGORIES } from "@/data/faculty-categories";
-
-import { FACULTY_PHOTO_BUCKET } from "../upload/route";
 
 const FACULTY_CATEGORY_VALUES = FACULTY_CATEGORIES.map((c) => c.value);
 
@@ -14,12 +12,6 @@ function sanitizeStringArray(values) {
   return values
     .map((value) => (typeof value === "string" ? value.trim() : ""))
     .filter(Boolean);
-}
-
-function storagePathFromUrl(url) {
-  const marker = `/public/${FACULTY_PHOTO_BUCKET}/`;
-  const index = url.indexOf(marker);
-  return index === -1 ? null : url.slice(index + marker.length);
 }
 
 export async function GET(request, { params }) {
@@ -130,11 +122,7 @@ export async function DELETE(request, { params }) {
   }
 
   if (existing.photoUrl) {
-    const path = storagePathFromUrl(existing.photoUrl);
-    if (path) {
-      const supabase = await createClient();
-      await supabase.storage.from(FACULTY_PHOTO_BUCKET).remove([path]);
-    }
+    await deleteFromS3([existing.photoUrl]);
   }
 
   await prisma.faculty.delete({ where: { id } });
