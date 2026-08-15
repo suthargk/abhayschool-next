@@ -32,12 +32,19 @@ export default async function EditLibraryBookPage({ params }) {
 }
 
 async function EditLibraryBookSection({ id }) {
-  const [item, profile] = await Promise.all([
+  const [item, profile, classes] = await Promise.all([
     prisma.libraryBook.findUnique({ where: { id } }),
     getCurrentProfile(),
+    prisma.schoolClass.findMany({ orderBy: { position: "asc" } }),
   ]);
 
   if (!item) notFound();
 
-  return <LibraryForm initialItem={item} canPublish={profile?.role === "ADMIN"} />;
+  return (
+    <LibraryForm
+      initialItem={item}
+      classes={classes}
+      canPublish={profile?.role === "ADMIN"}
+    />
+  );
 }

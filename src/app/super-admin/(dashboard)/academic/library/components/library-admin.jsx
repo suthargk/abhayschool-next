@@ -8,12 +8,11 @@ import { Plus } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { LIBRARY_CLASSES } from "@/data/library-classes";
 
 import { LibraryDeleteDialog } from "./library-table/delete-dialog";
 import { LibraryTable } from "./library-table";
 
-export function LibraryAdmin({ initialItems, canPublish }) {
+export function LibraryAdmin({ initialItems, classes, canPublish }) {
   const router = useRouter();
   const [items, setItems] = useState(initialItems);
   const [pendingId, setPendingId] = useState(null);
@@ -92,14 +91,26 @@ export function LibraryAdmin({ initialItems, canPublish }) {
     router.refresh();
   }
 
+  if (classes.length === 0) {
+    return (
+      <p className="rounded-md border border-dashed p-8 text-center text-sm text-muted-foreground">
+        No classes configured yet.{" "}
+        <Link href="/super-admin/classes" className="underline">
+          Add a class
+        </Link>{" "}
+        to start building the library catalogue.
+      </p>
+    );
+  }
+
   return (
     <div className="space-y-4">
-      <Tabs defaultValue={LIBRARY_CLASSES[0].value} className="w-full">
+      <Tabs defaultValue={classes[0].value} className="w-full">
         <TabsList
           aria-label="Library catalogue by class"
           className="h-auto w-full flex-wrap justify-start gap-1"
         >
-          {LIBRARY_CLASSES.map((klass) => (
+          {classes.map((klass) => (
             <TabsTrigger key={klass.value} value={klass.value} className="gap-1.5">
               {klass.label}
               <Badge variant="secondary" className="px-1.5">
@@ -109,7 +120,7 @@ export function LibraryAdmin({ initialItems, canPublish }) {
           ))}
         </TabsList>
 
-        {LIBRARY_CLASSES.map((klass) => (
+        {classes.map((klass) => (
           <TabsContent key={klass.value} value={klass.value} className="space-y-3 pt-4">
             <div className="flex justify-end">
               <Button asChild size="sm">

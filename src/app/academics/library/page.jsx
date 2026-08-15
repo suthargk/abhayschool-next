@@ -1,19 +1,20 @@
 import { prisma } from "@/lib/prisma";
 
-import { LIBRARY_CLASSES } from "@/data/library-classes";
-
 import { LibraryCatalog } from "./components/library-catalog";
 
 export const revalidate = 60;
 
 export default async function LibraryPage() {
-  const books = await prisma.libraryBook.findMany({
-    where: { status: "PUBLISHED" },
-    orderBy: [{ class: "asc" }, { position: "asc" }],
-  });
+  const [books, classes] = await Promise.all([
+    prisma.libraryBook.findMany({
+      where: { status: "PUBLISHED" },
+      orderBy: [{ class: "asc" }, { position: "asc" }],
+    }),
+    prisma.schoolClass.findMany({ orderBy: { position: "asc" } }),
+  ]);
 
   const subjectCount = new Set(books.map((book) => book.subject)).size;
-  const classesInUse = LIBRARY_CLASSES.filter((klass) =>
+  const classesInUse = classes.filter((klass) =>
     books.some((book) => book.class === klass.value)
   );
   const classRange =
@@ -62,7 +63,7 @@ export default async function LibraryPage() {
           </div>
         </div>
 
-        <LibraryCatalog books={books} />
+        <LibraryCatalog books={books} classes={classes} />
       </div>
     </div>
   );

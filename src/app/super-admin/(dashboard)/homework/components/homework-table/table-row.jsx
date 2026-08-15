@@ -15,7 +15,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { TableCell, TableRow } from "@/components/ui/table";
-import { libraryClassLabel } from "@/data/library-classes";
 
 const STATUS_META = {
   PUBLISHED: { label: "Published" },
@@ -61,7 +60,7 @@ export function HomeworkRow({
       </TableCell>
       {visibleColumns.class ? (
         <TableCell className="text-muted-foreground">
-          {libraryClassLabel(item.class)}
+          {item.classLabel}
         </TableCell>
       ) : null}
       {visibleColumns.subject ? (

@@ -25,7 +25,19 @@ const DialogOverlay = React.forwardRef(({ className, ...props }, ref) => (
 ))
 DialogOverlay.displayName = DialogPrimitive.Overlay.displayName
 
-const DialogContent = React.forwardRef(({ className, children, ...props }, ref) => (
+const DialogContent = React.forwardRef(({ className, children, ...props }, ref) => {
+  React.useEffect(() => {
+    // See AlertDialogContent in alert-dialog.jsx: Radix's Dialog and
+    // DropdownMenu both toggle `document.body.style.pointerEvents`, and
+    // opening this dialog from a DropdownMenuItem can race their cleanups,
+    // leaving <body> stuck with pointer-events: none. Clear it once this
+    // dialog unmounts so the page stays clickable.
+    return () => {
+      document.body.style.pointerEvents = "";
+    };
+  }, []);
+
+  return (
   <DialogPortal>
     <DialogOverlay />
     <DialogPrimitive.Content
@@ -43,7 +55,8 @@ const DialogContent = React.forwardRef(({ className, children, ...props }, ref) 
       </DialogPrimitive.Close>
     </DialogPrimitive.Content>
   </DialogPortal>
-))
+  );
+})
 DialogContent.displayName = DialogPrimitive.Content.displayName
 
 const DialogHeader = ({

@@ -3,7 +3,6 @@ import { revalidateTag } from "next/cache";
 
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { LIBRARY_CLASS_VALUES } from "@/data/library-classes";
 import { HOMEWORK_CACHE_TAG } from "@/lib/homework/cached-queries";
 
 function parseAttachments(attachments) {
@@ -61,7 +60,7 @@ export async function PATCH(request, { params }) {
     data.title = body.title.trim();
   }
   if (body.class !== undefined) {
-    if (!LIBRARY_CLASS_VALUES.includes(body.class)) {
+    if (!(await prisma.schoolClass.findUnique({ where: { value: body.class } }))) {
       return NextResponse.json({ error: "Invalid class" }, { status: 400 });
     }
     data.class = body.class;

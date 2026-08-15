@@ -2,6 +2,7 @@ import { Suspense } from "react";
 
 import { prisma } from "@/lib/prisma";
 import { Skeleton } from "@/components/ui/skeleton";
+import { classLabel } from "@/lib/classes";
 import {
   getHomeworkClasses,
   getHomeworkSubjects,
@@ -58,7 +59,7 @@ async function HomeworkResults({ searchParams }) {
       : {}),
   };
 
-  const [items, total, counts, classOptions, subjectOptions] =
+  const [items, total, counts, classOptions, subjectOptions, classes] =
     await Promise.all([
       prisma.homework.findMany({
         where,
@@ -71,11 +72,16 @@ async function HomeworkResults({ searchParams }) {
       getHomeworkSummaryCounts(),
       getHomeworkClasses(),
       getHomeworkSubjects(),
+      prisma.schoolClass.findMany({ orderBy: { position: "asc" } }),
     ]);
 
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
   const showingFrom = total === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
   const showingTo = Math.min(page * PAGE_SIZE, total);
+  const itemsWithClassLabel = items.map((item) => ({
+    ...item,
+    classLabel: classLabel(classes, item.class),
+  }));
 
   return (
     <HomeworkExplorer
@@ -84,12 +90,13 @@ async function HomeworkResults({ searchParams }) {
       subject={subject}
       range={range}
       page={page}
-      items={items}
+      items={itemsWithClassLabel}
       total={total}
       totalPages={totalPages}
       showingFrom={showingFrom}
       showingTo={showingTo}
       counts={counts}
+      classes={classes}
       classOptions={classOptions}
       subjectOptions={subjectOptions}
     />

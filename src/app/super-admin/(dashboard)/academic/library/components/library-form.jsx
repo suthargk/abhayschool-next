@@ -14,14 +14,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { LIBRARY_CLASSES } from "@/data/library-classes";
 
-export function LibraryForm({ initialItem, defaultClass, canPublish }) {
+export function LibraryForm({ initialItem, classes, defaultClass, canPublish }) {
   const router = useRouter();
   const isEdit = Boolean(initialItem);
 
   const [klass, setKlass] = useState(
-    initialItem?.class ?? defaultClass ?? LIBRARY_CLASSES[0].value,
+    initialItem?.class ?? defaultClass ?? classes[0]?.value,
   );
   const [bookName, setBookName] = useState(initialItem?.bookName ?? "");
   const [subject, setSubject] = useState(initialItem?.subject ?? "");
@@ -104,7 +103,7 @@ export function LibraryForm({ initialItem, defaultClass, canPublish }) {
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            {LIBRARY_CLASSES.map((c) => (
+            {classes.map((c) => (
               <SelectItem key={c.value} value={c.value}>
                 {c.label}
               </SelectItem>

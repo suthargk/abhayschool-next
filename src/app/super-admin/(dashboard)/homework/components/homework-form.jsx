@@ -16,7 +16,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { RichTextEditor } from "@/components/news-notices/rich-text-editor";
-import { LIBRARY_CLASSES } from "@/data/library-classes";
 import { SUBJECTS } from "@/lib/homework/subjects";
 
 function formatFileSize(bytes) {
@@ -25,12 +24,12 @@ function formatFileSize(bytes) {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
-export function HomeworkForm({ initialItem }) {
+export function HomeworkForm({ initialItem, classes }) {
   const router = useRouter();
   const isEdit = Boolean(initialItem);
 
   const [homeworkClass, setHomeworkClass] = useState(
-    initialItem?.class ?? "CLASS_I",
+    initialItem?.class ?? classes[0]?.value,
   );
   const [subject, setSubject] = useState(
     initialItem?.subject ?? SUBJECTS[0].value,
@@ -169,7 +168,7 @@ export function HomeworkForm({ initialItem }) {
               <SelectValue placeholder="Select a class" />
             </SelectTrigger>
             <SelectContent>
-              {LIBRARY_CLASSES.map((c) => (
+              {classes.map((c) => (
                 <SelectItem key={c.value} value={c.value}>
                   {c.label}
                 </SelectItem>

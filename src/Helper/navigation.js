@@ -65,6 +65,19 @@ const navigationCategory = [
         description:
           "Explore our library and resources that support our academic programs.",
       },
+      {
+        title: "Time Table",
+        href: "/time-table",
+        description:
+          "View the weekly class schedule for each class, by day and period.",
+      },
+      {
+        title: "Testimonials",
+        href: "/testimonials",
+        absolute: true,
+        description:
+          "Read stories from the families and students who have been part of the Abhay Nobles community.",
+      },
     ],
   },
   {

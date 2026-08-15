@@ -34,6 +34,8 @@ model Profile {
   homework          Homework[]
   faqs              Faq[]
   testimonials      Testimonial[]
+  timeTableSlots    TimeTableSlot[]
+  schoolClasses     SchoolClass[]
 
   @@map("profiles")
 }
@@ -216,24 +218,28 @@ model Faculty {
   @@map("faculty")
 }
 
-enum LibraryClass {
-  CLASS_I
-  CLASS_II
-  CLASS_III
-  CLASS_IV
-  CLASS_V
-  CLASS_VI
-  CLASS_VII
-  CLASS_VIII
-  CLASS_IX
-  CLASS_X
-  CLASS_XI
-  CLASS_XII
+// Admin-managed list of school classes/grades (e.g. "Class I", "Nursery").
+// `value` is a stable, immutable identifier stored on content records
+// (LibraryBook.class, Homework.class, TimeTableSlot.class); `label` is the
+// editable display name, so renaming a class here updates it everywhere
+// without touching existing content rows.
+model SchoolClass {
+  id        String   @id @default(cuid())
+  value     String   @unique
+  label     String
+  position  Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  authorId String  @db.Uuid
+  author   Profile @relation(fields: [authorId], references: [id])
+
+  @@map("school_classes")
 }
 
 model LibraryBook {
   id          String        @id @default(cuid())
-  class       LibraryClass
+  class       String
   bookName    String
   subject     String
   publication String
@@ -250,9 +256,40 @@ model LibraryBook {
   @@map("library_books")
 }
 
+enum Weekday {
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+}
+
+model TimeTableSlot {
+  id          String        @id @default(cuid())
+  class       String
+  day         Weekday
+  period      Int
+  subject     String
+  teacherName String?
+  startTime   String?
+  endTime     String?
+  status      ContentStatus @default(DRAFT)
+  publishedAt DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  authorId String  @db.Uuid
+  author   Profile @relation(fields: [authorId], references: [id])
+
+  @@unique([class, day, period])
+  @@index([class, status])
+  @@map("time_table_slots")
+}
+
 model Homework {
   id           String        @id @default(cuid())
-  class        LibraryClass
+  class        String
   subject      String
   title        String
   content      Json

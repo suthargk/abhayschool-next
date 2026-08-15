@@ -5,6 +5,7 @@ import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TableSkeleton } from "@/components/table-skeleton";
 import { getCurrentProfile } from "@/lib/auth";
+import { classLabel } from "@/lib/classes";
 import { parsePageSize } from "@/lib/pagination";
 import { prisma } from "@/lib/prisma";
 
@@ -55,7 +56,7 @@ async function HomeworkSection({ q, page, pageSize }) {
       }
     : {};
 
-  const [items, total, profile] = await Promise.all([
+  const [items, total, profile, classes] = await Promise.all([
     prisma.homework.findMany({
       where,
       orderBy: { createdAt: "desc" },
@@ -65,13 +66,18 @@ async function HomeworkSection({ q, page, pageSize }) {
     }),
     prisma.homework.count({ where }),
     getCurrentProfile(),
+    prisma.schoolClass.findMany({ orderBy: { position: "asc" } }),
   ]);
 
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
+  const itemsWithClassLabel = items.map((item) => ({
+    ...item,
+    classLabel: classLabel(classes, item.class),
+  }));
 
   return (
     <HomeworkTable
-      items={items}
+      items={itemsWithClassLabel}
       canPublish={profile?.role === "ADMIN"}
       search={q}
       page={page}

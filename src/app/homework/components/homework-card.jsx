@@ -3,7 +3,6 @@ import { format } from "date-fns";
 import { Paperclip } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import { libraryClassLabel } from "@/data/library-classes";
 import { subjectBadgeClass, subjectIcon } from "@/lib/homework/subjects";
 import { DUE_STATUS_BADGE_CLASS, dueStatus } from "@/lib/homework/due-status";
 
@@ -28,7 +27,7 @@ export function HomeworkCard({ item }) {
         <div className="min-w-0 space-y-0.5">
           <div className="flex flex-wrap items-center gap-2">
             <span className="text-xs font-medium text-muted-foreground">
-              {item.subject} · {libraryClassLabel(item.class)}
+              {item.subject} · {item.classLabel}
             </span>
           </div>
           <h3 className="truncate font-semibold leading-snug">

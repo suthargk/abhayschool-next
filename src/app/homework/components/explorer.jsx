@@ -14,7 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import { libraryClassLabel } from "@/data/library-classes";
+import { classLabel } from "@/lib/classes";
 
 import { RANGE_OPTIONS } from "../constants";
 import { SummaryStats } from "./summary-stats";
@@ -32,6 +32,7 @@ export function HomeworkExplorer({
   showingFrom,
   showingTo,
   counts,
+  classes,
   classOptions,
   subjectOptions,
 }) {
@@ -116,7 +117,7 @@ export function HomeworkExplorer({
               <SelectItem value="ALL">All classes</SelectItem>
               {classOptions.map((c) => (
                 <SelectItem key={c} value={c}>
-                  {libraryClassLabel(c)}
+                  {classLabel(classes, c)}
                 </SelectItem>
               ))}
             </SelectContent>

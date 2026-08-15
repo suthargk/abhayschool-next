@@ -6,7 +6,7 @@ import { ArrowLeft, Calendar, CalendarClock, FileText, User } from "lucide-react
 import { prisma } from "@/lib/prisma";
 import { ContentRenderer } from "@/components/news-notices/content-renderer";
 import { cn } from "@/lib/utils";
-import { libraryClassLabel } from "@/data/library-classes";
+import { classLabel } from "@/lib/classes";
 import { subjectBadgeClass, subjectIcon } from "@/lib/homework/subjects";
 import { DUE_STATUS_BADGE_CLASS, dueStatus } from "@/lib/homework/due-status";
 
@@ -19,10 +19,13 @@ function formatFileSize(bytes) {
 export default async function HomeworkDetailPage({ params }) {
   const { id } = await params;
 
-  const item = await prisma.homework.findFirst({
-    where: { id, status: { in: ["PUBLISHED", "ARCHIVED"] } },
-    include: { attachments: true },
-  });
+  const [item, classes] = await Promise.all([
+    prisma.homework.findFirst({
+      where: { id, status: { in: ["PUBLISHED", "ARCHIVED"] } },
+      include: { attachments: true },
+    }),
+    prisma.schoolClass.findMany(),
+  ]);
 
   if (!item) notFound();
 
@@ -51,7 +54,7 @@ export default async function HomeworkDetailPage({ params }) {
             {item.subject}
           </span>
           <span className="inline-block rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground">
-            {libraryClassLabel(item.class)}
+            {classLabel(classes, item.class)}
           </span>
           <span
             className={cn(

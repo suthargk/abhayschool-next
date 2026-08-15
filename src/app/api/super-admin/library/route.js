@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 
-import { LIBRARY_CLASS_VALUES } from "@/data/library-classes";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
@@ -28,7 +27,7 @@ export async function POST(request) {
   }
 
   const body = await request.json().catch(() => null);
-  if (!body || !LIBRARY_CLASS_VALUES.includes(body.class)) {
+  if (!body || !(await prisma.schoolClass.findUnique({ where: { value: body.class } }))) {
     return NextResponse.json({ error: "A valid class is required" }, { status: 400 });
   }
   if (typeof body.bookName !== "string" || !body.bookName.trim()) {

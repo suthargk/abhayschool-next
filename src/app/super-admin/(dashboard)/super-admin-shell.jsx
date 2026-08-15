@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
+import { formatDistanceToNow } from "date-fns";
 import { Toaster } from "sonner";
 
 import { ModeToggle } from "@/components/mode-toggle";
@@ -32,14 +33,17 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import {
+  Bell,
   Bus,
   Building2,
+  CalendarClock,
   ChevronsUpDown,
   ClipboardList,
   ExternalLink,
   GraduationCap,
   HelpCircle,
   ImageIcon,
+  Layers,
   LayoutDashboard,
   Library,
   LogOut,
@@ -53,6 +57,7 @@ import {
 
 const DASHBOARD_ITEM = { href: "/super-admin", label: "Dashboard", icon: LayoutDashboard };
 const ADMISSIONS_HREF = "/super-admin/admissions";
+const TESTIMONIALS_HREF = "/super-admin/homepage/testimonials";
 
 const navSections = [
   {
@@ -106,7 +111,13 @@ const navSections = [
   {
     title: "Academic",
     items: [
+      { href: "/super-admin/classes", label: "Classes", icon: Layers },
       { href: "/super-admin/academic/library", label: "Library", icon: Library },
+      {
+        href: "/super-admin/academic/time-table",
+        label: "Time Table",
+        icon: CalendarClock,
+      },
       { href: "/super-admin/academic/blog", label: "Blog", icon: Newspaper },
     ],
   },
@@ -161,8 +172,36 @@ function NavLink({ href, label, icon: Icon, badge }) {
   );
 }
 
-export function SuperAdminShell({ children, profile, newAdmissionsCount = 0 }) {
+function buildNotifications({ pendingAdmissions, pendingTestimonials }) {
+  const admissionNotifications = pendingAdmissions.map((item) => ({
+    id: `admission-${item.id}`,
+    href: `${ADMISSIONS_HREF}/${item.id}`,
+    title: `New admission enquiry from ${item.parentName}`,
+    detail: `${item.studentName} · Class ${item.classAppliedFor}`,
+    createdAt: item.createdAt,
+  }));
+  const testimonialNotifications = pendingTestimonials.map((item) => ({
+    id: `testimonial-${item.id}`,
+    href: TESTIMONIALS_HREF,
+    title: `New testimonial from ${item.name}`,
+    detail: item.quote,
+    createdAt: item.createdAt,
+  }));
+
+  return [...admissionNotifications, ...testimonialNotifications].sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  );
+}
+
+export function SuperAdminShell({
+  children,
+  profile,
+  newAdmissionsCount = 0,
+  pendingAdmissions = [],
+  pendingTestimonials = [],
+}) {
   const router = useRouter();
+  const notifications = buildNotifications({ pendingAdmissions, pendingTestimonials });
   const pathname = usePathname();
   const { resolvedTheme } = useTheme();
 
@@ -220,7 +259,13 @@ export function SuperAdminShell({ children, profile, newAdmissionsCount = 0 }) {
                     <NavLink
                       key={item.href}
                       {...item}
-                      badge={item.href === ADMISSIONS_HREF ? newAdmissionsCount : undefined}
+                      badge={
+                        item.href === ADMISSIONS_HREF
+                          ? newAdmissionsCount
+                          : item.href === TESTIMONIALS_HREF
+                            ? pendingTestimonials.length
+                            : undefined
+                      }
                     />
                   ))}
                 </SidebarMenu>
@@ -282,6 +327,45 @@ export function SuperAdminShell({ children, profile, newAdmissionsCount = 0 }) {
           <Separator orientation="vertical" className="h-4" />
           <h1 className="truncate text-sm font-medium">{getPageTitle(pathname)}</h1>
           <div className="ml-auto flex items-center gap-1">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  type="button"
+                  className="relative inline-flex size-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                  aria-label="Notifications"
+                >
+                  <Bell className="size-4" />
+                  {notifications.length > 0 ? (
+                    <span className="absolute right-1 top-1 flex size-4 items-center justify-center rounded-full bg-primary text-[9px] font-medium text-primary-foreground">
+                      {notifications.length > 9 ? "9+" : notifications.length}
+                    </span>
+                  ) : null}
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" sideOffset={8} className="w-80">
+                <div className="px-2 py-1.5 text-sm font-medium">Notifications</div>
+                <DropdownMenuSeparator />
+                {notifications.length === 0 ? (
+                  <p className="px-2 py-3 text-sm text-muted-foreground">
+                    No new notifications.
+                  </p>
+                ) : (
+                  notifications.map((item) => (
+                    <DropdownMenuItem key={item.id} asChild className="flex-col items-start">
+                      <Link href={item.href}>
+                        <span className="w-full truncate text-sm font-medium">{item.title}</span>
+                        <span className="line-clamp-2 w-full text-xs text-muted-foreground">
+                          {item.detail}
+                        </span>
+                        <span className="w-full text-[11px] text-muted-foreground/80">
+                          {formatDistanceToNow(new Date(item.createdAt), { addSuffix: true })}
+                        </span>
+                      </Link>
+                    </DropdownMenuItem>
+                  ))
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
             <Link
               href="/"
               target="_blank"

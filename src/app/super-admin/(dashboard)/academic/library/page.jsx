@@ -24,12 +24,19 @@ export default function SuperAdminLibraryPage() {
 }
 
 async function LibrarySection() {
-  const [items, profile] = await Promise.all([
+  const [items, profile, classes] = await Promise.all([
     prisma.libraryBook.findMany({
       orderBy: [{ class: "asc" }, { position: "asc" }],
     }),
     getCurrentProfile(),
+    prisma.schoolClass.findMany({ orderBy: { position: "asc" } }),
   ]);
 
-  return <LibraryAdmin initialItems={items} canPublish={profile?.role === "ADMIN"} />;
+  return (
+    <LibraryAdmin
+      initialItems={items}
+      classes={classes}
+      canPublish={profile?.role === "ADMIN"}
+    />
+  );
 }

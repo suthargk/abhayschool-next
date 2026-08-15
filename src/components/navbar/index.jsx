@@ -56,7 +56,11 @@ export function Navbar() {
                         return (
                           <ListItem
                             key={subCategory.title}
-                            href={category.href + subCategory.href}
+                            href={
+                              subCategory.absolute
+                                ? subCategory.href
+                                : category.href + subCategory.href
+                            }
                             title={subCategory.title}
                           >
                             {subCategory.description}

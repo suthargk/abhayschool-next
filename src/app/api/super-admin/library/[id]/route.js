@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 
-import { LIBRARY_CLASS_VALUES } from "@/data/library-classes";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
@@ -41,7 +40,7 @@ export async function PATCH(request, { params }) {
   const data = {};
 
   if (body.class !== undefined) {
-    if (!LIBRARY_CLASS_VALUES.includes(body.class)) {
+    if (!(await prisma.schoolClass.findUnique({ where: { value: body.class } }))) {
       return NextResponse.json({ error: "A valid class is required" }, { status: 400 });
     }
     data.class = body.class;

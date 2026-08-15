@@ -29,7 +29,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
-import { LIBRARY_CLASSES, libraryClassLabel } from "@/data/library-classes";
+import { classLabel } from "@/lib/classes";
 
 const PAGE_SIZE = 20;
 
@@ -53,7 +53,7 @@ function chipClasses(active) {
   );
 }
 
-export function LibraryCatalog({ books }) {
+export function LibraryCatalog({ books, classes }) {
   const [search, setSearch] = useState("");
   const [selectedClass, setSelectedClass] = useState("all");
   const [selectedSubject, setSelectedSubject] = useState("all");
@@ -63,8 +63,8 @@ export function LibraryCatalog({ books }) {
 
   const classesInUse = useMemo(() => {
     const present = new Set(books.map((book) => book.class));
-    return LIBRARY_CLASSES.filter((klass) => present.has(klass.value));
-  }, [books]);
+    return classes.filter((klass) => present.has(klass.value));
+  }, [books, classes]);
 
   const subjects = useMemo(
     () =>
@@ -123,7 +123,7 @@ export function LibraryCatalog({ books }) {
         book.bookName.toLowerCase().includes(q) ||
         book.subject.toLowerCase().includes(q) ||
         book.publication.toLowerCase().includes(q) ||
-        libraryClassLabel(book.class).toLowerCase().includes(q)
+        classLabel(classes, book.class).toLowerCase().includes(q)
       );
     });
   }, [books, search, selectedClass, selectedSubject, selectedPublication]);
@@ -132,7 +132,7 @@ export function LibraryCatalog({ books }) {
     if (!sort.key) return filtered;
     const dir = sort.dir === "asc" ? 1 : -1;
     const valueOf = (book) =>
-      sort.key === "class" ? libraryClassLabel(book.class) : book[sort.key];
+      sort.key === "class" ? classLabel(classes, book.class) : book[sort.key];
     return [...filtered].sort(
       (a, b) => valueOf(a).localeCompare(valueOf(b)) * dir
     );
@@ -288,7 +288,7 @@ export function LibraryCatalog({ books }) {
               paginated.map((book) => (
                 <TableRow key={book.id} className="bg-white dark:bg-zinc-900">
                   <TableCell className="text-zinc-700 dark:text-zinc-300">
-                    {libraryClassLabel(book.class)}
+                    {classLabel(classes, book.class)}
                   </TableCell>
                   <TableCell className="font-medium text-zinc-900 dark:text-zinc-100">
                     {book.bookName}
@@ -329,7 +329,7 @@ export function LibraryCatalog({ books }) {
                 <div className="flex justify-between gap-3">
                   <dt className="text-zinc-500 dark:text-zinc-400">Class</dt>
                   <dd className="text-right text-zinc-700 dark:text-zinc-300">
-                    {libraryClassLabel(book.class)}
+                    {classLabel(classes, book.class)}
                   </dd>
                 </div>
                 <div className="flex justify-between gap-3">

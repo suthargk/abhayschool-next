@@ -39,7 +39,8 @@ const itemVariants = {
 };
 
 function getSubHref(category, subCategory, index) {
-  return index === 0 ? subCategory.href : category.href + subCategory.href;
+  if (subCategory.absolute || index === 0) return subCategory.href;
+  return category.href + subCategory.href;
 }
 
 function NavPill({ href, isActive, children }) {

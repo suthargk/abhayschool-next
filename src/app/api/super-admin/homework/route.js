@@ -3,7 +3,6 @@ import { revalidateTag } from "next/cache";
 
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { LIBRARY_CLASS_VALUES } from "@/data/library-classes";
 import { HOMEWORK_CACHE_TAG } from "@/lib/homework/cached-queries";
 
 export async function GET() {
@@ -45,7 +44,7 @@ export async function POST(request) {
   if (!body || typeof body.title !== "string" || !body.title.trim()) {
     return NextResponse.json({ error: "Title is required" }, { status: 400 });
   }
-  if (!LIBRARY_CLASS_VALUES.includes(body.class)) {
+  if (!(await prisma.schoolClass.findUnique({ where: { value: body.class } }))) {
     return NextResponse.json({ error: "Invalid class" }, { status: 400 });
   }
   if (typeof body.subject !== "string" || !body.subject.trim()) {
