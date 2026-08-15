@@ -1,3 +1,4 @@
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 import { ConditionalSiteChrome } from "@/components/conditional-site-chrome";
@@ -14,6 +15,7 @@ export default function RootLayout({ children }) {
           disableTransitionOnChange
         >
           <ConditionalSiteChrome>{children}</ConditionalSiteChrome>
+          <Analytics />
         </ThemeProvider>
       </body>
     </html>
