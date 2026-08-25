@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 
 import { getCurrentProfile } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { getRecentTeacherActivity } from "@/lib/teacher-activity";
 
 import { SuperAdminShell } from "./super-admin-shell";
 
@@ -22,23 +23,29 @@ export default async function SuperAdminDashboardLayout({ children }) {
     redirect("/");
   }
 
-  const [newAdmissionsCount, pendingAdmissions, pendingTestimonials, pendingTeachersCount] =
-    await Promise.all([
-      prisma.admissionEnquiry.count({ where: { status: "NEW" } }),
-      prisma.admissionEnquiry.findMany({
-        where: { status: "NEW" },
-        orderBy: { createdAt: "desc" },
-        take: 10,
-        select: { id: true, studentName: true, parentName: true, classAppliedFor: true, createdAt: true },
-      }),
-      prisma.testimonial.findMany({
-        where: { source: "PARENT", status: "DRAFT" },
-        orderBy: { createdAt: "desc" },
-        take: 10,
-        select: { id: true, name: true, quote: true, createdAt: true },
-      }),
-      prisma.profile.count({ where: { role: "TEACHER", status: "PENDING" } }),
-    ]);
+  const [
+    newAdmissionsCount,
+    pendingAdmissions,
+    pendingTestimonials,
+    pendingTeachersCount,
+    teacherActivity,
+  ] = await Promise.all([
+    prisma.admissionEnquiry.count({ where: { status: "NEW" } }),
+    prisma.admissionEnquiry.findMany({
+      where: { status: "NEW" },
+      orderBy: { createdAt: "desc" },
+      take: 10,
+      select: { id: true, studentName: true, parentName: true, classAppliedFor: true, createdAt: true },
+    }),
+    prisma.testimonial.findMany({
+      where: { source: "PARENT", status: "DRAFT" },
+      orderBy: { createdAt: "desc" },
+      take: 10,
+      select: { id: true, name: true, quote: true, createdAt: true },
+    }),
+    prisma.profile.count({ where: { role: "TEACHER", status: "PENDING" } }),
+    getRecentTeacherActivity(8),
+  ]);
 
   return (
     <SuperAdminShell
@@ -47,6 +54,7 @@ export default async function SuperAdminDashboardLayout({ children }) {
       pendingAdmissions={pendingAdmissions}
       pendingTestimonials={pendingTestimonials}
       pendingTeachersCount={pendingTeachersCount}
+      teacherActivity={teacherActivity}
     >
       {children}
     </SuperAdminShell>

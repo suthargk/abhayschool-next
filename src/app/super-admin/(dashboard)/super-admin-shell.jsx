@@ -175,13 +175,30 @@ function NavLink({ href, label, icon: Icon, badge }) {
   );
 }
 
-function buildNotifications({ pendingAdmissions, pendingTestimonials }) {
+const TEACHER_ACTIVITY_ICON = {
+  FAQ: HelpCircle,
+  Testimonials: Quote,
+  "Principal's Message": MessageSquareQuote,
+  Faculty: Users,
+  Facilities: Building2,
+  Gallery: ImageIcon,
+  "News & Notices": Megaphone,
+  Homework: GraduationCap,
+  Classes: Layers,
+  Library: Library,
+  "Time Table": CalendarClock,
+  Blog: Newspaper,
+  Toppers: Trophy,
+};
+
+function buildNotifications({ pendingAdmissions, pendingTestimonials, teacherActivity }) {
   const admissionNotifications = pendingAdmissions.map((item) => ({
     id: `admission-${item.id}`,
     href: `${ADMISSIONS_HREF}/${item.id}`,
     title: `New admission enquiry from ${item.parentName}`,
     detail: `${item.studentName} · Class ${item.classAppliedFor}`,
     createdAt: item.createdAt,
+    icon: null,
   }));
   const testimonialNotifications = pendingTestimonials.map((item) => ({
     id: `testimonial-${item.id}`,
@@ -189,9 +206,18 @@ function buildNotifications({ pendingAdmissions, pendingTestimonials }) {
     title: `New testimonial from ${item.name}`,
     detail: item.quote,
     createdAt: item.createdAt,
+    icon: null,
+  }));
+  const teacherNotifications = teacherActivity.map((item) => ({
+    id: item.id,
+    href: item.href,
+    title: `${item.authorName} ${item.action} ${item.kind}`,
+    detail: item.detail,
+    createdAt: item.createdAt,
+    icon: TEACHER_ACTIVITY_ICON[item.kind] ?? null,
   }));
 
-  return [...admissionNotifications, ...testimonialNotifications].sort(
+  return [...admissionNotifications, ...testimonialNotifications, ...teacherNotifications].sort(
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   );
 }
@@ -203,9 +229,14 @@ export function SuperAdminShell({
   pendingAdmissions = [],
   pendingTestimonials = [],
   pendingTeachersCount = 0,
+  teacherActivity = [],
 }) {
   const router = useRouter();
-  const notifications = buildNotifications({ pendingAdmissions, pendingTestimonials });
+  const notifications = buildNotifications({
+    pendingAdmissions,
+    pendingTestimonials,
+    teacherActivity,
+  });
   const pathname = usePathname();
   const { resolvedTheme } = useTheme();
 
@@ -356,19 +387,31 @@ export function SuperAdminShell({
                     No new notifications.
                   </p>
                 ) : (
-                  notifications.map((item) => (
-                    <DropdownMenuItem key={item.id} asChild className="flex-col items-start">
-                      <Link href={item.href}>
-                        <span className="w-full truncate text-sm font-medium">{item.title}</span>
-                        <span className="line-clamp-2 w-full text-xs text-muted-foreground">
-                          {item.detail}
-                        </span>
-                        <span className="w-full text-[11px] text-muted-foreground/80">
-                          {formatDistanceToNow(new Date(item.createdAt), { addSuffix: true })}
-                        </span>
-                      </Link>
-                    </DropdownMenuItem>
-                  ))
+                  notifications.map((item) => {
+                    const Icon = item.icon;
+                    return (
+                      <DropdownMenuItem key={item.id} asChild className="items-start gap-2">
+                        <Link href={item.href}>
+                          {Icon ? (
+                            <div className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-md bg-muted text-muted-foreground">
+                              <Icon className="size-3.5" />
+                            </div>
+                          ) : null}
+                          <div className="min-w-0 flex-1">
+                            <span className="block w-full truncate text-sm font-medium">
+                              {item.title}
+                            </span>
+                            <span className="line-clamp-2 w-full text-xs text-muted-foreground">
+                              {item.detail}
+                            </span>
+                            <span className="w-full text-[11px] text-muted-foreground/80">
+                              {formatDistanceToNow(new Date(item.createdAt), { addSuffix: true })}
+                            </span>
+                          </div>
+                        </Link>
+                      </DropdownMenuItem>
+                    );
+                  })
                 )}
               </DropdownMenuContent>
             </DropdownMenu>
