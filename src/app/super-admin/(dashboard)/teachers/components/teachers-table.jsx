@@ -2,11 +2,12 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import { MoreHorizontal, Plus, X } from "lucide-react";
+import { Loader2, MoreHorizontal, Plus, X } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -38,6 +39,8 @@ import {
 import { classLabel } from "@/lib/classes";
 import { SUBJECTS } from "@/lib/homework/subjects";
 import { getInitials, teacherFullName } from "@/lib/teacher";
+import { TEACHER_FEATURE_GROUPS, TEACHER_FEATURES } from "@/lib/teacher-features";
+import { cn } from "@/lib/utils";
 
 const STATUS_META = {
   ACTIVE: { label: "Active", variant: "success" },
@@ -45,7 +48,7 @@ const STATUS_META = {
   REJECTED: { label: "Rejected", variant: "destructive" },
 };
 
-function TeacherActionsMenu({ teacher, pending, onAssign, onSetStatus }) {
+function TeacherActionsMenu({ teacher, pending, onAssign, onPermissions, onSetStatus }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -56,6 +59,7 @@ function TeacherActionsMenu({ teacher, pending, onAssign, onSetStatus }) {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem onSelect={onAssign}>Assign</DropdownMenuItem>
+        <DropdownMenuItem onSelect={onPermissions}>Permissions</DropdownMenuItem>
         <DropdownMenuSeparator />
         {teacher.status === "PENDING" ? (
           <>
@@ -85,6 +89,7 @@ function TeacherActionsMenu({ teacher, pending, onAssign, onSetStatus }) {
 export function TeachersTable({ initialTeachers, classes }) {
   const [teachers, setTeachers] = useState(initialTeachers);
   const [assigningTeacher, setAssigningTeacher] = useState(null);
+  const [permissioningTeacher, setPermissioningTeacher] = useState(null);
   const [pendingId, setPendingId] = useState(null);
 
   async function setStatus(teacher, status) {
@@ -121,6 +126,17 @@ export function TeachersTable({ initialTeachers, classes }) {
     );
   }
 
+  function updatePermissions(teacherId, permissions) {
+    setTeachers((prev) =>
+      prev.map((t) =>
+        t.id === teacherId ? { ...t, teacherFeaturePermissions: permissions } : t,
+      ),
+    );
+    setPermissioningTeacher((prev) =>
+      prev && prev.id === teacherId ? { ...prev, teacherFeaturePermissions: permissions } : prev,
+    );
+  }
+
   if (teachers.length === 0) {
     return <p className="text-sm text-muted-foreground">No teacher accounts yet.</p>;
   }
@@ -150,6 +166,7 @@ export function TeachersTable({ initialTeachers, classes }) {
                 teacher={teacher}
                 pending={pendingId === teacher.id}
                 onAssign={() => setAssigningTeacher(teacher)}
+                onPermissions={() => setPermissioningTeacher(teacher)}
                 onSetStatus={(status) => setStatus(teacher, status)}
               />
             </div>
@@ -230,6 +247,7 @@ export function TeachersTable({ initialTeachers, classes }) {
                     teacher={teacher}
                     pending={pendingId === teacher.id}
                     onAssign={() => setAssigningTeacher(teacher)}
+                    onPermissions={() => setPermissioningTeacher(teacher)}
                     onSetStatus={(status) => setStatus(teacher, status)}
                   />
                 </TableCell>
@@ -244,6 +262,12 @@ export function TeachersTable({ initialTeachers, classes }) {
         classes={classes}
         onClose={() => setAssigningTeacher(null)}
         onChange={updateAssignments}
+      />
+
+      <PermissionsDialog
+        teacher={permissioningTeacher}
+        onClose={() => setPermissioningTeacher(null)}
+        onChange={updatePermissions}
       />
     </>
   );
@@ -367,6 +391,186 @@ function AssignmentsDialog({ teacher, classes, onClose, onChange }) {
               <Button type="button" size="icon" disabled={saving} onClick={addAssignment}>
                 <Plus className="size-4" />
               </Button>
+            </div>
+          </div>
+        ) : null}
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function PermissionsDialog({ teacher, onClose, onChange }) {
+  const [pendingFeature, setPendingFeature] = useState(null);
+  const [bulkPending, setBulkPending] = useState(false);
+
+  const grantedKeys = teacher
+    ? new Set(teacher.teacherFeaturePermissions.map((p) => p.feature))
+    : new Set();
+  const grantedCount = grantedKeys.size;
+  const totalCount = TEACHER_FEATURES.length;
+  const anyPending = bulkPending || pendingFeature !== null;
+
+  async function toggleFeature(feature, granted) {
+    if (!teacher) return;
+    setPendingFeature(feature);
+    try {
+      if (granted) {
+        const res = await fetch(`/api/super-admin/teachers/${teacher.id}/permissions`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ feature }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Couldn't grant permission");
+        const exists = teacher.teacherFeaturePermissions.some((p) => p.id === data.item.id);
+        onChange(
+          teacher.id,
+          exists
+            ? teacher.teacherFeaturePermissions
+            : [...teacher.teacherFeaturePermissions, data.item],
+        );
+      } else {
+        const res = await fetch(
+          `/api/super-admin/teachers/${teacher.id}/permissions/${feature}`,
+          { method: "DELETE" },
+        );
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data.error || "Couldn't revoke permission");
+        onChange(
+          teacher.id,
+          teacher.teacherFeaturePermissions.filter((p) => p.feature !== feature),
+        );
+      }
+    } catch (err) {
+      toast.error(err.message);
+    } finally {
+      setPendingFeature(null);
+    }
+  }
+
+  async function setAllFeatures(grant) {
+    if (!teacher) return;
+    const targets = TEACHER_FEATURES.map((f) => f.key).filter((key) =>
+      grant ? !grantedKeys.has(key) : grantedKeys.has(key),
+    );
+    if (targets.length === 0) return;
+
+    setBulkPending(true);
+    try {
+      if (grant) {
+        const results = await Promise.all(
+          targets.map((feature) =>
+            fetch(`/api/super-admin/teachers/${teacher.id}/permissions`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ feature }),
+            }).then(async (res) => ({ ok: res.ok, item: (await res.json().catch(() => ({}))).item })),
+          ),
+        );
+        const granted = results.filter((r) => r.ok && r.item).map((r) => r.item);
+        onChange(teacher.id, [...teacher.teacherFeaturePermissions, ...granted]);
+        const failed = targets.length - granted.length;
+        if (failed) toast.error(`Couldn't grant ${failed} permission${failed === 1 ? "" : "s"}`);
+      } else {
+        const results = await Promise.all(
+          targets.map((feature) =>
+            fetch(`/api/super-admin/teachers/${teacher.id}/permissions/${feature}`, {
+              method: "DELETE",
+            }).then((res) => ({ ok: res.ok, feature })),
+          ),
+        );
+        const removedKeys = new Set(results.filter((r) => r.ok).map((r) => r.feature));
+        onChange(
+          teacher.id,
+          teacher.teacherFeaturePermissions.filter((p) => !removedKeys.has(p.feature)),
+        );
+        const failed = targets.length - removedKeys.size;
+        if (failed) toast.error(`Couldn't revoke ${failed} permission${failed === 1 ? "" : "s"}`);
+      }
+    } finally {
+      setBulkPending(false);
+    }
+  }
+
+  return (
+    <Dialog open={Boolean(teacher)} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="sm:max-w-xl">
+        <DialogHeader>
+          <DialogTitle>Feature permissions</DialogTitle>
+        </DialogHeader>
+        {teacher ? (
+          <div className="space-y-4">
+            <div className="flex items-center justify-between gap-2">
+              <p className="text-sm text-muted-foreground">
+                {teacherFullName(teacher) || teacher.email} can manage the areas checked below
+                directly — published immediately, no review needed.
+              </p>
+              <Badge variant="outline" className="shrink-0">
+                {grantedCount}/{totalCount}
+              </Badge>
+            </div>
+
+            <div className="flex gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                disabled={anyPending || grantedCount === totalCount}
+                onClick={() => setAllFeatures(true)}
+              >
+                {bulkPending ? <Loader2 className="size-3.5 animate-spin" /> : null}
+                Select all
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                disabled={anyPending || grantedCount === 0}
+                onClick={() => setAllFeatures(false)}
+              >
+                Clear all
+              </Button>
+            </div>
+
+            <div className="max-h-[60vh] space-y-4 overflow-y-auto pr-1">
+              {TEACHER_FEATURE_GROUPS.map((group) => (
+                <div key={group.label} className="space-y-1.5">
+                  <p className="px-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                    {group.label}
+                  </p>
+                  <div className="grid gap-1 sm:grid-cols-2">
+                    {group.keys.map((key) => {
+                      const feature = TEACHER_FEATURES.find((f) => f.key === key);
+                      const Icon = feature.icon;
+                      const checked = grantedKeys.has(key);
+                      const isPending = pendingFeature === key;
+                      return (
+                        <label
+                          key={key}
+                          htmlFor={`permission-${key}`}
+                          className={cn(
+                            "flex cursor-pointer items-center gap-2 rounded-md border px-2.5 py-2 text-sm transition-colors hover:bg-muted/50",
+                            checked ? "border-primary/30 bg-primary/5" : "border-transparent",
+                          )}
+                        >
+                          <Icon className="size-4 shrink-0 text-muted-foreground" />
+                          <span className="flex-1">{feature.label}</span>
+                          {isPending ? (
+                            <Loader2 className="size-4 shrink-0 animate-spin text-muted-foreground" />
+                          ) : (
+                            <Checkbox
+                              id={`permission-${key}`}
+                              checked={checked}
+                              disabled={anyPending}
+                              onCheckedChange={(next) => toggleFeature(key, Boolean(next))}
+                            />
+                          )}
+                        </label>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         ) : null}

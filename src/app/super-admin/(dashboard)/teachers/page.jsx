@@ -7,7 +7,10 @@ export default async function SuperAdminTeachersPage() {
     prisma.profile.findMany({
       where: { role: "TEACHER" },
       orderBy: [{ status: "asc" }, { createdAt: "desc" }],
-      include: { teacherAssignments: { orderBy: [{ class: "asc" }, { subject: "asc" }] } },
+      include: {
+        teacherAssignments: { orderBy: [{ class: "asc" }, { subject: "asc" }] },
+        teacherFeaturePermissions: true,
+      },
     }),
     prisma.schoolClass.findMany({ orderBy: { position: "asc" } }),
   ]);

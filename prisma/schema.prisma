@@ -41,20 +41,21 @@ model Profile {
   photoUrl  String?
   createdAt DateTime      @default(now())
 
-  newsNotices        NewsNotice[]
-  galleryAlbums      GalleryAlbum[]
-  principalMessages  PrincipalMessage[]
-  faculty            Faculty[]
-  libraryBooks       LibraryBook[]
-  academicPosts      AcademicPost[]
-  toppers            Topper[]
-  facilities         Facility[]
-  homework           Homework[]
-  faqs               Faq[]
-  testimonials       Testimonial[]
-  timeTableSlots     TimeTableSlot[]
-  schoolClasses      SchoolClass[]
-  teacherAssignments TeacherAssignment[]
+  newsNotices               NewsNotice[]
+  galleryAlbums             GalleryAlbum[]
+  principalMessages         PrincipalMessage[]
+  faculty                   Faculty[]
+  libraryBooks              LibraryBook[]
+  academicPosts             AcademicPost[]
+  toppers                   Topper[]
+  facilities                Facility[]
+  homework                  Homework[]
+  faqs                      Faq[]
+  testimonials              Testimonial[]
+  timeTableSlots            TimeTableSlot[]
+  schoolClasses             SchoolClass[]
+  teacherAssignments        TeacherAssignment[]
+  teacherFeaturePermissions TeacherFeaturePermission[]
 
   @@map("profiles")
 }
@@ -72,6 +73,36 @@ model TeacherAssignment {
 
   @@unique([teacherId, class, subject])
   @@map("teacher_assignments")
+}
+
+enum TeacherFeature {
+  FAQ
+  TESTIMONIALS
+  PRINCIPAL_MESSAGE
+  FACULTY
+  FACILITIES
+  GALLERY
+  NEWS_NOTICES
+  CLASSES
+  LIBRARY
+  TIME_TABLE
+  BLOG
+  TOPPERS
+}
+
+// Which content areas a TEACHER profile may manage directly (create/edit/
+// delete, published immediately, no admin review) — granted by an admin
+// from the super-admin teacher-approval page. Mirrors TeacherAssignment.
+model TeacherFeaturePermission {
+  id        String         @id @default(cuid())
+  feature   TeacherFeature
+  createdAt DateTime       @default(now())
+
+  teacherId String  @db.Uuid
+  teacher   Profile @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+
+  @@unique([teacherId, feature])
+  @@map("teacher_feature_permissions")
 }
 
 // Short-lived record backing teacher email verification. Holds the signup

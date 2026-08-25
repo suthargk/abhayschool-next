@@ -32,13 +32,19 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { getInitials, teacherFullName } from "@/lib/teacher";
+import { TEACHER_FEATURES } from "@/lib/teacher-features";
 
-const navItems = [
+const BASE_NAV_ITEMS = [
   { href: "/teacher", label: "Dashboard", icon: LayoutDashboard },
   { href: "/teacher/homework", label: "Homework", icon: GraduationCap },
 ];
 
-function getPageTitle(pathname) {
+function buildNavItems(features) {
+  const granted = TEACHER_FEATURES.filter((f) => features.includes(f.key));
+  return [...BASE_NAV_ITEMS, ...granted];
+}
+
+function getPageTitle(pathname, navItems) {
   const match = [...navItems]
     .sort((a, b) => b.href.length - a.href.length)
     .find((item) => pathname === item.href || pathname?.startsWith(`${item.href}/`));
@@ -61,11 +67,12 @@ function NavLink({ href, label, icon: Icon }) {
   );
 }
 
-export function TeacherShell({ children, profile }) {
+export function TeacherShell({ children, profile, features = [] }) {
   const router = useRouter();
   const pathname = usePathname();
   const { resolvedTheme } = useTheme();
   const name = teacherFullName(profile);
+  const navItems = buildNavItems(features);
 
   async function handleLogout() {
     await fetch("/api/teacher/logout", { method: "POST" });
@@ -156,7 +163,7 @@ export function TeacherShell({ children, profile }) {
         <header className="flex h-14 shrink-0 items-center gap-2 border-b px-4 sm:px-6">
           <SidebarTrigger className="-ml-1" />
           <Separator orientation="vertical" className="h-4" />
-          <h1 className="truncate text-sm font-medium">{getPageTitle(pathname)}</h1>
+          <h1 className="truncate text-sm font-medium">{getPageTitle(pathname, navItems)}</h1>
           <div className="ml-auto flex items-center gap-1">
             <ModeToggle />
           </div>

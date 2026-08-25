@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 
 import { getCurrentProfile } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 import { createClient } from "@/lib/supabase/server";
 
 import { TeacherShell } from "./teacher-shell";
@@ -20,5 +21,15 @@ export default async function TeacherDashboardLayout({ children }) {
     redirect("/teacher/login");
   }
 
-  return <TeacherShell profile={profile}>{children}</TeacherShell>;
+  const permissions = await prisma.teacherFeaturePermission.findMany({
+    where: { teacherId: profile.id },
+    select: { feature: true },
+  });
+  const features = permissions.map((p) => p.feature);
+
+  return (
+    <TeacherShell profile={profile} features={features}>
+      {children}
+    </TeacherShell>
+  );
 }

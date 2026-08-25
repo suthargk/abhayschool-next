@@ -45,3 +45,22 @@ export async function requireRole(roles) {
   }
   return profile;
 }
+
+/**
+ * Throws a Response-friendly error unless the current user is an ACTIVE
+ * TEACHER who has been granted the given content-area feature by an admin
+ * (see TeacherFeaturePermission). Use in Route Handlers for the 12
+ * permission-gated teacher content areas.
+ */
+export async function requireTeacherFeature(feature) {
+  const profile = await requireRole(["TEACHER"]);
+  const grant = await prisma.teacherFeaturePermission.findUnique({
+    where: { teacherId_feature: { teacherId: profile.id, feature } },
+  });
+  if (!grant) {
+    const error = new Error("Forbidden");
+    error.status = 403;
+    throw error;
+  }
+  return profile;
+}
