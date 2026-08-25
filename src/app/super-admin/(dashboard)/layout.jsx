@@ -1,12 +1,29 @@
+import { redirect } from "next/navigation";
+
 import { getCurrentProfile } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 import { SuperAdminShell } from "./super-admin-shell";
 
 export default async function SuperAdminDashboardLayout({ children }) {
-  const [profile, newAdmissionsCount, pendingAdmissions, pendingTestimonials] =
+  const profile = await getCurrentProfile();
+
+  // A teacher (or any other non-admin authenticated user) shares the same
+  // Supabase session cookie as the super-admin portal, so middleware alone
+  // (which only checks "is there a session") isn't enough to keep them out
+  // here — every /super-admin/* page trusts this layout for the role gate.
+  // Redirect to their own portal rather than /super-admin/login: that path
+  // bounces a logged-in user straight back to /super-admin, which would
+  // loop forever for a role that will never pass this check.
+  if (profile?.role === "TEACHER") {
+    redirect("/teacher");
+  }
+  if (!profile || !["ADMIN", "EDITOR"].includes(profile.role)) {
+    redirect("/");
+  }
+
+  const [newAdmissionsCount, pendingAdmissions, pendingTestimonials, pendingTeachersCount] =
     await Promise.all([
-      getCurrentProfile(),
       prisma.admissionEnquiry.count({ where: { status: "NEW" } }),
       prisma.admissionEnquiry.findMany({
         where: { status: "NEW" },
@@ -20,6 +37,7 @@ export default async function SuperAdminDashboardLayout({ children }) {
         take: 10,
         select: { id: true, name: true, quote: true, createdAt: true },
       }),
+      prisma.profile.count({ where: { role: "TEACHER", status: "PENDING" } }),
     ]);
 
   return (
@@ -28,6 +46,7 @@ export default async function SuperAdminDashboardLayout({ children }) {
       newAdmissionsCount={newAdmissionsCount}
       pendingAdmissions={pendingAdmissions}
       pendingTestimonials={pendingTestimonials}
+      pendingTeachersCount={pendingTeachersCount}
     >
       {children}
     </SuperAdminShell>

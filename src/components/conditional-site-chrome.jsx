@@ -13,7 +13,8 @@ import Footer from "@/app/landing/footer";
 
 export function ConditionalSiteChrome({ children }) {
   const pathname = usePathname();
-  const hideSiteChrome = pathname?.startsWith("/super-admin");
+  const hideSiteChrome =
+    pathname?.startsWith("/super-admin") || pathname?.startsWith("/teacher");
 
   if (hideSiteChrome) {
     return <>{children}</>;

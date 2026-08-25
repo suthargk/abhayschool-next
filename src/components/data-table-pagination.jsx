@@ -46,6 +46,7 @@ export function DataTablePagination({
   totalPages,
   pageSizeOptions = DEFAULT_PAGE_SIZE_OPTIONS,
   onPendingChange,
+  extraParams = {},
 }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -67,6 +68,7 @@ export function DataTablePagination({
       q: search || undefined,
       page: targetPage > 1 ? targetPage : undefined,
       pageSize: pageSize !== defaultPageSize ? pageSize : undefined,
+      ...extraParams,
     });
   }
 
@@ -75,6 +77,7 @@ export function DataTablePagination({
       buildHref(basePath, {
         q: search || undefined,
         pageSize: Number(value) !== defaultPageSize ? value : undefined,
+        ...extraParams,
       })
     );
   }

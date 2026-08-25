@@ -52,12 +52,14 @@ import {
   Newspaper,
   Quote,
   Trophy,
+  UserCheck,
   Users,
 } from "lucide-react";
 
 const DASHBOARD_ITEM = { href: "/super-admin", label: "Dashboard", icon: LayoutDashboard };
 const ADMISSIONS_HREF = "/super-admin/admissions";
 const TESTIMONIALS_HREF = "/super-admin/homepage/testimonials";
+const TEACHERS_HREF = "/super-admin/teachers";
 
 const navSections = [
   {
@@ -106,6 +108,7 @@ const navSections = [
         label: "Homework",
         icon: GraduationCap,
       },
+      { href: TEACHERS_HREF, label: "Teachers", icon: UserCheck },
     ],
   },
   {
@@ -199,6 +202,7 @@ export function SuperAdminShell({
   newAdmissionsCount = 0,
   pendingAdmissions = [],
   pendingTestimonials = [],
+  pendingTeachersCount = 0,
 }) {
   const router = useRouter();
   const notifications = buildNotifications({ pendingAdmissions, pendingTestimonials });
@@ -264,7 +268,9 @@ export function SuperAdminShell({
                           ? newAdmissionsCount
                           : item.href === TESTIMONIALS_HREF
                             ? pendingTestimonials.length
-                            : undefined
+                            : item.href === TEACHERS_HREF
+                              ? pendingTeachersCount
+                              : undefined
                       }
                     />
                   ))}

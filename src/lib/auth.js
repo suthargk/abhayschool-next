@@ -36,5 +36,12 @@ export async function requireRole(roles) {
     error.status = profile ? 403 : 401;
     throw error;
   }
+  // Self-signed-up teacher accounts need admin approval before they can use
+  // any TEACHER-gated route; ADMIN/EDITOR profiles are always ACTIVE.
+  if (profile.role === "TEACHER" && profile.status !== "ACTIVE") {
+    const error = new Error("Forbidden");
+    error.status = 403;
+    throw error;
+  }
   return profile;
 }

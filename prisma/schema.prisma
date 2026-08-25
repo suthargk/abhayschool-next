@@ -12,32 +12,89 @@ datasource db {
 enum Role {
   EDITOR
   ADMIN
+  TEACHER
 }
 
-// Mirrors a Supabase Auth user (auth.users.id). Created manually via Prisma
-// Studio after the account is created in the Supabase Auth dashboard —
-// this row is what grants dashboard access and a role.
-model Profile {
-  id        String   @id @db.Uuid
-  email     String   @unique
-  role      Role     @default(EDITOR)
-  createdAt DateTime @default(now())
+// Only meaningful for TEACHER profiles: ADMIN/EDITOR rows created via Prisma
+// Studio stay ACTIVE. A teacher who self-signs-up starts PENDING until an
+// admin approves them in the super-admin dashboard; REJECTED revokes access.
+enum ProfileStatus {
+  ACTIVE
+  PENDING
+  REJECTED
+}
 
-  newsNotices       NewsNotice[]
-  galleryAlbums     GalleryAlbum[]
-  principalMessages PrincipalMessage[]
-  faculty           Faculty[]
-  libraryBooks      LibraryBook[]
-  academicPosts     AcademicPost[]
-  toppers           Topper[]
-  facilities        Facility[]
-  homework          Homework[]
-  faqs              Faq[]
-  testimonials      Testimonial[]
-  timeTableSlots    TimeTableSlot[]
-  schoolClasses     SchoolClass[]
+// Mirrors a Supabase Auth user (auth.users.id). ADMIN/EDITOR rows are created
+// manually via Prisma Studio after the account is created in the Supabase
+// Auth dashboard. TEACHER rows are created by the self-serve signup flow
+// (src/app/api/teacher/verify-otp) after the teacher verifies the OTP emailed
+// to their school address — this row is what grants dashboard access and a
+// role.
+model Profile {
+  id        String        @id @db.Uuid
+  email     String        @unique
+  role      Role          @default(EDITOR)
+  status    ProfileStatus @default(ACTIVE)
+  firstName String?
+  lastName  String?
+  phone     String?
+  photoUrl  String?
+  createdAt DateTime      @default(now())
+
+  newsNotices        NewsNotice[]
+  galleryAlbums      GalleryAlbum[]
+  principalMessages  PrincipalMessage[]
+  faculty            Faculty[]
+  libraryBooks       LibraryBook[]
+  academicPosts      AcademicPost[]
+  toppers            Topper[]
+  facilities         Facility[]
+  homework           Homework[]
+  faqs               Faq[]
+  testimonials       Testimonial[]
+  timeTableSlots     TimeTableSlot[]
+  schoolClasses      SchoolClass[]
+  teacherAssignments TeacherAssignment[]
 
   @@map("profiles")
+}
+
+// Which class+subject combinations a TEACHER profile is allowed to post
+// homework for, set by an admin from the super-admin teacher-approval page.
+model TeacherAssignment {
+  id        String   @id @default(cuid())
+  class     String
+  subject   String
+  createdAt DateTime @default(now())
+
+  teacherId String  @db.Uuid
+  teacher   Profile @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+
+  @@unique([teacherId, class, subject])
+  @@map("teacher_assignments")
+}
+
+// Short-lived record backing teacher email verification. Holds the signup
+// form data (password encrypted at rest, see src/lib/otp.js) until the OTP
+// is verified — no Supabase Auth user and no Profile are created until then,
+// so an unverified signup never reaches auth.users. Consumed by
+// /api/teacher/verify-otp, which creates the Auth user and Profile together.
+// One pending signup per email; re-signing up before verifying replaces the
+// row (see /api/teacher/signup).
+model TeacherSignupOtp {
+  id          String   @id @default(cuid())
+  email       String   @unique
+  firstName   String
+  lastName    String
+  phone       String
+  photoUrl    String?
+  passwordEnc String
+  codeHash    String
+  attempts    Int      @default(0)
+  expiresAt   DateTime
+  createdAt   DateTime @default(now())
+
+  @@map("teacher_signup_otps")
 }
 
 enum ContentType {
