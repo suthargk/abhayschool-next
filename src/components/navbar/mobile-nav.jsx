@@ -251,6 +251,17 @@ export function MobileNav() {
               Apply Now
             </Link>
           </SheetClose>
+          <SheetClose asChild>
+            <Link
+              href="/teacher/login"
+              className={cn(
+                buttonVariants({ size: "lg", variant: "outline" }),
+                "mt-2 w-full"
+              )}
+            >
+              Teacher Login
+            </Link>
+          </SheetClose>
         </div>
       </SheetContent>
     </Sheet>

@@ -31,11 +31,13 @@ function LoginForm() {
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
         setError(data.error || "Sign in failed");
+        setLoading(false);
         return;
       }
       router.replace(data.status === "PENDING" ? "/teacher/pending" : "/teacher");
       router.refresh();
-    } finally {
+    } catch (err) {
+      setError("Sign in failed");
       setLoading(false);
     }
   }

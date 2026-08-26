@@ -26,11 +26,13 @@ export default function SuperAdminLoginPage() {
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
         setError(data.error || "Sign in failed");
+        setLoading(false);
         return;
       }
       router.replace("/super-admin");
       router.refresh();
-    } finally {
+    } catch (err) {
+      setError("Sign in failed");
       setLoading(false);
     }
   }

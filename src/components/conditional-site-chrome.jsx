@@ -36,6 +36,14 @@ export function ConditionalSiteChrome({ children }) {
         </Link>
         <Navbar />
         <div className="col-start-3 flex items-center justify-end gap-2">
+          <Button
+            asChild
+            size="sm"
+            variant="outline"
+            className="hidden md:inline-flex"
+          >
+            <Link href="/teacher/login">Teacher Login</Link>
+          </Button>
           <Button asChild size="sm" className="hidden md:inline-flex">
             <Link href="/#admissions">Apply Now</Link>
           </Button>
