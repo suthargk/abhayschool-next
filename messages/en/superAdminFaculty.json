@@ -1,0 +1,73 @@
+{
+  "page": {
+    "heading": "Faculty",
+    "description": "Manage the staff shown on the public Faculty page.",
+    "addFaculty": "Add faculty"
+  },
+  "editPage": {
+    "heading": "Edit faculty"
+  },
+  "newPage": {
+    "heading": "Add faculty"
+  },
+  "categories": {
+    "leadership": "Leadership",
+    "teaching": "Teaching",
+    "support": "Student Support"
+  },
+  "form": {
+    "photoLabel": "Photo",
+    "uploading": "Uploading…",
+    "photoHelp": "Optional. A generic placeholder is shown on the public site if left blank.",
+    "nameLabel": "Name",
+    "namePlaceholder": "e.g. Jane Doe",
+    "designationLabel": "Designation",
+    "designationPlaceholder": "e.g. Senior Teacher",
+    "categoryLabel": "Category",
+    "categoryHelp": "Controls which section of the public Faculty page this person appears in.",
+    "departmentLabel": "Department",
+    "departmentPlaceholder": "e.g. Science",
+    "experienceLabel": "Years of experience",
+    "experiencePlaceholder": "e.g. 8",
+    "subjectsLabel": "Subjects taught",
+    "subjectsPlaceholder": "Type a subject and press Enter",
+    "gradesLabel": "Classes / grades taught",
+    "gradesPlaceholder": "e.g. VIII, IX, X",
+    "qualificationLabel": "Qualification",
+    "qualificationPlaceholder": "e.g. M.Sc, B.Ed",
+    "areasOfInterestLabel": "Areas of interest",
+    "areasOfInterestPlaceholder": "e.g. STEM education, Mathematics competitions",
+    "achievementsLabel": "Achievements & certifications",
+    "achievementsPlaceholder": "e.g. Best Teacher Award 2023",
+    "emailLabel": "Email",
+    "emailPlaceholder": "e.g. jane.doe@abhayschool.edu",
+    "emailHelp": "Internal reference only — not shown on the public site.",
+    "bioLabel": "Bio",
+    "bioPlaceholder": "A short blurb about this faculty member.",
+    "saveDraft": "Save draft",
+    "saveChanges": "Save changes",
+    "updating": "Updating…",
+    "uploadFailed": "Upload failed",
+    "saveFailed": "Save failed",
+    "statusUpdateFailed": "Failed to update status"
+  },
+  "table": {
+    "searchPlaceholder": "Search by name, designation, or department...",
+    "deleteSelected": "Delete selected",
+    "columns": {
+      "reorder": "Reorder",
+      "name": "Name",
+      "designation": "Designation",
+      "department": "Department",
+      "category": "Category",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "empty": "No faculty members yet.",
+    "dragHintDisabled": "Clear the search to drag and reorder.",
+    "dragHint": "Drag rows to change display order.",
+    "deleteDescriptionOne": "This will permanently remove this faculty member from the site.",
+    "deleteDescriptionMany": "This will permanently remove these faculty members from the site.",
+    "bulkDeleteLabel": "{count, plural, one {# faculty member} other {# faculty members}}"
+  }
+}

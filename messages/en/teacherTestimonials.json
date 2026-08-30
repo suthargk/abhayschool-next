@@ -1,0 +1,50 @@
+{
+  "page": {
+    "heading": "Testimonials",
+    "description": "Testimonials you've added.",
+    "addTestimonial": "Add testimonial"
+  },
+  "new": {
+    "heading": "Add testimonial"
+  },
+  "edit": {
+    "heading": "Edit testimonial"
+  },
+  "form": {
+    "photoLabel": "Photo",
+    "uploading": "Uploading…",
+    "photoHelp": "Optional. A placeholder avatar is shown if left blank.",
+    "nameLabel": "Name",
+    "namePlaceholder": "e.g. Priya Sharma",
+    "designationLabel": "Designation",
+    "designationPlaceholder": "e.g. Parent of Class VIII student",
+    "quoteLabel": "Quote",
+    "quotePlaceholder": "What did they say about the school?",
+    "saving": "Saving…",
+    "saveChanges": "Save changes",
+    "publish": "Publish",
+    "publishNote": "This testimonial is published immediately and appears on the school website right away.",
+    "uploadFailed": "Upload failed",
+    "saveFailed": "Save failed"
+  },
+  "list": {
+    "searchPlaceholder": "Search by name, designation, or quote…",
+    "clearFilters": "Clear filters",
+    "noResultsFiltered": "No testimonials match your search.",
+    "noResultsEmpty": "You haven't added any testimonials yet.",
+    "selectAllRows": "Select all rows",
+    "selectAllLabel": "Select all",
+    "selectRow": "Select {name}",
+    "selectedCount": "{count} selected",
+    "deleteSelected": "Delete selected",
+    "nameColumn": "Name",
+    "designationColumn": "Designation",
+    "quoteColumn": "Quote",
+    "itemsLabel": "{count, plural, one {# item} other {# items}}",
+    "deleteTitle": "Delete {label}?",
+    "deleteDescription": "This can't be undone. This will permanently delete {count, plural, one {this item} other {these items}}.",
+    "deletingToast": "Deleting {label}…",
+    "deletedToast": "Deleted {label}",
+    "deleteFailedToast": "Failed to delete {label}"
+  }
+}

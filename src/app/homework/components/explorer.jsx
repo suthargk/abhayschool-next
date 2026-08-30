@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
 import { Loader2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,6 +21,12 @@ import { RANGE_OPTIONS } from "../constants";
 import { SummaryStats } from "./summary-stats";
 import { HomeworkList } from "./homework-list";
 
+const RANGE_LABEL_KEYS = {
+  THIS_WEEK: "rangeThisWeek",
+  NEXT_WEEK: "rangeNextWeek",
+  ALL: "rangeAll",
+};
+
 export function HomeworkExplorer({
   q,
   classFilter,
@@ -36,6 +43,7 @@ export function HomeworkExplorer({
   classOptions,
   subjectOptions,
 }) {
+  const t = useTranslations("homework.explorer");
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [search, setSearch] = useState(q);
@@ -83,13 +91,13 @@ export function HomeworkExplorer({
               disabled={isPending}
               onClick={() => navigate({ range: r.value, page: 1 })}
             >
-              {r.label}
+              {t(RANGE_LABEL_KEYS[r.value])}
             </Button>
           ))}
           {isPending ? (
             <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
               <Loader2 className="size-3.5 animate-spin" />
-              Updating…
+              {t("updating")}
             </span>
           ) : null}
         </div>
@@ -102,7 +110,7 @@ export function HomeworkExplorer({
             type="search"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search homework…"
+            placeholder={t("searchPlaceholder")}
             className="h-11 sm:max-w-xs"
           />
           <Select
@@ -111,10 +119,10 @@ export function HomeworkExplorer({
             disabled={isPending}
           >
             <SelectTrigger className="h-11 sm:w-44">
-              <SelectValue placeholder="All classes" />
+              <SelectValue placeholder={t("allClasses")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="ALL">All classes</SelectItem>
+              <SelectItem value="ALL">{t("allClasses")}</SelectItem>
               {classOptions.map((c) => (
                 <SelectItem key={c} value={c}>
                   {classLabel(classes, c)}
@@ -128,10 +136,10 @@ export function HomeworkExplorer({
             disabled={isPending}
           >
             <SelectTrigger className="h-11 sm:w-44">
-              <SelectValue placeholder="All subjects" />
+              <SelectValue placeholder={t("allSubjects")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="ALL">All subjects</SelectItem>
+              <SelectItem value="ALL">{t("allSubjects")}</SelectItem>
               {subjectOptions.map((s) => (
                 <SelectItem key={s} value={s}>
                   {s}
@@ -141,7 +149,7 @@ export function HomeworkExplorer({
           </Select>
           <Button type="submit" className="h-11 px-6" disabled={isPending}>
             {isPending ? <Loader2 className="size-4 animate-spin" /> : null}
-            Apply
+            {t("apply")}
           </Button>
         </form>
       </div>
@@ -156,7 +164,7 @@ export function HomeworkExplorer({
       {total > 0 ? (
         <div className="flex flex-col items-center gap-4 border-t pt-6 text-sm sm:flex-row sm:justify-between">
           <span className="text-muted-foreground">
-            Showing {showingFrom}–{showingTo} of {total}
+            {t("showingResults", { from: showingFrom, to: showingTo, total })}
           </span>
           {totalPages > 1 ? (
             <div className="flex items-center gap-3">
@@ -166,10 +174,10 @@ export function HomeworkExplorer({
                 disabled={isPending || page <= 1}
                 onClick={() => navigate({ page: page - 1 })}
               >
-                ← Previous
+                {t("previous")}
               </Button>
               <span className="text-muted-foreground">
-                Page {page} of {totalPages}
+                {t("pageOf", { page, totalPages })}
               </span>
               <Button
                 variant="outline"
@@ -177,7 +185,7 @@ export function HomeworkExplorer({
                 disabled={isPending || page >= totalPages}
                 onClick={() => navigate({ page: page + 1 })}
               >
-                Next →
+                {t("next")}
               </Button>
             </div>
           ) : null}

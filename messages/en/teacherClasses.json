@@ -1,0 +1,17 @@
+{
+  "heading": "Classes",
+  "description": "Manage the list of classes used across Library, Homework, and Time Table.",
+  "addPlaceholder": "e.g. Nursery, Class I, Class XI - Science",
+  "empty": "No classes yet. Add one above.",
+  "moveUp": "Move {label} up",
+  "moveDown": "Move {label} down",
+  "deleteDialog": {
+    "title": "Delete \"{label}\"?",
+    "description": "This can't be undone. Deletion is blocked if any library book, homework, or time table entry still uses this class."
+  },
+  "errors": {
+    "addFailed": "Failed to add class",
+    "renameFailed": "Failed to rename class",
+    "deleteFailed": "Failed to delete class"
+  }
+}

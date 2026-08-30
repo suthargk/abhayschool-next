@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import {
   Dialog,
   DialogContent,
@@ -10,47 +11,33 @@ import {
 } from "../ui/dialog";
 import { Button } from "../ui/button";
 
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
 import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
 import { DesktopIcon, MoonIcon, SunIcon } from "@radix-ui/react-icons";
 import { useTheme } from "next-themes";
-import { LANGUAGES } from "@/Helper/languages";
+import { LanguageSelect } from "@/components/language-select";
 
 const CustomizeSettingDialog = () => {
   const { theme, setTheme } = useTheme();
+  const t = useTranslations("common");
 
   const [customizeSettings, setCustomizeSettings] = useState({
-    isCustomizeSettingDialog: true,
+    isCustomizeSettingDialog: false,
     themeMode: theme,
-    language: LANGUAGES[0],
   });
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const language = localStorage.getItem("language");
       const storedTheme = localStorage.getItem("theme");
 
       setCustomizeSettings({
-        isCustomizeSettingDialog: !(language && (storedTheme || theme)),
+        isCustomizeSettingDialog: !(storedTheme || theme),
         themeMode: storedTheme || theme,
-        language:
-          LANGUAGES.find((lang) => lang.value === language) || LANGUAGES[0],
       });
     }
   }, [theme]);
 
   const handleClick = () => {
-    localStorage.setItem("language", customizeSettings.language.value);
-    localStorage.setItem("theme", customizeSettings.themeMode); // (you missed saving theme before)
-
+    localStorage.setItem("theme", customizeSettings.themeMode);
     setTheme(customizeSettings.themeMode);
 
     setCustomizeSettings((settings) => ({
@@ -71,44 +58,20 @@ const CustomizeSettingDialog = () => {
     >
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Customize Your Experience</DialogTitle>
+          <DialogTitle>{t("customizeDialog.title")}</DialogTitle>
           <DialogDescription>
-            Select your preferred language and theme to get started.
+            {t("customizeDialog.description")}
           </DialogDescription>
         </DialogHeader>
 
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-2 mt-2">
-            <div className="font-medium">Select Your Language</div>
-            <Select
-              defaultValue={customizeSettings.language}
-              onValueChange={(value) => {
-                setCustomizeSettings((settings) => ({
-                  ...settings,
-                  language: value,
-                }));
-              }}
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select a language" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectLabel>Languages</SelectLabel>
-                  {LANGUAGES.map((language) => {
-                    return (
-                      <SelectItem key={language.id} value={language}>
-                        {language.label}
-                      </SelectItem>
-                    );
-                  })}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
+            <div className="font-medium">{t("customizeDialog.languageLabel")}</div>
+            <LanguageSelect triggerClassName="w-full" />
           </div>
 
           <div className="flex flex-col  gap-2">
-            <div className="font-medium">Choose Your Theme</div>
+            <div className="font-medium">{t("customizeDialog.themeLabel")}</div>
             <ToggleGroup
               type="single"
               className="justify-start"
@@ -123,19 +86,19 @@ const CustomizeSettingDialog = () => {
               <ToggleGroupItem value="dark" aria-label="Toggle dark">
                 <div className="flex gap-2 items-center">
                   <MoonIcon />
-                  <div>Dark</div>
+                  <div>{t("theme.dark")}</div>
                 </div>
               </ToggleGroupItem>
               <ToggleGroupItem value="light" aria-label="Toggle light">
                 <div className="flex gap-2 items-center">
                   <SunIcon />
-                  <div>Light</div>
+                  <div>{t("theme.light")}</div>
                 </div>
               </ToggleGroupItem>
               <ToggleGroupItem value="system" aria-label="Toggle system">
                 <div className="flex gap-2 items-center">
                   <DesktopIcon />
-                  <div>System</div>
+                  <div>{t("theme.system")}</div>
                 </div>
               </ToggleGroupItem>
             </ToggleGroup>
@@ -143,7 +106,7 @@ const CustomizeSettingDialog = () => {
         </div>
         <DialogFooter>
           <Button type="submit" onClick={handleClick}>
-            Save changes
+            {t("customizeDialog.save")}
           </Button>
         </DialogFooter>
       </DialogContent>

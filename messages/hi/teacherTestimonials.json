@@ -1,0 +1,50 @@
+{
+  "page": {
+    "heading": "अभिमत",
+    "description": "आपके द्वारा जोड़े गए अभिमत।",
+    "addTestimonial": "अभिमत जोड़ें"
+  },
+  "new": {
+    "heading": "अभिमत जोड़ें"
+  },
+  "edit": {
+    "heading": "अभिमत संपादित करें"
+  },
+  "form": {
+    "photoLabel": "फ़ोटो",
+    "uploading": "अपलोड हो रहा है…",
+    "photoHelp": "वैकल्पिक। खाली छोड़ने पर एक डिफ़ॉल्ट अवतार दिखाया जाएगा।",
+    "nameLabel": "नाम",
+    "namePlaceholder": "जैसे प्रिया शर्मा",
+    "designationLabel": "पदनाम",
+    "designationPlaceholder": "जैसे कक्षा आठवीं के विद्यार्थी के अभिभावक",
+    "quoteLabel": "कथन",
+    "quotePlaceholder": "उन्होंने स्कूल के बारे में क्या कहा?",
+    "saving": "सहेजा जा रहा है…",
+    "saveChanges": "परिवर्तन सहेजें",
+    "publish": "प्रकाशित करें",
+    "publishNote": "यह अभिमत तुरंत प्रकाशित हो जाता है और तत्काल स्कूल की वेबसाइट पर दिखाई देता है।",
+    "uploadFailed": "अपलोड विफल",
+    "saveFailed": "सहेजना विफल"
+  },
+  "list": {
+    "searchPlaceholder": "नाम, पदनाम या कथन से खोजें…",
+    "clearFilters": "फ़िल्टर साफ़ करें",
+    "noResultsFiltered": "आपकी खोज से मेल खाता कोई अभिमत नहीं मिला।",
+    "noResultsEmpty": "आपने अभी तक कोई अभिमत नहीं जोड़ा है।",
+    "selectAllRows": "सभी पंक्तियाँ चुनें",
+    "selectAllLabel": "सभी चुनें",
+    "selectRow": "{name} को चुनें",
+    "selectedCount": "{count} चयनित",
+    "deleteSelected": "चयनित हटाएँ",
+    "nameColumn": "नाम",
+    "designationColumn": "पदनाम",
+    "quoteColumn": "कथन",
+    "itemsLabel": "{count, plural, one {# आइटम} other {# आइटम}}",
+    "deleteTitle": "{label} हटाएँ?",
+    "deleteDescription": "इसे पूर्ववत नहीं किया जा सकता। {count, plural, one {यह आइटम स्थायी रूप से हट जाएगा।} other {ये आइटम स्थायी रूप से हट जाएंगे।}}",
+    "deletingToast": "{label} हटाया जा रहा है…",
+    "deletedToast": "{label} हटा दिया गया",
+    "deleteFailedToast": "{label} हटाने में विफल"
+  }
+}

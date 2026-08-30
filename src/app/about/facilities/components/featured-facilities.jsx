@@ -1,17 +1,18 @@
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 
 import { cn } from "@/lib/utils";
 
 export function FeaturedFacilities({ items }) {
+  const t = useTranslations("facilities.featuredFacilities");
+
   return (
     <section className="space-y-14">
       <div className="mx-auto max-w-2xl space-y-2 text-center">
         <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-          Featured Facilities
+          {t("heading")}
         </h2>
-        <p className="text-muted-foreground">
-          A closer look at some of the spaces students use every day.
-        </p>
+        <p className="text-muted-foreground">{t("description")}</p>
       </div>
 
       <div className="space-y-14">

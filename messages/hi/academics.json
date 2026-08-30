@@ -1,0 +1,61 @@
+{
+  "page": {
+    "heading": "शैक्षणिक",
+    "description": "हमारी शैक्षणिक टीम के कार्यक्रम, अपडेट और कहानियाँ।"
+  },
+  "explorer": {
+    "searchPlaceholder": "शैक्षणिक पोस्ट खोजें…",
+    "search": "खोजें",
+    "empty": "कोई परिणाम नहीं मिला। कृपया कोई अन्य खोज करें या थोड़ी देर बाद फिर देखें!",
+    "previous": "← पिछला",
+    "next": "अगला →",
+    "loading": "लोड हो रहा है…",
+    "pageOf": "पृष्ठ {page}, कुल {totalPages} में से"
+  },
+  "postDetail": {
+    "backToAcademics": "शैक्षणिक पृष्ठ पर वापस जाएँ"
+  },
+  "library": {
+    "heading": "विद्यालय पुस्तकालय",
+    "description": "हमारे संग्रह की शैक्षणिक और संदर्भ पुस्तकों को कक्षा, विषय और प्रकाशन के अनुसार देखें।",
+    "bookWord": "{count, plural, one {पुस्तक} other {पुस्तकें}}",
+    "subjectWord": "{count, plural, one {विषय} other {विषय}}",
+    "classesLabel": "कक्षाएँ",
+    "searchPlaceholder": "पुस्तक के नाम, विषय, प्रकाशन या कक्षा से खोजें...",
+    "allClasses": "सभी कक्षाएँ",
+    "allSubjects": "सभी विषय",
+    "allPublications": "सभी प्रकाशन",
+    "clearFilters": "फ़िल्टर हटाएँ",
+    "columnClass": "कक्षा",
+    "columnBookName": "पुस्तक का नाम",
+    "columnSubject": "विषय",
+    "columnPublicationHeader": "प्रकाशन",
+    "detailPublication": "प्रकाशन",
+    "noBooksFound": "कोई पुस्तक नहीं मिली।",
+    "showingRange": "{count, plural, one {कुल # पुस्तक में से {start}–{end} दिखाई जा रही है} other {कुल # पुस्तकों में से {start}–{end} दिखाई जा रही हैं}}",
+    "noBooksMatchFilters": "आपकी खोज या फ़िल्टर से कोई पुस्तक मेल नहीं खाती।",
+    "noBooksYet": "अभी तक कोई पुस्तक सूचीबद्ध नहीं है।",
+    "previous": "पिछला",
+    "next": "अगला",
+    "pageOf": "पृष्ठ {page}, कुल {totalPages} में से"
+  },
+  "timeTable": {
+    "heading": "समय सारणी",
+    "description": "कक्षा, दिन और अवधि के अनुसार साप्ताहिक कक्षा समय सारणी।",
+    "schoolName": "श्री अभय नोबल्स सीनियर सेकेंडरी स्कूल",
+    "weekdays": {
+      "monday": "सोमवार",
+      "tuesday": "मंगलवार",
+      "wednesday": "बुधवार",
+      "thursday": "गुरुवार",
+      "friday": "शुक्रवार",
+      "saturday": "शनिवार"
+    },
+    "pdfTitle": "समय सारणी — {className}",
+    "periodColumn": "अवधि",
+    "downloadPdf": "पीडीएफ़ डाउनलोड करें",
+    "preparingPdf": "तैयार किया जा रहा है…",
+    "emptyGlobal": "अभी तक कोई समय सारणी प्रकाशित नहीं की गई है।",
+    "emptyClass": "इस कक्षा के लिए अभी तक कोई समय सारणी प्रकाशित नहीं की गई है।"
+  }
+}

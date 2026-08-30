@@ -2,10 +2,13 @@ import Link from "next/link";
 import Image from "next/image";
 import { format } from "date-fns";
 import { ImageOff } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 const ASPECTS = ["aspect-[4/3]", "aspect-square", "aspect-[3/4]"];
 
 export function AlbumGrid({ albums, emptyMessage }) {
+  const t = useTranslations("gallery.albumGrid");
+
   if (albums.length === 0) {
     return (
       <div className="flex flex-col items-center gap-3 rounded-lg border border-dashed p-10 text-center">
@@ -45,7 +48,7 @@ export function AlbumGrid({ albums, emptyMessage }) {
               {album.title}
             </h2>
             <p className="text-xs text-muted-foreground">
-              {album._count.images} photo{album._count.images === 1 ? "" : "s"}
+              {t("photoCount", { count: album._count.images })}
             </p>
           </div>
         </Link>

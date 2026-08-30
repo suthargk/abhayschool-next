@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Check, Circle, CircleDashed, GripVertical, MoreHorizontal, UserRound } from "lucide-react";
@@ -18,7 +19,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
-import { facultyCategoryLabel } from "@/data/faculty-categories";
+import { FACULTY_CATEGORY_LABEL_KEYS } from "@/data/faculty-categories";
 
 export function FacultyRow({
   item,
@@ -30,6 +31,9 @@ export function FacultyRow({
   onTogglePublish,
   onDelete,
 }) {
+  const tCommon = useTranslations("common.actions");
+  const tStatus = useTranslations("common.status");
+  const tCategories = useTranslations("superAdminFaculty.categories");
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: item.id,
     disabled: dragDisabled,
@@ -61,7 +65,7 @@ export function FacultyRow({
           <Checkbox
             checked={selected}
             onCheckedChange={(checked) => onToggleSelect(Boolean(checked))}
-            aria-label={`Select ${item.name}`}
+            aria-label={tCommon("select", { name: item.name })}
           />
         </TableCell>
       ) : null}
@@ -83,7 +87,7 @@ export function FacultyRow({
       <TableCell className="text-muted-foreground">{item.designation}</TableCell>
       <TableCell className="text-muted-foreground">{item.department || "—"}</TableCell>
       <TableCell>
-        <Badge variant="secondary">{facultyCategoryLabel(item.category)}</Badge>
+        <Badge variant="secondary">{tCategories(FACULTY_CATEGORY_LABEL_KEYS[item.category])}</Badge>
       </TableCell>
       <TableCell>
         <Badge variant="outline">
@@ -101,7 +105,7 @@ export function FacultyRow({
           ) : (
             <CircleDashed className="size-3.5" />
           )}
-          {item.status === "PUBLISHED" ? "Published" : "Draft"}
+          {item.status === "PUBLISHED" ? tStatus("published") : tStatus("draft")}
         </Badge>
       </TableCell>
       <TableCell>
@@ -109,21 +113,21 @@ export function FacultyRow({
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon" className="size-8" disabled={pending}>
               <MoreHorizontal className="size-4" />
-              <span className="sr-only">Open menu</span>
+              <span className="sr-only">{tCommon("openMenu")}</span>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem asChild>
-              <Link href={`/super-admin/about-us/faculty/${item.id}/edit`}>Edit</Link>
+              <Link href={`/super-admin/about-us/faculty/${item.id}/edit`}>{tCommon("edit")}</Link>
             </DropdownMenuItem>
             {canPublish ? (
               <>
                 <DropdownMenuItem onSelect={onTogglePublish}>
-                  {item.status === "PUBLISHED" ? "Unpublish" : "Publish"}
+                  {item.status === "PUBLISHED" ? tCommon("unpublish") : tCommon("publish")}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem className="text-destructive focus:text-destructive" onSelect={onDelete}>
-                  Delete
+                  {tCommon("delete")}
                 </DropdownMenuItem>
               </>
             ) : null}

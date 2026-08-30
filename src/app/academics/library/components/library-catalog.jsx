@@ -10,6 +10,7 @@ import {
   Search,
   X,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,10 +35,10 @@ import { classLabel } from "@/lib/classes";
 const PAGE_SIZE = 20;
 
 const SORT_COLUMNS = [
-  { key: "class", label: "Class" },
-  { key: "bookName", label: "Book Name" },
-  { key: "subject", label: "Subject" },
-  { key: "publication", label: "Publications" },
+  { key: "class" },
+  { key: "bookName" },
+  { key: "subject" },
+  { key: "publication" },
 ];
 
 function classShortLabel(label) {
@@ -54,6 +55,13 @@ function chipClasses(active) {
 }
 
 export function LibraryCatalog({ books, classes }) {
+  const t = useTranslations("academics.library");
+  const columnLabels = {
+    class: t("columnClass"),
+    bookName: t("columnBookName"),
+    subject: t("columnSubject"),
+    publication: t("columnPublicationHeader"),
+  };
   const [search, setSearch] = useState("");
   const [selectedClass, setSelectedClass] = useState("all");
   const [selectedSubject, setSelectedSubject] = useState("all");
@@ -171,8 +179,8 @@ export function LibraryCatalog({ books, classes }) {
   }
 
   const emptyMessage = hasActiveFilters
-    ? "No books match your search or filters."
-    : "No books listed yet.";
+    ? t("noBooksMatchFilters")
+    : t("noBooksYet");
 
   return (
     <div className="space-y-4">
@@ -182,7 +190,7 @@ export function LibraryCatalog({ books, classes }) {
           type="search"
           value={search}
           onChange={(e) => setSearchAndReset(e.target.value)}
-          placeholder="Search by book name, subject, publication, or class..."
+          placeholder={t("searchPlaceholder")}
           className="h-11 border-zinc-200 bg-white pl-9 dark:border-zinc-800 dark:bg-zinc-900"
         />
       </div>
@@ -194,7 +202,7 @@ export function LibraryCatalog({ books, classes }) {
             onClick={() => setClassAndReset("all")}
             className={chipClasses(selectedClass === "all")}
           >
-            All Classes
+            {t("allClasses")}
           </button>
           {classesInUse.map((klass) => (
             <button
@@ -213,10 +221,10 @@ export function LibraryCatalog({ books, classes }) {
       <div className="flex flex-wrap items-center gap-2">
         <Select value={selectedSubject} onValueChange={setSubjectAndReset}>
           <SelectTrigger className="w-full border-zinc-200 bg-white sm:w-48 dark:border-zinc-800 dark:bg-zinc-900">
-            <SelectValue placeholder="All subjects" />
+            <SelectValue placeholder={t("allSubjects")} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All subjects</SelectItem>
+            <SelectItem value="all">{t("allSubjects")}</SelectItem>
             {subjects.map((subject) => (
               <SelectItem key={subject} value={subject}>
                 {subject}
@@ -229,10 +237,10 @@ export function LibraryCatalog({ books, classes }) {
           onValueChange={setPublicationAndReset}
         >
           <SelectTrigger className="w-full border-zinc-200 bg-white sm:w-48 dark:border-zinc-800 dark:bg-zinc-900">
-            <SelectValue placeholder="All publications" />
+            <SelectValue placeholder={t("allPublications")} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All publications</SelectItem>
+            <SelectItem value="all">{t("allPublications")}</SelectItem>
             {publications.map((publication) => (
               <SelectItem key={publication} value={publication}>
                 {publication}
@@ -249,17 +257,19 @@ export function LibraryCatalog({ books, classes }) {
             className="gap-1 text-zinc-500 dark:text-zinc-400"
           >
             <X className="size-3.5" />
-            Clear filters
+            {t("clearFilters")}
           </Button>
         ) : null}
       </div>
 
       <p className="text-sm text-muted-foreground">
         {sorted.length === 0
-          ? "No books found."
-          : `Showing ${rangeStart}–${rangeEnd} of ${sorted.length} ${
-              sorted.length === 1 ? "book" : "books"
-            }`}
+          ? t("noBooksFound")
+          : t("showingRange", {
+              start: rangeStart,
+              end: rangeEnd,
+              count: sorted.length,
+            })}
       </p>
 
       <div className="hidden overflow-hidden rounded-md border border-zinc-200 md:block dark:border-zinc-800">
@@ -276,7 +286,7 @@ export function LibraryCatalog({ books, classes }) {
                     onClick={() => toggleSort(col.key)}
                     className="flex items-center gap-1 hover:text-zinc-600 dark:hover:text-zinc-300"
                   >
-                    {col.label}
+                    {columnLabels[col.key]}
                     <SortIcon column={col.key} />
                   </button>
                 </TableHead>
@@ -327,14 +337,14 @@ export function LibraryCatalog({ books, classes }) {
               </p>
               <dl className="mt-2 space-y-1 text-sm">
                 <div className="flex justify-between gap-3">
-                  <dt className="text-zinc-500 dark:text-zinc-400">Class</dt>
+                  <dt className="text-zinc-500 dark:text-zinc-400">{t("columnClass")}</dt>
                   <dd className="text-right text-zinc-700 dark:text-zinc-300">
                     {classLabel(classes, book.class)}
                   </dd>
                 </div>
                 <div className="flex justify-between gap-3">
                   <dt className="text-zinc-500 dark:text-zinc-400">
-                    Subject
+                    {t("columnSubject")}
                   </dt>
                   <dd className="text-right text-zinc-700 dark:text-zinc-300">
                     {book.subject}
@@ -342,7 +352,7 @@ export function LibraryCatalog({ books, classes }) {
                 </div>
                 <div className="flex justify-between gap-3">
                   <dt className="text-zinc-500 dark:text-zinc-400">
-                    Publication
+                    {t("detailPublication")}
                   </dt>
                   <dd className="text-right text-zinc-700 dark:text-zinc-300">
                     {book.publication}
@@ -369,10 +379,10 @@ export function LibraryCatalog({ books, classes }) {
             className="gap-1"
           >
             <ChevronLeft className="size-4" />
-            Previous
+            {t("previous")}
           </Button>
           <span className="text-sm text-muted-foreground">
-            Page {currentPage} of {totalPages}
+            {t("pageOf", { page: currentPage, totalPages })}
           </span>
           <Button
             type="button"
@@ -382,7 +392,7 @@ export function LibraryCatalog({ books, classes }) {
             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             className="gap-1"
           >
-            Next
+            {t("next")}
             <ChevronRight className="size-4" />
           </Button>
         </div>

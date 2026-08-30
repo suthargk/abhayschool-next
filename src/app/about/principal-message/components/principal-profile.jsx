@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 
 function hasProfileDetails(item) {
   return Boolean(
@@ -10,15 +11,17 @@ function hasProfileDetails(item) {
 }
 
 export function PrincipalProfile({ item }) {
+  const t = useTranslations("principalMessage.principalProfile");
+
   if (!hasProfileDetails(item)) return null;
 
-  const name = item.principalName || "Our Principal";
+  const name = item.principalName || t("defaultName");
 
   return (
     <section className="mx-auto max-w-3xl space-y-6">
       <div className="mx-auto max-w-2xl space-y-2 text-center">
         <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-          About the Principal
+          {t("heading")}
         </h2>
       </div>
 
@@ -47,25 +50,27 @@ export function PrincipalProfile({ item }) {
           <dl className="grid grid-cols-2 gap-4 text-sm sm:grid-cols-4">
             {item.principalSince ? (
               <div>
-                <dt className="text-muted-foreground">Principal since</dt>
+                <dt className="text-muted-foreground">{t("principalSince")}</dt>
                 <dd className="font-medium">{item.principalSince}</dd>
               </div>
             ) : null}
             {item.experienceYears ? (
               <div>
-                <dt className="text-muted-foreground">Experience</dt>
-                <dd className="font-medium">{item.experienceYears}+ years</dd>
+                <dt className="text-muted-foreground">{t("experience")}</dt>
+                <dd className="font-medium">
+                  {t("experienceYears", { years: item.experienceYears })}
+                </dd>
               </div>
             ) : null}
             {item.qualification ? (
               <div className="col-span-2">
-                <dt className="text-muted-foreground">Qualification</dt>
+                <dt className="text-muted-foreground">{t("qualification")}</dt>
                 <dd className="font-medium">{item.qualification}</dd>
               </div>
             ) : null}
             {item.interests ? (
               <div className="col-span-2 sm:col-span-4">
-                <dt className="text-muted-foreground">Areas of interest</dt>
+                <dt className="text-muted-foreground">{t("interests")}</dt>
                 <dd className="font-medium">{item.interests}</dd>
               </div>
             ) : null}

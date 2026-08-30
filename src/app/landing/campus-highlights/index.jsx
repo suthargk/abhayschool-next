@@ -2,6 +2,7 @@
 import React, { useRef } from "react";
 import webpImage from "../../../../public/copter.webp";
 import { motion, useScroll, useTransform } from "framer-motion";
+import { useTranslations } from "next-intl";
 import Image from "next/image";
 import Stars from "../../../../public/icons/stars";
 import { campusImages, campusLowerImages, mobileImages } from "./data";
@@ -9,6 +10,7 @@ import { HighlightRow } from "./highlight-row";
 
 const CampusHighlights = () => {
   const containerRef = useRef(null);
+  const t = useTranslations("landing.campusHighlights");
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -34,11 +36,10 @@ const CampusHighlights = () => {
 
       <div className="flex flex-col items-center gap-2 px-4">
         <h4 className="text-2xl sm:text-3xl font-semibold mb-2 text-center">
-          <span>Explore Our Campus</span>
+          <span>{t("heading")}</span>
         </h4>
         <div className="text-zinc-700 text-center dark:text-zinc-500 max-w-md">
-          Experience our campus through vibrant images showcasing its energy,
-          spaces, and community.
+          {t("description")}
         </div>
         <Stars />
       </div>
@@ -46,7 +47,7 @@ const CampusHighlights = () => {
       <div className="flex flex-col gap-6 px-4 md:hidden">
         <div className="rounded-2xl bg-violet-50 dark:bg-zinc-900 px-6 py-5 text-center">
           <h2 className="text-lg sm:text-xl font-bold bg-clip-text text-transparent bg-gradient-to-b from-[#df4fca] to-[#ed4492]">
-            Keeping teachers, families, and kids connected
+            {t("mobileHeading")}
           </h2>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">

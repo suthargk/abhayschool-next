@@ -1,3 +1,5 @@
+import { getTranslations } from "next-intl/server";
+
 import { prisma } from "@/lib/prisma";
 
 import { PrincipalHero } from "./components/principal-hero";
@@ -13,6 +15,7 @@ import { PrincipalExploreLinks } from "./components/principal-explore-links";
 export const revalidate = 60;
 
 export default async function PrincipalMessagePage() {
+  const t = await getTranslations("principalMessage.page");
   const item = await prisma.principalMessage.findFirst({
     where: { status: "PUBLISHED" },
     orderBy: { publishedAt: "desc" },
@@ -35,7 +38,7 @@ export default async function PrincipalMessagePage() {
           </>
         ) : (
           <p className="mx-auto max-w-3xl text-center text-muted-foreground">
-            The Principal&apos;s message will be published here soon.
+            {t("emptyState")}
           </p>
         )}
 

@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
 import { format } from "date-fns";
 import { Loader2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,6 +21,7 @@ function buildHref({ q, page }) {
 }
 
 export function AcademicsExplorer({ q, page, totalPages, items }) {
+  const t = useTranslations("academics.explorer");
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [search, setSearch] = useState(q);
@@ -46,12 +48,12 @@ export function AcademicsExplorer({ q, page, totalPages, items }) {
           type="search"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search academic posts…"
+          placeholder={t("searchPlaceholder")}
           className="h-11"
         />
         <Button type="submit" className="h-11 px-6" disabled={isPending}>
           {isPending ? <Loader2 className="size-4 animate-spin" /> : null}
-          Search
+          {t("search")}
         </Button>
       </form>
 
@@ -61,7 +63,7 @@ export function AcademicsExplorer({ q, page, totalPages, items }) {
       >
         {items.length === 0 ? (
           <p className="rounded-lg border border-dashed p-10 text-center text-sm text-muted-foreground">
-            No results found. Try a different search or check back soon!
+            {t("empty")}
           </p>
         ) : (
           items.map((item) => (
@@ -108,16 +110,16 @@ export function AcademicsExplorer({ q, page, totalPages, items }) {
             disabled={isPending || page <= 1}
             onClick={() => navigate({ page: page - 1 })}
           >
-            ← Previous
+            {t("previous")}
           </Button>
           {isPending ? (
             <span className="flex items-center gap-1.5 text-muted-foreground">
               <Loader2 className="size-3.5 animate-spin" />
-              Loading…
+              {t("loading")}
             </span>
           ) : (
             <span className="text-muted-foreground">
-              Page {page} of {totalPages}
+              {t("pageOf", { page, totalPages })}
             </span>
           )}
           <Button
@@ -126,7 +128,7 @@ export function AcademicsExplorer({ q, page, totalPages, items }) {
             disabled={isPending || page >= totalPages}
             onClick={() => navigate({ page: page + 1 })}
           >
-            Next →
+            {t("next")}
           </Button>
         </div>
       ) : null}

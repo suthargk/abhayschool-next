@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { TEACHER_EMAIL_DOMAIN } from "@/lib/teacher";
 
 export default function TeacherSignupPage() {
+  const t = useTranslations("teacherAuth.signup");
   const router = useRouter();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -26,7 +28,7 @@ export default function TeacherSignupPage() {
     setError("");
 
     if (password !== confirmPassword) {
-      setError("Passwords don't match");
+      setError(t("passwordMismatch"));
       return;
     }
 
@@ -43,7 +45,7 @@ export default function TeacherSignupPage() {
       const res = await fetch("/api/teacher/signup", { method: "POST", body: formData });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        setError(data.error || "Sign up failed");
+        setError(data.error || t("defaultError"));
         return;
       }
       router.push(`/teacher/verify?email=${encodeURIComponent(email)}`);
@@ -56,16 +58,15 @@ export default function TeacherSignupPage() {
     <div className="flex min-h-screen items-center justify-center bg-muted/40 px-4 py-10">
       <div className="w-full max-w-md space-y-6 rounded-xl border bg-card p-8 shadow-sm">
         <div className="space-y-1 text-center">
-          <h1 className="text-2xl font-semibold tracking-tight">Teacher sign up</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">{t("heading")}</h1>
           <p className="text-sm text-muted-foreground">
-            Use your @{TEACHER_EMAIL_DOMAIN} email address. An admin will approve your
-            account before you can log in.
+            {t("subheading", { domain: TEACHER_EMAIL_DOMAIN })}
           </p>
         </div>
         <form onSubmit={onSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="firstName">First name</Label>
+              <Label htmlFor="firstName">{t("firstNameLabel")}</Label>
               <Input
                 id="firstName"
                 value={firstName}
@@ -74,7 +75,7 @@ export default function TeacherSignupPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="lastName">Last name</Label>
+              <Label htmlFor="lastName">{t("lastNameLabel")}</Label>
               <Input
                 id="lastName"
                 value={lastName}
@@ -85,7 +86,7 @@ export default function TeacherSignupPage() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{t("emailLabel")}</Label>
             <Input
               id="email"
               type="email"
@@ -98,33 +99,31 @@ export default function TeacherSignupPage() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="phone">Mobile number</Label>
+            <Label htmlFor="phone">{t("phoneLabel")}</Label>
             <Input
               id="phone"
               type="tel"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               required
-              placeholder="98765 43210"
+              placeholder={t("phonePlaceholder")}
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="photo">Photo (optional)</Label>
+            <Label htmlFor="photo">{t("photoLabel")}</Label>
             <Input
               id="photo"
               type="file"
               accept="image/png,image/jpeg,image/webp"
               onChange={(e) => setPhoto(e.target.files?.[0] ?? null)}
             />
-            <p className="text-xs text-muted-foreground">
-              If you skip this, your initials will be used instead.
-            </p>
+            <p className="text-xs text-muted-foreground">{t("photoHint")}</p>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">{t("passwordLabel")}</Label>
               <Input
                 id="password"
                 type="password"
@@ -136,7 +135,7 @@ export default function TeacherSignupPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirm password</Label>
+              <Label htmlFor="confirmPassword">{t("confirmPasswordLabel")}</Label>
               <Input
                 id="confirmPassword"
                 type="password"
@@ -156,14 +155,14 @@ export default function TeacherSignupPage() {
           ) : null}
 
           <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? "Signing up…" : "Sign up"}
+            {loading ? t("signingUp") : t("signUp")}
           </Button>
         </form>
 
         <p className="text-center text-sm text-muted-foreground">
-          Already have an account?{" "}
+          {t("alreadyHaveAccount")}{" "}
           <Link href="/teacher/login" className="font-medium text-foreground underline">
-            Log in
+            {t("logIn")}
           </Link>
         </p>
       </div>

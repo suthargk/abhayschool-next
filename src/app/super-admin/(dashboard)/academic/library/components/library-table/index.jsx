@@ -16,6 +16,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { Search } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -33,6 +34,9 @@ export function LibraryTable({
   onDelete,
   onBulkDelete,
 }) {
+  const t = useTranslations("superAdminLibrary.table");
+  const tCommon = useTranslations("common.actions");
+  const tTable = useTranslations("common.table");
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState(() => new Set());
 
@@ -99,13 +103,13 @@ export function LibraryTable({
             type="search"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search by book name, subject, or publication..."
+            placeholder={t("searchPlaceholder")}
             className="pl-8"
           />
         </div>
         {canPublish && selected.size > 0 ? (
           <div className="flex items-center gap-2">
-            <span className="text-sm text-muted-foreground">{selected.size} selected</span>
+            <span className="text-sm text-muted-foreground">{tTable("rowsSelected", { count: selected.size })}</span>
             <Button
               type="button"
               variant="destructive"
@@ -115,10 +119,10 @@ export function LibraryTable({
                 onBulkDelete(selectedItems);
               }}
             >
-              Delete selected
+              {t("deleteSelected")}
             </Button>
             <Button type="button" variant="ghost" size="sm" onClick={() => setSelected(new Set())}>
-              Clear
+              {tCommon("clear")}
             </Button>
           </div>
         ) : null}
@@ -126,11 +130,11 @@ export function LibraryTable({
 
       {items.length === 0 ? (
         <p className="rounded-md border border-dashed p-8 text-center text-sm text-muted-foreground">
-          No books in this class yet.
+          {t("emptyNoBooks")}
         </p>
       ) : filtered.length === 0 ? (
         <p className="rounded-md border border-dashed p-8 text-center text-sm text-muted-foreground">
-          No results match your search.
+          {tTable("noResults")}
         </p>
       ) : (
         <div className="rounded-md border">
@@ -139,23 +143,23 @@ export function LibraryTable({
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-8">
-                    <span className="sr-only">Reorder</span>
+                    <span className="sr-only">{t("reorderSr")}</span>
                   </TableHead>
                   {canPublish ? (
                     <TableHead className="w-8">
                       <Checkbox
                         checked={allFilteredSelected ? true : someFilteredSelected ? "indeterminate" : false}
                         onCheckedChange={(checked) => toggleSelectAllFiltered(Boolean(checked))}
-                        aria-label="Select all"
+                        aria-label={tCommon("selectAll")}
                       />
                     </TableHead>
                   ) : null}
-                  <TableHead>Book name</TableHead>
-                  <TableHead>Subject</TableHead>
-                  <TableHead>Publication</TableHead>
-                  <TableHead>Status</TableHead>
+                  <TableHead>{t("columns.bookName")}</TableHead>
+                  <TableHead>{t("columns.subject")}</TableHead>
+                  <TableHead>{t("columns.publication")}</TableHead>
+                  <TableHead>{t("columns.status")}</TableHead>
                   <TableHead className="w-10">
-                    <span className="sr-only">Actions</span>
+                    <span className="sr-only">{t("actionsSr")}</span>
                   </TableHead>
                 </TableRow>
               </TableHeader>
@@ -186,9 +190,9 @@ export function LibraryTable({
 
       {items.length > 0 ? (
         dragDisabled ? (
-          <p className="text-xs text-muted-foreground">Clear the search to drag and reorder.</p>
+          <p className="text-xs text-muted-foreground">{t("clearToReorder")}</p>
         ) : (
-          <p className="text-xs text-muted-foreground">Drag rows to change display order.</p>
+          <p className="text-xs text-muted-foreground">{t("dragToReorder")}</p>
         )
       ) : null}
     </div>

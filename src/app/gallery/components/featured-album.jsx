@@ -2,15 +2,18 @@ import Link from "next/link";
 import Image from "next/image";
 import { format } from "date-fns";
 import { ImageOff } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 export function FeaturedAlbum({ album }) {
+  const t = useTranslations("gallery.featuredAlbum");
+
   if (!album) return null;
 
   return (
     <section className="space-y-6">
       <div className="mx-auto max-w-2xl space-y-2 text-center">
         <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-          Featured Album
+          {t("heading")}
         </h2>
       </div>
 
@@ -46,7 +49,7 @@ export function FeaturedAlbum({ album }) {
             </p>
           ) : null}
           <span className="text-sm font-medium text-violet-600 dark:text-violet-400">
-            {album._count.images} Photo{album._count.images === 1 ? "" : "s"} →
+            {t("photoCount", { count: album._count.images })}
           </span>
         </div>
       </Link>

@@ -1,0 +1,51 @@
+{
+  "page": {
+    "heading": "Time Table",
+    "description": "Time table slots you've posted.",
+    "addSlot": "Add slot"
+  },
+  "new": {
+    "heading": "Add slot"
+  },
+  "edit": {
+    "heading": "Edit"
+  },
+  "form": {
+    "noClasses": "No classes are configured yet. Contact an admin to add one before posting a time table slot.",
+    "classLabel": "Class",
+    "dayLabel": "Day",
+    "periodLabel": "Period",
+    "periodPlaceholder": "e.g. 1",
+    "subjectLabel": "Subject",
+    "subjectPlaceholder": "e.g. Mathematics",
+    "teacherLabel": "Teacher (optional)",
+    "teacherPlaceholder": "e.g. Mrs. Sharma",
+    "startTimeLabel": "Start time (optional)",
+    "endTimeLabel": "End time (optional)",
+    "saving": "Saving…",
+    "saveChanges": "Save changes",
+    "publish": "Publish",
+    "publishNote": "This will be published immediately and appears on the school website right away.",
+    "saveFailed": "Save failed"
+  },
+  "list": {
+    "searchPlaceholder": "Search by subject or teacher…",
+    "allClasses": "All classes",
+    "allDays": "All days",
+    "clearFilters": "Clear filters",
+    "noResultsFiltered": "No slots match your search/filters.",
+    "noResultsEmpty": "You haven't posted any time table slots yet.",
+    "classColumn": "Class",
+    "dayColumn": "Day",
+    "periodColumn": "Period",
+    "subjectColumn": "Subject",
+    "teacherColumn": "Teacher",
+    "timeColumn": "Time",
+    "periodValue": "Period {period}",
+    "deleteTitle": "Delete {label}?",
+    "deleteDescription": "This can't be undone. This will permanently delete this time table slot.",
+    "deletingToast": "Deleting {label}…",
+    "deletedToast": "Deleted {label}",
+    "deleteFailedToast": "Failed to delete {label}"
+  }
+}

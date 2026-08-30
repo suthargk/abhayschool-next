@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { ArrowDown, ArrowUp, Check, Pencil, Plus, Trash2, X } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 import {
   AlertDialog,
@@ -18,6 +19,8 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 export function TeacherClassesAdmin({ initialItems }) {
+  const t = useTranslations("teacherClasses");
+  const tActions = useTranslations("common.actions");
   const router = useRouter();
   const [items, setItems] = useState(initialItems);
   const [newLabel, setNewLabel] = useState("");
@@ -41,7 +44,7 @@ export function TeacherClassesAdmin({ initialItems }) {
         body: JSON.stringify({ label: newLabel.trim() }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to add class");
+      if (!res.ok) throw new Error(data.error || t("errors.addFailed"));
       setItems((prev) => [...prev, data.item]);
       setNewLabel("");
       router.refresh();
@@ -68,7 +71,7 @@ export function TeacherClassesAdmin({ initialItems }) {
         body: JSON.stringify({ label: editLabel.trim() }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to rename class");
+      if (!res.ok) throw new Error(data.error || t("errors.renameFailed"));
       setItems((prev) => prev.map((i) => (i.id === item.id ? data.item : i)));
       setEditingId(null);
       router.refresh();
@@ -104,7 +107,7 @@ export function TeacherClassesAdmin({ initialItems }) {
         method: "DELETE",
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to delete class");
+      if (!res.ok) throw new Error(data.error || t("errors.deleteFailed"));
       setItems((prev) => prev.filter((i) => i.id !== deleteTarget.id));
       setDeleteTarget(null);
       router.refresh();

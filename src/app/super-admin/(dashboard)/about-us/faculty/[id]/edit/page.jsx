@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { ArrowLeft } from "lucide-react";
 
 import { FormSkeleton } from "@/components/form-skeleton";
@@ -11,6 +12,8 @@ import { prisma } from "@/lib/prisma";
 import { FacultyForm } from "../../components/faculty-form";
 
 export default async function EditFacultyPage({ params }) {
+  const t = await getTranslations("superAdminFaculty.editPage");
+  const tCommon = await getTranslations("common.actions");
   const { id } = await params;
 
   return (
@@ -19,10 +22,10 @@ export default async function EditFacultyPage({ params }) {
         <Button variant="ghost" size="sm" className="-ml-3" asChild>
           <Link href="/super-admin/about-us/faculty">
             <ArrowLeft className="size-4" />
-            Back
+            {tCommon("back")}
           </Link>
         </Button>
-        <h1 className="text-2xl font-semibold tracking-tight">Edit faculty</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">{t("heading")}</h1>
       </div>
       <Suspense fallback={<FormSkeleton />}>
         <EditFacultySection id={id} />

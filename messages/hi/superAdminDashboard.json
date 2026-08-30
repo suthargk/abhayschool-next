@@ -1,0 +1,71 @@
+{
+  "home": {
+    "heading": "अवलोकन",
+    "description": "सामग्री प्रबंधित करने के लिए बाईं ओर से एक अनुभाग चुनें। यह क्षेत्र सार्वजनिक साइट के हेडर और फ़ुटर से अलग है।",
+    "recentChangesHeading": "हाल के बदलाव"
+  },
+  "recentChanges": {
+    "empty": "अभी तक कोई बदलाव नहीं हुआ है।",
+    "unknownAuthor": "अज्ञात",
+    "createdBadge": "बनाया गया",
+    "principalMessageFallback": "प्राचार्य का संदेश",
+    "kinds": {
+      "newsNotices": "समाचार और सूचनाएं",
+      "gallery": "गैलरी",
+      "homework": "होमवर्क",
+      "faculty": "संकाय",
+      "facilities": "सुविधाएं",
+      "library": "पुस्तकालय",
+      "blog": "ब्लॉग",
+      "toppers": "टॉपर्स",
+      "faq": "सामान्य प्रश्न",
+      "testimonials": "प्रशंसापत्र",
+      "principalMessage": "प्राचार्य का संदेश",
+      "admissions": "प्रवेश"
+    }
+  },
+  "teachers": {
+    "page": {
+      "heading": "शिक्षक",
+      "description": "शिक्षक साइनअप स्वीकृत करें और प्रत्येक शिक्षक जिन कक्षाओं/विषयों के लिए होमवर्क पोस्ट कर सकता है, वे असाइन करें।"
+    },
+    "table": {
+      "empty": "अभी तक कोई शिक्षक खाता नहीं है।",
+      "openMenu": "मेनू खोलें",
+      "assign": "असाइन करें",
+      "permissions": "अनुमतियां",
+      "approve": "स्वीकृत करें",
+      "reject": "अस्वीकार करें",
+      "revoke": "रद्द करें",
+      "reApprove": "पुनः स्वीकृत करें",
+      "statusActive": "सक्रिय",
+      "statusPending": "लंबित",
+      "statusRejected": "अस्वीकृत",
+      "columnTeacher": "शिक्षक",
+      "columnPhone": "फ़ोन",
+      "columnStatus": "स्थिति",
+      "columnAssigned": "असाइन किया गया",
+      "columnActions": "कार्रवाई",
+      "noAssignments": "कोई असाइनमेंट नहीं",
+      "noneAssigned": "कोई नहीं",
+      "toastApproved": "शिक्षक स्वीकृत किया गया",
+      "toastRevoked": "पहुंच रद्द कर दी गई",
+      "toastStatusUpdated": "स्थिति अपडेट की गई",
+      "statusUpdateFailed": "अपडेट असफल रहा",
+      "assignDialogTitle": "कक्षाएं/विषय असाइन करें",
+      "noAssignmentsYet": "अभी तक कोई असाइनमेंट नहीं।",
+      "classPlaceholder": "कक्षा",
+      "subjectPlaceholder": "विषय",
+      "assignmentAddFailed": "असाइनमेंट नहीं जोड़ा जा सका",
+      "assignmentRemoveFailed": "असाइनमेंट नहीं हटाया जा सका",
+      "permissionsDialogTitle": "फ़ीचर अनुमतियां",
+      "permissionsDescription": "{name} नीचे चुने गए क्षेत्रों को सीधे प्रबंधित कर सकते हैं — तुरंत प्रकाशित, बिना समीक्षा के।",
+      "selectAll": "सभी चुनें",
+      "clearAll": "सभी हटाएं",
+      "grantFailed": "अनुमति नहीं दी जा सकी",
+      "revokeFailed": "अनुमति रद्द नहीं की जा सकी",
+      "grantFailedCount": "{count, plural, one {# अनुमति नहीं दी जा सकी} other {# अनुमतियां नहीं दी जा सकीं}}",
+      "revokeFailedCount": "{count, plural, one {# अनुमति रद्द नहीं की जा सकी} other {# अनुमतियां रद्द नहीं की जा सकीं}}"
+    }
+  }
+}

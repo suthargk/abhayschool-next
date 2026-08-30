@@ -1,0 +1,56 @@
+{
+  "page": {
+    "heading": "गृहकार्य",
+    "description": "आपके द्वारा पोस्ट किया गया गृहकार्य।",
+    "addHomework": "गृहकार्य जोड़ें"
+  },
+  "newPage": {
+    "heading": "गृहकार्य जोड़ें"
+  },
+  "editPage": {
+    "heading": "संपादित करें"
+  },
+  "form": {
+    "classLabel": "कक्षा",
+    "classPlaceholder": "एक कक्षा चुनें",
+    "subjectLabel": "विषय",
+    "subjectPlaceholder": "एक विषय चुनें",
+    "titleLabel": "शीर्षक",
+    "titlePlaceholder": "अध्याय 5 — रैखिक समीकरण",
+    "assignedDateLabel": "निर्धारण की तिथि",
+    "dueDateLabel": "अंतिम तिथि",
+    "instructionsLabel": "निर्देश",
+    "instructionsPlaceholder": "कार्य, पृष्ठों और अपेक्षाओं का वर्णन करें…",
+    "attachmentsLabel": "संलग्नक",
+    "uploadFailed": "अपलोड विफल रहा",
+    "dueDateRequired": "अंतिम तिथि आवश्यक है",
+    "saveFailed": "सहेजना विफल रहा",
+    "noAssignments": "आपको अभी तक कोई कक्षा/विषय आवंटित नहीं किया गया है। गृहकार्य पोस्ट करने से पहले सेटअप के लिए किसी व्यवस्थापक से संपर्क करें।",
+    "saving": "सहेजा जा रहा है…",
+    "saveChanges": "परिवर्तन सहेजें",
+    "publish": "प्रकाशित करें",
+    "publishNote": "यह गृहकार्य तुरंत प्रकाशित हो जाता है और स्कूल की वेबसाइट पर तुरंत दिखाई देने लगता है।"
+  },
+  "list": {
+    "searchPlaceholder": "शीर्षक या विषय से खोजें…",
+    "allClasses": "सभी कक्षाएँ",
+    "allSubjects": "सभी विषय",
+    "allStatuses": "सभी स्थितियाँ",
+    "dueDatePlaceholder": "अंतिम तिथि",
+    "clearFilters": "फ़िल्टर साफ़ करें",
+    "deleteSelected": "चयनित हटाएँ",
+    "noResultsFiltered": "आपकी खोज/फ़िल्टर से मेल खाता कोई गृहकार्य नहीं मिला।",
+    "noResultsEmpty": "आपने अभी तक कोई गृहकार्य पोस्ट नहीं किया है।",
+    "titleColumn": "शीर्षक",
+    "classColumn": "कक्षा",
+    "subjectColumn": "विषय",
+    "dueColumn": "अंतिम तिथि",
+    "statusColumn": "स्थिति",
+    "dueOn": "अंतिम तिथि {date}",
+    "statusUpdateFailed": "स्थिति अपडेट नहीं हो सकी",
+    "bulkDeleteLabel": "{count, plural, one {# आइटम} other {# आइटम}}",
+    "deletingToast": "{label} हटाया जा रहा है…",
+    "deletedToast": "{label} हटा दिया गया",
+    "deleteFailedToast": "{label} हटाने में विफल"
+  }
+}

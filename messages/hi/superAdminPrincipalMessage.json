@@ -1,0 +1,38 @@
+{
+  "page": {
+    "heading": "प्रधानाचार्य का संदेश",
+    "description": "सार्वजनिक प्रधानाचार्य के संदेश पृष्ठ पर दिखाई जाने वाली सामग्री और फ़ोटो को प्रबंधित करें।"
+  },
+  "form": {
+    "updating": "अद्यतन हो रहा है…",
+    "unpublish": "अप्रकाशित करें",
+    "publish": "प्रकाशित करें",
+    "nameLabel": "प्रधानाचार्य का नाम",
+    "namePlaceholder": "जैसे डॉ. जेन डो",
+    "designationLabel": "पदनाम",
+    "designationPlaceholder": "जैसे प्रधानाचार्य, श्री अभय नोबल्स सीनियर सेकेंडरी स्कूल",
+    "heroQuoteLabel": "मुख्य उद्धरण",
+    "heroQuotePlaceholder": "फ़ोटो के साथ दिखाई जाने वाली एक छोटी पंक्ति, जैसे “शिक्षा केवल शैक्षणिक सफलता प्राप्त करने के बारे में नहीं है…”",
+    "photoLabel": "फ़ोटो",
+    "signatureLabel": "हस्ताक्षर",
+    "uploading": "अपलोड हो रहा है…",
+    "messageLabel": "संदेश",
+    "messagePlaceholder": "प्रिय विद्यार्थियों, अभिभावकों और हमारे विद्यालय समुदाय के सदस्यों, … इनको शामिल करने का प्रयास करें: एक स्वागत संदेश, आपका शैक्षिक दर्शन, चरित्र एवं मूल्य, शिक्षा, और भविष्य के लिए आपकी दृष्टि — इन्हें उप-शीर्षकों से विभाजित करें।",
+    "aboutSectionTitle": "प्रधानाचार्य के बारे में (संक्षिप्त प्रोफ़ाइल)",
+    "principalSinceLabel": "प्रधानाचार्य कब से हैं",
+    "principalSincePlaceholder": "2021",
+    "experienceLabel": "अनुभव (वर्ष)",
+    "experiencePlaceholder": "20",
+    "qualificationLabel": "योग्यता",
+    "qualificationPlaceholder": "एम.एड., शिक्षा में पीएच.डी.",
+    "interestsLabel": "रुचि के क्षेत्र",
+    "interestsPlaceholder": "छात्र विकास, शैक्षिक नेतृत्व, एसटीईएम शिक्षा",
+    "videoLabel": "वीडियो संदेश URL (YouTube या Vimeo, वैकल्पिक)",
+    "videoPlaceholder": "https://www.youtube.com/watch?v=…",
+    "save": "सहेजें",
+    "saving": "सहेजा जा रहा है…",
+    "uploadFailedError": "अपलोड विफल रहा",
+    "saveFailedError": "सहेजना विफल रहा",
+    "statusUpdateFailedError": "स्थिति अद्यतन करने में विफल"
+  }
+}

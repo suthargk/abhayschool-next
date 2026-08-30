@@ -1,10 +1,7 @@
 export const PAGE_SIZE = 15;
 
-export const RANGE_OPTIONS = [
-  { value: "THIS_WEEK", label: "This Week" },
-  { value: "NEXT_WEEK", label: "Next Week" },
-  { value: "ALL", label: "All" },
-];
+/** labels resolve against the "homework.explorer.range" message namespace, keyed by value */
+export const RANGE_OPTIONS = [{ value: "THIS_WEEK" }, { value: "NEXT_WEEK" }, { value: "ALL" }];
 
 /** Returns the [start, end) date bounds for a range option, or null for "ALL". */
 export function rangeBounds(range, now = new Date()) {

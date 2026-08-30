@@ -1,0 +1,86 @@
+{
+  "facultyHero": {
+    "headingLine1": "मिलिए",
+    "headingLine2": "हमारे शिक्षकगण से",
+    "description": "ऐसे समर्पित शिक्षक जो जिज्ञासा को प्रेरित करते हैं, क्षमता को निखारते हैं, और हर विद्यार्थी को आत्मविश्वास के साथ आगे बढ़ने में मदद करते हैं।"
+  },
+  "facultyStats": {
+    "facultyMembers": "शिक्षक सदस्य",
+    "averageExperience": "औसत अनुभव",
+    "departments": "विभाग",
+    "countSuffix": "{count}+",
+    "avgExperienceValue": "{count}+ वर्ष"
+  },
+  "facultyLeadership": {
+    "heading": "प्रधानाचार्य एवं नेतृत्व",
+    "description": "वे लोग जो हमारे विद्यालय की दृष्टि और शैक्षणिक दिशा का मार्गदर्शन करते हैं।",
+    "defaultPrincipalName": "हमारे प्रधानाचार्य",
+    "defaultDesignation": "प्रधानाचार्य",
+    "viewProfile": "प्रोफ़ाइल देखें →"
+  },
+  "facultyDepartments": {
+    "heading": "विभाग",
+    "description": "विभाग के अनुसार शिक्षकों को देखें, या किसी विशेष शिक्षक को खोजने के लिए नीचे दी गई खोज और फ़िल्टर का उपयोग करें।",
+    "teacherCount": "{count} शिक्षक"
+  },
+  "facultyDirectoryGrid": {
+    "heading": "शिक्षक निर्देशिका",
+    "description": "नाम से खोजें, या विभाग, कक्षा और विषय के अनुसार फ़िल्टर करें।",
+    "noResults": "आपकी खोज या फ़िल्टर से मेल खाने वाला कोई शिक्षक नहीं मिला।",
+    "comingSoon": "शिक्षकों की प्रोफ़ाइल शीघ्र ही यहाँ प्रकाशित की जाएँगी।"
+  },
+  "facultyFilters": {
+    "searchPlaceholder": "शिक्षक खोजें...",
+    "allDepartments": "सभी विभाग",
+    "allGrades": "सभी कक्षाएँ",
+    "allSubjects": "सभी विषय"
+  },
+  "facultyCard": {
+    "viewProfile": "प्रोफ़ाइल देखें →",
+    "experienceYears": "{count} वर्षों का अनुभव"
+  },
+  "teachingPhilosophy": {
+    "heading": "शिक्षक ही नहीं, मार्गदर्शक भी।",
+    "studentCentered": {
+      "title": "विद्यार्थी-केंद्रित",
+      "description": "प्रत्येक विद्यार्थी को उसकी सीखने की शैली के अनुरूप ध्यान और सहयोग मिलता है।"
+    },
+    "curiosityDriven": {
+      "title": "जिज्ञासा-प्रेरित",
+      "description": "शिक्षक विद्यार्थियों को प्रश्न पूछने और पाठ्यक्रम से परे विचारों को खोजने के लिए प्रोत्साहित करते हैं।"
+    },
+    "continuousLearning": {
+      "title": "सतत सीखना",
+      "description": "हमारे शिक्षक हर वर्ष अपनी शिक्षण पद्धतियों को और बेहतर बनाते रहते हैं।"
+    },
+    "mentorship": {
+      "title": "मार्गदर्शन",
+      "description": "शिक्षक विद्यार्थियों को केवल परीक्षा के लिए नहीं, बल्कि शैक्षणिक और व्यक्तिगत रूप से आगे बढ़ने में मदद करते हैं।"
+    }
+  },
+  "excellenceInTeaching": {
+    "heading": "शिक्षण में उत्कृष्टता",
+    "description": "कक्षा के भीतर और बाहर किए गए कार्यों के लिए हमारे शिक्षकों को मिली पहचान।"
+  },
+  "studentSupportTeam": {
+    "heading": "हर विद्यार्थी की सहायता",
+    "description": "कक्षा से परे, यह टीम हमारे विद्यार्थियों की भलाई और व्यक्तिगत विकास का ध्यान रखती है।"
+  },
+  "facultyCta": {
+    "heading": "प्रवेश से जुड़े प्रश्न हैं?",
+    "description": "हमारी टीम आपको हमारे शिक्षकों और शैक्षणिक कार्यक्रमों के बारे में अधिक जानने में मदद करने के लिए तत्पर है।",
+    "exploreAcademics": "शैक्षणिक कार्यक्रम देखें",
+    "visitCampus": "हमारा परिसर देखें"
+  },
+  "facultyProfilePage": {
+    "backToFaculty": "शिक्षकगण पर वापस जाएँ",
+    "about": "परिचय",
+    "education": "शिक्षा",
+    "experience": "अनुभव",
+    "experienceYears": "{count}+ वर्ष",
+    "subjects": "विषय",
+    "classes": "कक्षाएँ",
+    "areasOfInterest": "रुचि के क्षेत्र",
+    "achievements": "उपलब्धियाँ एवं प्रमाणपत्र"
+  }
+}

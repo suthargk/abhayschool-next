@@ -15,6 +15,7 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
+import { useTranslations } from "next-intl";
 import { Search } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -33,6 +34,9 @@ export function TestimonialTable({
   onDelete,
   onBulkDelete,
 }) {
+  const t = useTranslations("superAdminTestimonials.table");
+  const tCommon = useTranslations("common.actions");
+  const tCommonTable = useTranslations("common.table");
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState(() => new Set());
 
@@ -99,13 +103,15 @@ export function TestimonialTable({
             type="search"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search by name, designation, or quote..."
+            placeholder={t("searchPlaceholder")}
             className="pl-8"
           />
         </div>
         {canPublish && selected.size > 0 ? (
           <div className="flex items-center gap-2">
-            <span className="text-sm text-muted-foreground">{selected.size} selected</span>
+            <span className="text-sm text-muted-foreground">
+              {tCommonTable("rowsSelected", { count: selected.size })}
+            </span>
             <Button
               type="button"
               variant="destructive"
@@ -115,10 +121,10 @@ export function TestimonialTable({
                 onBulkDelete(selectedItems);
               }}
             >
-              Delete selected
+              {t("deleteSelected")}
             </Button>
             <Button type="button" variant="ghost" size="sm" onClick={() => setSelected(new Set())}>
-              Clear
+              {tCommon("clear")}
             </Button>
           </div>
         ) : null}
@@ -126,11 +132,11 @@ export function TestimonialTable({
 
       {items.length === 0 ? (
         <p className="rounded-md border border-dashed p-8 text-center text-sm text-muted-foreground">
-          No testimonials yet.
+          {t("emptyState")}
         </p>
       ) : filtered.length === 0 ? (
         <p className="rounded-md border border-dashed p-8 text-center text-sm text-muted-foreground">
-          No results match your search.
+          {t("noSearchResults")}
         </p>
       ) : (
         <div className="rounded-md border">
@@ -139,22 +145,22 @@ export function TestimonialTable({
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-8">
-                    <span className="sr-only">Reorder</span>
+                    <span className="sr-only">{t("columnReorderSr")}</span>
                   </TableHead>
                   {canPublish ? (
                     <TableHead className="w-8">
                       <Checkbox
                         checked={allFilteredSelected ? true : someFilteredSelected ? "indeterminate" : false}
                         onCheckedChange={(checked) => toggleSelectAllFiltered(Boolean(checked))}
-                        aria-label="Select all"
+                        aria-label={tCommon("selectAll")}
                       />
                     </TableHead>
                   ) : null}
-                  <TableHead>Name</TableHead>
-                  <TableHead>Quote</TableHead>
-                  <TableHead>Status</TableHead>
+                  <TableHead>{t("columnName")}</TableHead>
+                  <TableHead>{t("columnQuote")}</TableHead>
+                  <TableHead>{t("columnStatus")}</TableHead>
                   <TableHead className="w-10">
-                    <span className="sr-only">Actions</span>
+                    <span className="sr-only">{t("columnActionsSr")}</span>
                   </TableHead>
                 </TableRow>
               </TableHeader>
@@ -185,9 +191,9 @@ export function TestimonialTable({
 
       {items.length > 0 ? (
         dragDisabled ? (
-          <p className="text-xs text-muted-foreground">Clear the search to drag and reorder.</p>
+          <p className="text-xs text-muted-foreground">{t("clearSearchToReorderHint")}</p>
         ) : (
-          <p className="text-xs text-muted-foreground">Drag rows to change display order.</p>
+          <p className="text-xs text-muted-foreground">{t("dragHint")}</p>
         )
       ) : null}
     </div>

@@ -1,21 +1,22 @@
 import Link from "next/link";
 import Image from "next/image";
 import { ImageOff } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
 
 export function GalleryPreview({ albums }) {
+  const t = useTranslations("about.galleryPreview");
+
   if (albums.length === 0) return null;
 
   return (
     <section className="space-y-8">
       <div className="mx-auto max-w-2xl space-y-2 text-center">
         <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-          Life at Shri Abhay Nobles
+          {t("heading")}
         </h2>
-        <p className="text-muted-foreground">
-          Students, classrooms, events, sports, and campus life in pictures.
-        </p>
+        <p className="text-muted-foreground">{t("description")}</p>
       </div>
 
       <div className="grid grid-cols-3 gap-3 sm:grid-cols-6">
@@ -44,7 +45,7 @@ export function GalleryPreview({ albums }) {
 
       <div className="text-center">
         <Button asChild variant="link">
-          <Link href="/gallery">View Gallery →</Link>
+          <Link href="/gallery">{t("viewGallery")}</Link>
         </Button>
       </div>
     </section>

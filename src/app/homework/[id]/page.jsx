@@ -2,13 +2,18 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { format } from "date-fns";
 import { ArrowLeft, Calendar, CalendarClock, FileText, User } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 
 import { prisma } from "@/lib/prisma";
 import { ContentRenderer } from "@/components/news-notices/content-renderer";
 import { cn } from "@/lib/utils";
 import { classLabel } from "@/lib/classes";
 import { subjectBadgeClass, subjectIcon } from "@/lib/homework/subjects";
-import { DUE_STATUS_BADGE_CLASS, dueStatus } from "@/lib/homework/due-status";
+import {
+  DUE_STATUS_BADGE_CLASS,
+  DUE_STATUS_LABEL_KEYS,
+  dueStatus,
+} from "@/lib/homework/due-status";
 
 function formatFileSize(bytes) {
   if (!bytes) return "";
@@ -18,6 +23,8 @@ function formatFileSize(bytes) {
 
 export default async function HomeworkDetailPage({ params }) {
   const { id } = await params;
+  const t = await getTranslations("homework.detail");
+  const tStatus = await getTranslations("homework.dueStatus");
 
   const [item, classes] = await Promise.all([
     prisma.homework.findFirst({
@@ -39,7 +46,7 @@ export default async function HomeworkDetailPage({ params }) {
         className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
       >
         <ArrowLeft className="size-4" />
-        Back to Homework
+        {t("backToHomework")}
       </Link>
 
       <div className="space-y-4">
@@ -62,7 +69,7 @@ export default async function HomeworkDetailPage({ params }) {
               DUE_STATUS_BADGE_CLASS[status.value],
             )}
           >
-            {status.label}
+            {tStatus(DUE_STATUS_LABEL_KEYS[status.value])}
           </span>
         </div>
         <h1 className="text-2xl font-semibold leading-tight tracking-tight sm:text-3xl">
@@ -75,7 +82,7 @@ export default async function HomeworkDetailPage({ params }) {
           <div className="flex items-start gap-2">
             <User className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
             <div>
-              <div className="text-xs text-muted-foreground">Teacher</div>
+              <div className="text-xs text-muted-foreground">{t("teacher")}</div>
               <div className="text-sm font-medium">{item.teacherName}</div>
             </div>
           </div>
@@ -83,7 +90,7 @@ export default async function HomeworkDetailPage({ params }) {
         <div className="flex items-start gap-2">
           <Calendar className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
           <div>
-            <div className="text-xs text-muted-foreground">Assigned</div>
+            <div className="text-xs text-muted-foreground">{t("assigned")}</div>
             <div className="text-sm font-medium">
               {format(new Date(item.assignedDate), "MMMM d, yyyy")}
             </div>
@@ -92,7 +99,7 @@ export default async function HomeworkDetailPage({ params }) {
         <div className="flex items-start gap-2">
           <CalendarClock className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
           <div>
-            <div className="text-xs text-muted-foreground">Due</div>
+            <div className="text-xs text-muted-foreground">{t("due")}</div>
             <div className="text-sm font-medium">
               {format(new Date(item.dueDate), "MMMM d, yyyy")}
             </div>
@@ -101,13 +108,13 @@ export default async function HomeworkDetailPage({ params }) {
       </div>
 
       <div className="space-y-2">
-        <h2 className="text-sm font-semibold">Instructions</h2>
+        <h2 className="text-sm font-semibold">{t("instructions")}</h2>
         <ContentRenderer content={item.content} />
       </div>
 
       {item.attachments.length > 0 ? (
         <div className="space-y-2 border-t pt-6">
-          <h2 className="text-sm font-semibold">Resources</h2>
+          <h2 className="text-sm font-semibold">{t("resources")}</h2>
           <ul className="space-y-2">
             {item.attachments.map((a) => (
               <li key={a.id}>

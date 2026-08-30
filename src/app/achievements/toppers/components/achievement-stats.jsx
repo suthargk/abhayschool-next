@@ -1,4 +1,5 @@
 import { Percent, Sparkles, Target, Trophy } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 function StatTile({ icon: Icon, label, value }) {
   return (
@@ -13,18 +14,20 @@ function StatTile({ icon: Icon, label, value }) {
 }
 
 export function AchievementStats({ toppers }) {
+  const t = useTranslations("achievements.achievementStats");
+
   if (toppers.length === 0) return null;
 
-  const highest = Math.max(...toppers.map((t) => t.percentage));
+  const highest = Math.max(...toppers.map((topper) => topper.percentage));
   const average =
-    toppers.reduce((sum, t) => sum + t.percentage, 0) / toppers.length;
-  const highScorers = toppers.filter((t) => t.percentage >= 90).length;
+    toppers.reduce((sum, topper) => sum + topper.percentage, 0) / toppers.length;
+  const highScorers = toppers.filter((topper) => topper.percentage >= 90).length;
 
   const stats = [
-    { icon: Trophy, label: "Toppers Featured", value: toppers.length },
-    { icon: Sparkles, label: "90%+ Scorers", value: highScorers },
-    { icon: Target, label: "Highest Score", value: `${highest}%` },
-    { icon: Percent, label: "Average Score", value: `${average.toFixed(1)}%` },
+    { icon: Trophy, label: t("toppersFeatured"), value: toppers.length },
+    { icon: Sparkles, label: t("highScorers"), value: highScorers },
+    { icon: Target, label: t("highestScore"), value: `${highest}%` },
+    { icon: Percent, label: t("averageScore"), value: `${average.toFixed(1)}%` },
   ];
 
   return (

@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { Loader2, UserRound, X } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
@@ -12,6 +13,9 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
 export function TestimonialForm({ initialItem, canPublish }) {
+  const t = useTranslations("superAdminTestimonials.form");
+  const tCommon = useTranslations("common.actions");
+  const tStatus = useTranslations("common.status");
   const router = useRouter();
   const isEdit = Boolean(initialItem);
 
@@ -39,7 +43,7 @@ export function TestimonialForm({ initialItem, canPublish }) {
         body: formData,
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Upload failed");
+      if (!res.ok) throw new Error(data.error || t("uploadFailedError"));
       setPhotoUrl(data.url);
     } catch (err) {
       setError(err.message);
@@ -68,7 +72,7 @@ export function TestimonialForm({ initialItem, canPublish }) {
         },
       );
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Save failed");
+      if (!res.ok) throw new Error(data.error || t("saveFailedError"));
       router.push("/super-admin/homepage/testimonials");
       router.refresh();
     } catch (err) {
@@ -88,7 +92,7 @@ export function TestimonialForm({ initialItem, canPublish }) {
         body: JSON.stringify({ publish: status !== "PUBLISHED" }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to update status");
+      if (!res.ok) throw new Error(data.error || t("statusUpdateFailedError"));
       setStatus(data.item.status);
       router.refresh();
     } catch (err) {
@@ -102,7 +106,9 @@ export function TestimonialForm({ initialItem, canPublish }) {
     <form onSubmit={handleSubmit} className="max-w-xl space-y-6">
       {isEdit ? (
         <div className="flex flex-wrap items-center gap-2">
-          <Badge variant="outline">{status === "PUBLISHED" ? "Published" : "Draft"}</Badge>
+          <Badge variant="outline">
+            {status === "PUBLISHED" ? tStatus("published") : tStatus("draft")}
+          </Badge>
           {canPublish ? (
             <Button
               type="button"
@@ -111,7 +117,11 @@ export function TestimonialForm({ initialItem, canPublish }) {
               disabled={publishing}
               onClick={handleTogglePublish}
             >
-              {publishing ? "Updating…" : status === "PUBLISHED" ? "Unpublish" : "Publish"}
+              {publishing
+                ? t("updating")
+                : status === "PUBLISHED"
+                  ? tCommon("unpublish")
+                  : tCommon("publish")}
             </Button>
           ) : null}
         </div>
@@ -119,19 +129,14 @@ export function TestimonialForm({ initialItem, canPublish }) {
 
       {isEdit && initialItem.source === "PARENT" ? (
         <p className="rounded-md border border-dashed bg-muted/50 px-3 py-2 text-sm text-muted-foreground">
-          Submitted by a parent via the public form, verified by OTP
-          {initialItem.phone ? (
-            <>
-              {" "}
-              at <span className="font-medium text-foreground">{initialItem.phone}</span>
-            </>
-          ) : null}
-          . Review before publishing.
+          {initialItem.phone
+            ? t("parentSubmissionNoticeWithPhone", { phone: initialItem.phone })
+            : t("parentSubmissionNotice")}
         </p>
       ) : null}
 
       <div className="space-y-2">
-        <Label htmlFor="testimonial-photo">Photo</Label>
+        <Label htmlFor="testimonial-photo">{t("photoLabel")}</Label>
         {photoUrl ? (
           <div className="relative size-24 overflow-hidden rounded-full border">
             <Image src={photoUrl} alt="" fill className="object-cover" unoptimized />
@@ -162,46 +167,44 @@ export function TestimonialForm({ initialItem, canPublish }) {
         )}
         {uploadingPhoto ? (
           <p className="flex items-center gap-2 text-xs text-muted-foreground">
-            <Loader2 className="size-3 animate-spin" /> Uploading…
+            <Loader2 className="size-3 animate-spin" /> {t("uploading")}
           </p>
         ) : (
-          <p className="text-xs text-muted-foreground">
-            Optional. A placeholder avatar is shown if left blank.
-          </p>
+          <p className="text-xs text-muted-foreground">{t("photoHelp")}</p>
         )}
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-2">
-          <Label htmlFor="testimonial-name">Name</Label>
+          <Label htmlFor="testimonial-name">{t("nameLabel")}</Label>
           <Input
             id="testimonial-name"
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
-            placeholder="e.g. Priya Sharma"
+            placeholder={t("namePlaceholder")}
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="testimonial-designation">Designation</Label>
+          <Label htmlFor="testimonial-designation">{t("designationLabel")}</Label>
           <Input
             id="testimonial-designation"
             value={designation}
             onChange={(e) => setDesignation(e.target.value)}
-            placeholder="e.g. Parent of Class VIII student"
+            placeholder={t("designationPlaceholder")}
           />
         </div>
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="testimonial-quote">Quote</Label>
+        <Label htmlFor="testimonial-quote">{t("quoteLabel")}</Label>
         <Textarea
           id="testimonial-quote"
           value={quote}
           onChange={(e) => setQuote(e.target.value)}
           required
           rows={5}
-          placeholder="What did they say about the school?"
+          placeholder={t("quotePlaceholder")}
         />
       </div>
 
@@ -213,14 +216,14 @@ export function TestimonialForm({ initialItem, canPublish }) {
 
       <div className="flex gap-2">
         <Button type="submit" disabled={saving || uploadingPhoto}>
-          {saving ? "Saving…" : isEdit ? "Save changes" : "Save draft"}
+          {saving ? t("saving") : isEdit ? t("saveChanges") : t("saveDraft")}
         </Button>
         <Button
           type="button"
           variant="outline"
           onClick={() => router.push("/super-admin/homepage/testimonials")}
         >
-          Cancel
+          {tCommon("cancel")}
         </Button>
       </div>
     </form>

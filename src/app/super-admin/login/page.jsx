@@ -2,11 +2,13 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 export default function SuperAdminLoginPage() {
+  const t = useTranslations("superAdminAuth.login");
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -25,14 +27,14 @@ export default function SuperAdminLoginPage() {
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        setError(data.error || "Sign in failed");
+        setError(data.error || t("defaultError"));
         setLoading(false);
         return;
       }
       router.replace("/super-admin");
       router.refresh();
     } catch (err) {
-      setError("Sign in failed");
+      setError(t("defaultError"));
       setLoading(false);
     }
   }
@@ -42,16 +44,16 @@ export default function SuperAdminLoginPage() {
       <div className="w-full max-w-md space-y-6 rounded-xl border bg-card p-8 shadow-sm">
         <div className="space-y-1 text-center">
           <h1 className="text-2xl font-semibold tracking-tight">
-            Super admin sign in
+            {t("heading")}
           </h1>
           <p className="text-sm text-muted-foreground">
-            Sign in with your dashboard account.
+            {t("subheading")}
           </p>
         </div>
         <form onSubmit={onSubmit} className="space-y-4">
           <div className="space-y-2">
             <label htmlFor="email" className="text-sm font-medium">
-              Email
+              {t("emailLabel")}
             </label>
             <Input
               id="email"
@@ -65,7 +67,7 @@ export default function SuperAdminLoginPage() {
           </div>
           <div className="space-y-2">
             <label htmlFor="password" className="text-sm font-medium">
-              Password
+              {t("passwordLabel")}
             </label>
             <Input
               id="password"
@@ -83,7 +85,7 @@ export default function SuperAdminLoginPage() {
             </p>
           ) : null}
           <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? "Signing in…" : "Sign in"}
+            {loading ? t("signingIn") : t("signIn")}
           </Button>
         </form>
       </div>

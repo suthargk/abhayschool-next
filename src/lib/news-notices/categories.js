@@ -57,6 +57,21 @@ export const CATEGORIES = [
 
 const CATEGORY_MAP = Object.fromEntries(CATEGORIES.map((c) => [c.value, c]));
 
+// value -> "newsNotices.categories" message key, for public-facing locale-aware labels.
+// (categoryLabel()/CATEGORIES[].label above stay English-only for admin/teacher dashboards.)
+export const CATEGORY_LABEL_KEYS = {
+  ACADEMIC: "academic",
+  ADMISSIONS: "admissions",
+  EXAMINATION: "examination",
+  EVENTS: "events",
+  SPORTS: "sports",
+  HOLIDAYS: "holidays",
+  TRANSPORT: "transport",
+  PARENT_INFORMATION: "parentInformation",
+  ACHIEVEMENTS: "achievements",
+  GENERAL: "general",
+};
+
 export function categoryLabel(value) {
   return CATEGORY_MAP[value]?.label ?? "General";
 }

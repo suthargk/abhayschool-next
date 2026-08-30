@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Loader2, MoreHorizontal } from "lucide-react";
 
@@ -44,21 +45,22 @@ import { classLabel } from "@/lib/classes";
 import { cn } from "@/lib/utils";
 
 function RowActionsMenu({ item, onDelete }) {
+  const tCommon = useTranslations("common.actions");
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="size-8">
           <MoreHorizontal className="size-4" />
-          <span className="sr-only">Open menu</span>
+          <span className="sr-only">{tCommon("openMenu")}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem asChild>
-          <Link href={`/teacher/library/${item.id}/edit`}>Edit</Link>
+          <Link href={`/teacher/library/${item.id}/edit`}>{tCommon("edit")}</Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem className="text-destructive focus:text-destructive" onSelect={onDelete}>
-          Delete
+          {tCommon("delete")}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -66,6 +68,8 @@ function RowActionsMenu({ item, onDelete }) {
 }
 
 function TeacherLibraryFilters({ filters, classes, onPendingChange }) {
+  const t = useTranslations("teacherLibrary.list");
+  const tCommon = useTranslations("common.actions");
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [search, setSearch] = useState(filters.q);
@@ -105,17 +109,17 @@ function TeacherLibraryFilters({ filters, classes, onPendingChange }) {
         type="search"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        placeholder="Search by book, subject, or publication…"
+        placeholder={t("searchPlaceholder")}
         className="sm:max-w-xs"
         disabled={isPending}
       />
 
       <Select value={filters.class} onValueChange={(v) => navigate({ class: v })} disabled={isPending}>
         <SelectTrigger className="sm:w-40">
-          <SelectValue placeholder="All classes" />
+          <SelectValue placeholder={t("allClasses")} />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="ALL">All classes</SelectItem>
+          <SelectItem value="ALL">{t("allClasses")}</SelectItem>
           {classes.map((c) => (
             <SelectItem key={c.value} value={c.value}>
               {c.label}
@@ -126,7 +130,7 @@ function TeacherLibraryFilters({ filters, classes, onPendingChange }) {
 
       <Button type="submit" size="sm" disabled={isPending}>
         {isPending ? <Loader2 className="size-4 animate-spin" /> : null}
-        Search
+        {tCommon("search")}
       </Button>
       {hasActiveFilters ? (
         <Button
@@ -139,7 +143,7 @@ function TeacherLibraryFilters({ filters, classes, onPendingChange }) {
             navigate({ q: "", class: "ALL" });
           }}
         >
-          Clear filters
+          {t("clearFilters")}
         </Button>
       ) : null}
     </form>
@@ -147,6 +151,9 @@ function TeacherLibraryFilters({ filters, classes, onPendingChange }) {
 }
 
 export function TeacherLibraryList({ initialItems, classes, filters, hasAnyBooks }) {
+  const t = useTranslations("teacherLibrary.list");
+  const tCommon = useTranslations("common.actions");
+  const tTable = useTranslations("common.table");
   const router = useRouter();
   const [items, setItems] = useState(initialItems);
   const [deleteTarget, setDeleteTarget] = useState(null);
@@ -171,7 +178,11 @@ export function TeacherLibraryList({ initialItems, classes, filters, hasAnyBooks
           fetch(`/api/teacher/library/${id}`, { method: "DELETE" }).then((res) => {
             if (!res.ok) throw new Error("Delete failed");
           }),
-          { loading: `Deleting ${label}…`, success: `Deleted ${label}`, error: `Failed to delete ${label}` },
+          {
+            loading: t("deletingToast", { label }),
+            success: t("deletedToast", { label }),
+            error: t("deleteFailedToast", { label }),
+          },
         )
         .unwrap();
       setItems((prev) => prev.filter((i) => i.id !== id));
@@ -197,7 +208,7 @@ export function TeacherLibraryList({ initialItems, classes, filters, hasAnyBooks
 
         {items.length === 0 ? (
           <p className="rounded-md border border-dashed p-8 text-center text-sm text-muted-foreground">
-            {hasAnyBooks ? "No books match your search/filters." : "You haven't added any books yet."}
+            {hasAnyBooks ? t("noResultsFiltered") : t("noResultsEmpty")}
           </p>
         ) : (
           <>
@@ -227,10 +238,10 @@ export function TeacherLibraryList({ initialItems, classes, filters, hasAnyBooks
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Book</TableHead>
-                    <TableHead>Class</TableHead>
-                    <TableHead>Subject</TableHead>
-                    <TableHead>Publication</TableHead>
+                    <TableHead>{t("bookColumn")}</TableHead>
+                    <TableHead>{t("classColumn")}</TableHead>
+                    <TableHead>{t("subjectColumn")}</TableHead>
+                    <TableHead>{t("publicationColumn")}</TableHead>
                     <TableHead className="w-0" />
                   </TableRow>
                 </TableHeader>
@@ -259,13 +270,15 @@ export function TeacherLibraryList({ initialItems, classes, filters, hasAnyBooks
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete {deleteTarget?.label}?</AlertDialogTitle>
+            <AlertDialogTitle>
+              {tTable("deleteConfirmTitle", { label: deleteTarget?.label })}
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              This can&apos;t be undone. This will permanently delete this book.
+              {tTable("deleteConfirmDescription")} {tTable("confirmDeleteOne")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={deleting}>{tCommon("cancel")}</AlertDialogCancel>
             <AlertDialogAction
               disabled={deleting}
               onClick={(event) => {
@@ -274,7 +287,7 @@ export function TeacherLibraryList({ initialItems, classes, filters, hasAnyBooks
               }}
               className={buttonVariants({ variant: "destructive" })}
             >
-              {deleting ? "Deleting…" : "Delete"}
+              {deleting ? tCommon("deleting") : tCommon("delete")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

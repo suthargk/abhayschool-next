@@ -1,0 +1,55 @@
+{
+  "page": {
+    "heading": "Gallery",
+    "description": "Manage photo albums shown on the public gallery page.",
+    "create": "Create"
+  },
+  "newPage": {
+    "heading": "Create album"
+  },
+  "editPage": {
+    "heading": "Edit album"
+  },
+  "form": {
+    "titleLabel": "Title",
+    "titlePlaceholder": "Annual Sports Day 2026",
+    "eventDateLabel": "Event date",
+    "pickDate": "Pick a date",
+    "categoryLabel": "Category",
+    "featuredLabel": "Featured album",
+    "descriptionLabel": "Description",
+    "descriptionPlaceholder": "A short description of the event.",
+    "photosLabel": "Photos",
+    "noPhotos": "No photos yet. Add some below.",
+    "cover": "Cover",
+    "setCover": "Set cover",
+    "uploading": "Uploading…",
+    "reorderHelp": "Drag photos to reorder. Click the star to set the cover photo.",
+    "uploadFailed": "Failed to upload {fileName}",
+    "eventDateRequired": "Event date is required",
+    "saveFailed": "Save failed",
+    "saving": "Saving…",
+    "saveChanges": "Save changes",
+    "saveDraft": "Save draft"
+  },
+  "table": {
+    "titleHeader": "Title",
+    "columns": {
+      "eventDate": "Event date",
+      "category": "Category",
+      "status": "Status",
+      "photos": "Photos",
+      "author": "Author"
+    },
+    "columnsButton": "Columns",
+    "toggleColumns": "Toggle columns",
+    "searchPlaceholder": "Search by title or author...",
+    "deleteSelected": "Delete selected",
+    "emptyNoAlbums": "No albums yet.",
+    "emptyNoResults": "No results match your search.",
+    "actionsSr": "Actions",
+    "bulkDeleteLabel": "{count, plural, one {# album} other {# albums}}",
+    "deleteDescriptionOne": "This will permanently delete this album and its photos.",
+    "deleteDescriptionMany": "This will permanently delete these albums and their photos."
+  }
+}

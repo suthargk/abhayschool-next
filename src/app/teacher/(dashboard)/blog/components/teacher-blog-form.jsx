@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Image from "next/image";
 import { Loader2, X } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,6 +13,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { RichTextEditor } from "@/components/news-notices/rich-text-editor";
 
 export function TeacherBlogForm({ initialItem }) {
+  const t = useTranslations("teacherBlog.form");
+  const tActions = useTranslations("common.actions");
   const router = useRouter();
   const isEdit = Boolean(initialItem);
 
@@ -37,7 +40,7 @@ export function TeacherBlogForm({ initialItem }) {
         body: formData,
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Upload failed");
+      if (!res.ok) throw new Error(data.error || t("uploadFailed"));
       setCoverImageUrl(data.url);
     } catch (err) {
       setError(err.message);
@@ -64,7 +67,7 @@ export function TeacherBlogForm({ initialItem }) {
         },
       );
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Save failed");
+      if (!res.ok) throw new Error(data.error || t("saveFailed"));
       router.push("/teacher/blog");
       router.refresh();
     } catch (err) {
@@ -77,29 +80,29 @@ export function TeacherBlogForm({ initialItem }) {
   return (
     <form onSubmit={handleSubmit} className="max-w-3xl space-y-6">
       <div className="space-y-2">
-        <Label htmlFor="title">Title</Label>
+        <Label htmlFor="title">{t("titleLabel")}</Label>
         <Input
           id="title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           required
-          placeholder="Preparing for board exams"
+          placeholder={t("titlePlaceholder")}
         />
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="summary">Short description</Label>
+        <Label htmlFor="summary">{t("summaryLabel")}</Label>
         <Textarea
           id="summary"
           value={summary}
           onChange={(e) => setSummary(e.target.value)}
-          placeholder="A one or two sentence summary shown in lists."
+          placeholder={t("summaryPlaceholder")}
           rows={3}
         />
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="cover-image">Cover image</Label>
+        <Label htmlFor="cover-image">{t("coverImageLabel")}</Label>
         {coverImageUrl ? (
           <div className="relative w-full max-w-sm overflow-hidden rounded-md border">
             <Image
@@ -131,17 +134,17 @@ export function TeacherBlogForm({ initialItem }) {
         )}
         {uploading ? (
           <p className="flex items-center gap-2 text-xs text-muted-foreground">
-            <Loader2 className="size-3 animate-spin" /> Uploading…
+            <Loader2 className="size-3 animate-spin" /> {t("uploading")}
           </p>
         ) : null}
       </div>
 
       <div className="space-y-2">
-        <Label>Content</Label>
+        <Label>{t("contentLabel")}</Label>
         <RichTextEditor
           content={content}
           onChange={setContent}
-          placeholder="Write the post here…"
+          placeholder={t("contentPlaceholder")}
         />
       </div>
 
@@ -153,15 +156,13 @@ export function TeacherBlogForm({ initialItem }) {
 
       <div className="flex gap-2">
         <Button type="submit" disabled={saving || uploading}>
-          {saving ? "Saving…" : isEdit ? "Save changes" : "Publish"}
+          {saving ? t("saving") : isEdit ? t("saveChanges") : t("publish")}
         </Button>
         <Button type="button" variant="outline" onClick={() => router.push("/teacher/blog")}>
-          Cancel
+          {tActions("cancel")}
         </Button>
       </div>
-      <p className="text-xs text-muted-foreground">
-        This post is published immediately and appears on the school website right away.
-      </p>
+      <p className="text-xs text-muted-foreground">{t("publishNote")}</p>
     </form>
   );
 }

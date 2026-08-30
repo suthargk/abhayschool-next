@@ -2,11 +2,15 @@ import Link from "next/link";
 import Image from "next/image";
 import { format } from "date-fns";
 import { ArrowRight } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 import { cn } from "@/lib/utils";
-import { categoryBadgeClass, categoryLabel } from "@/lib/news-notices/categories";
+import { CATEGORY_LABEL_KEYS, categoryBadgeClass } from "@/lib/news-notices/categories";
 
 export function PublicNewsCard({ item }) {
+  const t = useTranslations("newsNotices.publicNewsCard");
+  const tCategories = useTranslations("newsNotices.categories");
+
   return (
     <Link
       href={`/news-notices/${item.slug}`}
@@ -34,7 +38,7 @@ export function PublicNewsCard({ item }) {
             categoryBadgeClass(item.category),
           )}
         >
-          {categoryLabel(item.category)}
+          {tCategories(CATEGORY_LABEL_KEYS[item.category])}
         </span>
         <h3 className="font-semibold leading-snug">{item.title}</h3>
         {item.summary ? (
@@ -49,7 +53,7 @@ export function PublicNewsCard({ item }) {
               : null}
           </span>
           <span className="inline-flex items-center gap-1 font-medium text-foreground opacity-0 transition-opacity group-hover:opacity-100">
-            Read more
+            {t("readMore")}
             <ArrowRight className="size-3.5" />
           </span>
         </div>

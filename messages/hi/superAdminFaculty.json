@@ -1,0 +1,73 @@
+{
+  "page": {
+    "heading": "शिक्षकगण",
+    "description": "सार्वजनिक शिक्षकगण पृष्ठ पर दिखाए जाने वाले कर्मचारियों का प्रबंधन करें।",
+    "addFaculty": "शिक्षक जोड़ें"
+  },
+  "editPage": {
+    "heading": "शिक्षक संपादित करें"
+  },
+  "newPage": {
+    "heading": "शिक्षक जोड़ें"
+  },
+  "categories": {
+    "leadership": "नेतृत्व",
+    "teaching": "शिक्षण",
+    "support": "छात्र सहायता"
+  },
+  "form": {
+    "photoLabel": "फ़ोटो",
+    "uploading": "अपलोड हो रहा है…",
+    "photoHelp": "वैकल्पिक। यदि खाली छोड़ा जाए तो सार्वजनिक साइट पर एक सामान्य प्लेसहोल्डर दिखाया जाता है।",
+    "nameLabel": "नाम",
+    "namePlaceholder": "जैसे जेन डो",
+    "designationLabel": "पदनाम",
+    "designationPlaceholder": "जैसे वरिष्ठ शिक्षक",
+    "categoryLabel": "श्रेणी",
+    "categoryHelp": "यह नियंत्रित करता है कि यह व्यक्ति सार्वजनिक शिक्षकगण पृष्ठ के किस अनुभाग में दिखाई देगा।",
+    "departmentLabel": "विभाग",
+    "departmentPlaceholder": "जैसे विज्ञान",
+    "experienceLabel": "अनुभव के वर्ष",
+    "experiencePlaceholder": "जैसे 8",
+    "subjectsLabel": "पढ़ाए जाने वाले विषय",
+    "subjectsPlaceholder": "विषय लिखें और Enter दबाएँ",
+    "gradesLabel": "पढ़ाई जाने वाली कक्षाएँ",
+    "gradesPlaceholder": "जैसे VIII, IX, X",
+    "qualificationLabel": "योग्यता",
+    "qualificationPlaceholder": "जैसे M.Sc, B.Ed",
+    "areasOfInterestLabel": "रुचि के क्षेत्र",
+    "areasOfInterestPlaceholder": "जैसे STEM शिक्षा, गणित प्रतियोगिताएँ",
+    "achievementsLabel": "उपलब्धियाँ और प्रमाणपत्र",
+    "achievementsPlaceholder": "जैसे सर्वश्रेष्ठ शिक्षक पुरस्कार 2023",
+    "emailLabel": "ईमेल",
+    "emailPlaceholder": "जैसे jane.doe@abhayschool.edu",
+    "emailHelp": "केवल आंतरिक संदर्भ के लिए — सार्वजनिक साइट पर नहीं दिखाया जाता।",
+    "bioLabel": "परिचय",
+    "bioPlaceholder": "इस शिक्षक के बारे में एक संक्षिप्त विवरण।",
+    "saveDraft": "ड्राफ़्ट सहेजें",
+    "saveChanges": "परिवर्तन सहेजें",
+    "updating": "अपडेट हो रहा है…",
+    "uploadFailed": "अपलोड विफल रहा",
+    "saveFailed": "सहेजना विफल रहा",
+    "statusUpdateFailed": "स्थिति अपडेट करने में विफल"
+  },
+  "table": {
+    "searchPlaceholder": "नाम, पदनाम या विभाग से खोजें...",
+    "deleteSelected": "चयनित हटाएँ",
+    "columns": {
+      "reorder": "क्रम बदलें",
+      "name": "नाम",
+      "designation": "पदनाम",
+      "department": "विभाग",
+      "category": "श्रेणी",
+      "status": "स्थिति",
+      "actions": "कार्रवाइयाँ"
+    },
+    "empty": "अभी तक कोई शिक्षक नहीं है।",
+    "dragHintDisabled": "खींचकर क्रम बदलने के लिए खोज साफ़ करें।",
+    "dragHint": "प्रदर्शन क्रम बदलने के लिए पंक्तियों को खींचें।",
+    "deleteDescriptionOne": "यह इस शिक्षक को साइट से स्थायी रूप से हटा देगा।",
+    "deleteDescriptionMany": "यह इन शिक्षकों को साइट से स्थायी रूप से हटा देगा।",
+    "bulkDeleteLabel": "{count, plural, one {# शिक्षक सदस्य} other {# शिक्षक सदस्य}}"
+  }
+}

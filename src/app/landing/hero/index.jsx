@@ -2,6 +2,7 @@ import React from "react";
 
 import Link from "next/link";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 // TODO: swap these placeholder illustrations for real campus/student photography or a short video.
 import webpImage from "../../../../public/peppa_hero.png";
 import peppaPigImage from "../../../../public/peppa_pig.png";
@@ -14,6 +15,7 @@ import { getActiveFestival } from "@/lib/festival";
 
 const Hero = () => {
   const festival = getActiveFestival();
+  const t = useTranslations("landing.hero");
 
   return (
     <div className="relative flex flex-col items-center gap-8">
@@ -26,33 +28,31 @@ const Hero = () => {
       <div className="flex flex-col items-center gap-6 text-center pt-24">
         <FestivalBanner />
         <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#8371fa] dark:text-[#c25ff9]">
-          Shri Abhay Nobles Senior Secondary School
+          {t("schoolName")}
         </p>
         <h1 className="flex flex-col">
           <span className="text-6xl font-semibold">
-            Inspiring Minds.{" "}
+            {t("taglineLine1")}{" "}
             <span className="bg-clip-text text-transparent bg-gradient-to-b from-[#8371fa] to-[#c25ff9]">
-              Building Futures.
+              {t("taglineLine2")}
             </span>
           </span>
         </h1>
         <p className="max-w-2xl text-lg text-zinc-600 dark:text-zinc-400">
-          A nurturing learning environment where students discover their
-          potential, develop strong character, and prepare for a changing
-          world.
+          {t("description")}
         </p>
 
         <div className="flex flex-wrap items-center justify-center gap-3">
           <Button asChild size="lg">
-            <Link href="/about">Explore Our School</Link>
+            <Link href="/about">{t("exploreSchool")}</Link>
           </Button>
           <Button asChild size="lg" variant="outline">
-            <Link href="#admissions">Admissions 2026–27</Link>
+            <Link href="#admissions">{t("admissions")}</Link>
           </Button>
         </div>
 
         <p className="text-sm font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-500">
-          RBSE Affiliated • Classes Nursery–XII • Established 1998
+          {t("affiliation")}
         </p>
       </div>
 

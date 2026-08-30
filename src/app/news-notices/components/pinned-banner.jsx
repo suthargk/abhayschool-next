@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { format } from "date-fns";
 import { ArrowRight, Pin } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 export function PinnedBanner({ items }) {
+  const t = useTranslations("newsNotices.pinnedBanner");
   if (!items?.length) return null;
   const [primary, ...rest] = items;
 
@@ -14,7 +16,9 @@ export function PinnedBanner({ items }) {
       >
         <div className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-amber-700 dark:text-amber-400">
           <Pin className="size-3.5 fill-current" />
-          Important {primary.type === "NOTICE" ? "notice" : "news"}
+          {primary.type === "NOTICE"
+            ? t("importantNotice")
+            : t("importantNews")}
         </div>
         <h2 className="mt-2 text-xl font-semibold leading-snug text-zinc-900 dark:text-zinc-50 sm:text-2xl">
           {primary.title}
@@ -27,11 +31,15 @@ export function PinnedBanner({ items }) {
         <div className="mt-4 flex items-center justify-between text-sm">
           <span className="text-zinc-500 dark:text-zinc-500">
             {primary.publishedAt
-              ? `Published ${format(new Date(primary.publishedAt), "d MMM yyyy")}`
+              ? t("publishedOn", {
+                  date: format(new Date(primary.publishedAt), "d MMM yyyy"),
+                })
               : null}
           </span>
           <span className="inline-flex items-center gap-1 font-medium text-amber-700 dark:text-amber-400">
-            Read full {primary.type === "NOTICE" ? "notice" : "story"}
+            {primary.type === "NOTICE"
+              ? t("readFullNotice")
+              : t("readFullStory")}
             <ArrowRight className="size-3.5" />
           </span>
         </div>

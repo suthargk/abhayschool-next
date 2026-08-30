@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Suspense } from "react";
 import { Plus } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
 import { TableSkeleton } from "@/components/table-skeleton";
@@ -15,17 +16,19 @@ const DEFAULT_PAGE_SIZE = 10;
 // Not async: the header below has no data dependency, so it streams
 // immediately on every nav click instead of waiting on the list's queries.
 export default function TeacherToppersPage({ searchParams }) {
+  const t = useTranslations("teacherToppers.page");
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div className="space-y-1">
-          <h1 className="text-2xl font-semibold tracking-tight">Toppers</h1>
-          <p className="text-muted-foreground">Toppers you&apos;ve added.</p>
+          <h1 className="text-2xl font-semibold tracking-tight">{t("heading")}</h1>
+          <p className="text-muted-foreground">{t("description")}</p>
         </div>
         <Button asChild>
           <Link href="/teacher/toppers/new">
             <Plus className="size-4" />
-            Add topper
+            {t("addTopper")}
           </Link>
         </Button>
       </div>

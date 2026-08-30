@@ -1,0 +1,55 @@
+{
+  "page": {
+    "heading": "प्रवेश हेतु आवेदन करें",
+    "description": "नीचे अपने बच्चे का विवरण भरें, हमारी प्रवेश टीम शीघ्र ही आपसे संपर्क करेगी।"
+  },
+  "form": {
+    "studentNameLabel": "विद्यार्थी का नाम *",
+    "studentNamePlaceholder": "उदाहरण: आरव शर्मा",
+    "dateOfBirthLabel": "जन्म तिथि",
+    "dateOfBirthPlaceholder": "जन्म तिथि चुनें",
+    "genderLabel": "लिंग",
+    "genderPlaceholder": "लिंग चुनें",
+    "genderOptions": {
+      "male": "पुरुष",
+      "female": "महिला",
+      "other": "अन्य"
+    },
+    "classAppliedForLabel": "जिस कक्षा हेतु आवेदन कर रहे हैं *",
+    "classPlaceholder": "कक्षा चुनें",
+    "classOptions": {
+      "nursery": "नर्सरी",
+      "lkg": "एलकेजी",
+      "ukg": "यूकेजी",
+      "classI": "कक्षा I",
+      "classII": "कक्षा II",
+      "classIII": "कक्षा III",
+      "classIV": "कक्षा IV",
+      "classV": "कक्षा V",
+      "classVI": "कक्षा VI",
+      "classVII": "कक्षा VII",
+      "classVIII": "कक्षा VIII",
+      "classIX": "कक्षा IX",
+      "classX": "कक्षा X",
+      "classXI": "कक्षा XI",
+      "classXII": "कक्षा XII"
+    },
+    "parentNameLabel": "अभिभावक का नाम *",
+    "parentNamePlaceholder": "उदाहरण: रोहित शर्मा",
+    "phoneLabel": "मोबाइल नंबर *",
+    "phonePlaceholder": "10 अंकों का मोबाइल नंबर",
+    "emailLabel": "ईमेल",
+    "previousSchoolLabel": "पिछला विद्यालय",
+    "previousSchoolPlaceholder": "यदि लागू हो",
+    "addressLabel": "पता",
+    "addressPlaceholder": "वर्तमान आवासीय पता",
+    "messageLabel": "क्या आप हमें कुछ और बताना चाहेंगे?",
+    "messagePlaceholder": "वैकल्पिक",
+    "defaultError": "कुछ गड़बड़ हो गई। कृपया पुनः प्रयास करें।",
+    "submitting": "सबमिट किया जा रहा है…",
+    "submit": "आवेदन सबमिट करें",
+    "successHeading": "धन्यवाद!",
+    "successMessage": "हमें आपकी प्रवेश संबंधी जानकारी प्राप्त हो गई है। हमारी प्रवेश टीम शीघ्र ही आपसे संपर्क करेगी।",
+    "successEmailNote": "हमने आपके ईमेल पर पुष्टिकरण भी भेज दिया है।"
+  }
+}

@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import Image from "next/image";
 import { format } from "date-fns";
+import { useTranslations } from "next-intl";
 import { CalendarIcon, GripVertical, Loader2, Star, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -20,7 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { GALLERY_CATEGORIES } from "@/data/gallery-categories";
+import { GALLERY_CATEGORIES, GALLERY_CATEGORY_LABEL_KEYS } from "@/data/gallery-categories";
 import { cn } from "@/lib/utils";
 
 function toDate(value) {
@@ -29,6 +30,9 @@ function toDate(value) {
 }
 
 export function TeacherGalleryForm({ initialItem }) {
+  const t = useTranslations("teacherGallery.form");
+  const tCategories = useTranslations("gallery.categories");
+  const tCommon = useTranslations("common.actions");
   const router = useRouter();
   const isEdit = Boolean(initialItem);
 
@@ -64,7 +68,7 @@ export function TeacherGalleryForm({ initialItem }) {
           body: formData,
         });
         const data = await res.json();
-        if (!res.ok) throw new Error(data.error || `Failed to upload ${file.name}`);
+        if (!res.ok) throw new Error(data.error || t("uploadFailed", { fileName: file.name }));
         uploaded.push({ key: crypto.randomUUID(), url: data.url });
       }
       setImages((prev) => {
@@ -103,7 +107,7 @@ export function TeacherGalleryForm({ initialItem }) {
   async function handleSubmit(e) {
     e.preventDefault();
     if (!eventDate) {
-      setError("Event date is required");
+      setError(t("eventDateRequired"));
       return;
     }
     setSaving(true);
@@ -129,7 +133,7 @@ export function TeacherGalleryForm({ initialItem }) {
         },
       );
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Save failed");
+      if (!res.ok) throw new Error(data.error || t("saveFailed"));
       router.push("/teacher/gallery");
       router.refresh();
     } catch (err) {
@@ -142,19 +146,19 @@ export function TeacherGalleryForm({ initialItem }) {
   return (
     <form onSubmit={handleSubmit} className="max-w-3xl space-y-6">
       <div className="space-y-2">
-        <Label htmlFor="title">Title</Label>
+        <Label htmlFor="title">{t("titleLabel")}</Label>
         <Input
           id="title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           required
-          placeholder="Annual Sports Day 2026"
+          placeholder={t("titlePlaceholder")}
         />
       </div>
 
       <div className="space-y-2">
         <Label htmlFor="event-date" className="block">
-          Event date
+          {t("eventDateLabel")}
         </Label>
         <Popover>
           <PopoverTrigger asChild>
@@ -168,7 +172,7 @@ export function TeacherGalleryForm({ initialItem }) {
               )}
             >
               <CalendarIcon className="mr-2 size-4" />
-              {eventDate ? format(eventDate, "PPP") : "Pick a date"}
+              {eventDate ? format(eventDate, "PPP") : t("pickDate")}
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-auto p-0" align="start">
@@ -179,7 +183,7 @@ export function TeacherGalleryForm({ initialItem }) {
 
       <div className="flex flex-wrap items-end gap-6">
         <div className="space-y-2">
-          <Label htmlFor="category">Category</Label>
+          <Label htmlFor="category">{t("categoryLabel")}</Label>
           <Select value={category} onValueChange={setCategory}>
             <SelectTrigger id="category" className="w-48">
               <SelectValue />
@@ -187,7 +191,7 @@ export function TeacherGalleryForm({ initialItem }) {
             <SelectContent>
               {GALLERY_CATEGORIES.map((c) => (
                 <SelectItem key={c.value} value={c.value}>
-                  {c.label}
+                  {tCategories(GALLERY_CATEGORY_LABEL_KEYS[c.value])}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -201,24 +205,24 @@ export function TeacherGalleryForm({ initialItem }) {
             onCheckedChange={(checked) => setFeatured(checked === true)}
           />
           <Label htmlFor="featured" className="font-normal">
-            Featured album
+            {t("featuredLabel")}
           </Label>
         </div>
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="description">Description</Label>
+        <Label htmlFor="description">{t("descriptionLabel")}</Label>
         <Textarea
           id="description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          placeholder="A short description of the event."
+          placeholder={t("descriptionPlaceholder")}
           rows={3}
         />
       </div>
 
       <div className="space-y-2">
-        <Label>Photos</Label>
+        <Label>{t("photosLabel")}</Label>
 
         {images.length > 0 ? (
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
@@ -269,14 +273,14 @@ export function TeacherGalleryForm({ initialItem }) {
                     className="size-3"
                     fill={image.url === coverImageUrl ? "currentColor" : "none"}
                   />
-                  {image.url === coverImageUrl ? "Cover" : "Set cover"}
+                  {image.url === coverImageUrl ? t("cover") : t("setCover")}
                 </button>
               </div>
             ))}
           </div>
         ) : (
           <p className="rounded-md border border-dashed p-6 text-center text-sm text-muted-foreground">
-            No photos yet. Add some below.
+            {t("noPhotos")}
           </p>
         )}
 
@@ -292,12 +296,10 @@ export function TeacherGalleryForm({ initialItem }) {
           />
           {uploading ? (
             <p className="mt-2 flex items-center gap-2 text-xs text-muted-foreground">
-              <Loader2 className="size-3 animate-spin" /> Uploading…
+              <Loader2 className="size-3 animate-spin" /> {t("uploading")}
             </p>
           ) : (
-            <p className="mt-2 text-xs text-muted-foreground">
-              Drag photos to reorder. Click the star to set the cover photo.
-            </p>
+            <p className="mt-2 text-xs text-muted-foreground">{t("reorderHelp")}</p>
           )}
         </div>
       </div>
@@ -310,15 +312,13 @@ export function TeacherGalleryForm({ initialItem }) {
 
       <div className="flex gap-2">
         <Button type="submit" disabled={saving || uploading}>
-          {saving ? "Saving…" : isEdit ? "Save changes" : "Publish"}
+          {saving ? t("saving") : isEdit ? t("saveChanges") : t("publish")}
         </Button>
         <Button type="button" variant="outline" onClick={() => router.push("/teacher/gallery")}>
-          Cancel
+          {tCommon("cancel")}
         </Button>
       </div>
-      <p className="text-xs text-muted-foreground">
-        This album is published immediately and appears on the school website right away.
-      </p>
+      <p className="text-xs text-muted-foreground">{t("publishNote")}</p>
     </form>
   );
 }

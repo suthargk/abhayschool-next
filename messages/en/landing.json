@@ -1,0 +1,56 @@
+{
+  "hero": {
+    "schoolName": "Shri Abhay Nobles Senior Secondary School",
+    "taglineLine1": "Inspiring Minds.",
+    "taglineLine2": "Building Futures.",
+    "description": "A nurturing learning environment where students discover their potential, develop strong character, and prepare for a changing world.",
+    "exploreSchool": "Explore Our School",
+    "admissions": "Admissions 2026–27",
+    "affiliation": "RBSE Affiliated • Classes Nursery–XII • Established 1998"
+  },
+  "welcome": {
+    "heading": "Where Learning Meets Possibility",
+    "description": "At Shri Abhay Nobles Senior Secondary School, we believe education goes beyond textbooks. Our students are encouraged to explore, question, create, and grow in an environment built around academic excellence and personal development.",
+    "discoverStory": "Discover Our Story →"
+  },
+  "stats": {
+    "yearsOfExcellence": "Years of Excellence",
+    "students": "Students",
+    "facultyMembers": "Faculty Members",
+    "highestBoardScore": "Highest Board Score"
+  },
+  "campusHighlights": {
+    "heading": "Explore Our Campus",
+    "description": "Experience our campus through vibrant images showcasing its energy, spaces, and community.",
+    "mobileHeading": "Keeping teachers, families, and kids connected"
+  },
+  "newsNotices": {
+    "heading": "School Updates and Announcements",
+    "description": "Stay Informed with the Latest News and Important Notices",
+    "latestUpdates": "Latest updates",
+    "viewAll": "View all",
+    "empty": "No news or notices yet.",
+    "readMore": "Read more",
+    "typeNews": "News",
+    "typeNotice": "Notice"
+  },
+  "testimonials": {
+    "heading": "Trusted by parents",
+    "studentsCount": "750 Students",
+    "description": "who have witnessed our commitment to quality education, nurturing environments, and student success.",
+    "viewAll": "View All Testimonials →"
+  },
+  "faq": {
+    "heading": "Frequently Asked Questions",
+    "description": "Find answers to common queries about our school, including admissions, academics, facilities, and more."
+  },
+  "admissionsCta": {
+    "heading": "Ready to Begin Your Child's Journey?",
+    "description": "Discover a learning environment where your child can learn, grow and thrive.",
+    "apply": "Apply for Admission",
+    "bookVisit": "Book a Campus Visit"
+  },
+  "toppers": {
+    "viewAll": "View All Achievements →"
+  }
+}

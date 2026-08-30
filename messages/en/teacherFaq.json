@@ -1,0 +1,35 @@
+{
+  "page": {
+    "heading": "FAQ",
+    "description": "FAQs you've posted.",
+    "addButton": "Add FAQ"
+  },
+  "form": {
+    "newHeading": "Add FAQ",
+    "editHeading": "Edit",
+    "questionLabel": "Question",
+    "questionPlaceholder": "e.g. What is the admission process?",
+    "answerLabel": "Answer",
+    "answerPlaceholder": "Write a clear, concise answer shown in the accordion.",
+    "saving": "Saving…",
+    "saveChanges": "Save changes",
+    "publish": "Publish",
+    "publishNote": "This FAQ is published immediately and appears on the school website right away.",
+    "saveFailed": "Save failed"
+  },
+  "list": {
+    "searchPlaceholder": "Search by question or answer…",
+    "noResultsFiltered": "No FAQs match your search.",
+    "noResultsEmpty": "You haven't posted any FAQs yet.",
+    "questionColumn": "Question",
+    "answerColumn": "Answer",
+    "deleteTitle": "Delete {label}?",
+    "deleteDescription": "This can't be undone. This will permanently delete this FAQ.",
+    "deleteCancel": "Cancel",
+    "deleteConfirm": "Delete",
+    "deleting": "Deleting…",
+    "deletingToast": "Deleting {label}…",
+    "deletedToast": "Deleted {label}",
+    "deleteFailedToast": "Failed to delete {label}"
+  }
+}

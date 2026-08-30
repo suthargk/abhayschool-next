@@ -1,9 +1,12 @@
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
 import { GlitterBackground } from "@/components/backgrounds/glitter-background";
 
 export function AdmissionsCta() {
+  const t = useTranslations("landing.admissionsCta");
+
   return (
     <section
       id="admissions"
@@ -11,18 +14,15 @@ export function AdmissionsCta() {
     >
       <GlitterBackground preset="festive" sparkleCount={20} />
       <h2 className="max-w-2xl text-2xl font-semibold tracking-tight sm:text-3xl">
-        Ready to Begin Your Child&apos;s Journey?
+        {t("heading")}
       </h2>
-      <p className="max-w-xl text-muted-foreground">
-        Discover a learning environment where your child can learn, grow and
-        thrive.
-      </p>
+      <p className="max-w-xl text-muted-foreground">{t("description")}</p>
       <div className="flex flex-wrap items-center justify-center gap-3">
         <Button asChild size="lg">
-          <Link href="/admissions">Apply for Admission</Link>
+          <Link href="/admissions">{t("apply")}</Link>
         </Button>
         <Button asChild size="lg" variant="outline">
-          <Link href="/admissions">Book a Campus Visit</Link>
+          <Link href="/admissions">{t("bookVisit")}</Link>
         </Button>
       </div>
     </section>

@@ -1,4 +1,5 @@
 import { CalendarDays, Users, GraduationCap, Trophy } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 function StatTile({ icon: Icon, label, value }) {
   return (
@@ -13,23 +14,24 @@ function StatTile({ icon: Icon, label, value }) {
 }
 
 export function StatsStrip({ facultyCount, highestPercentage }) {
+  const t = useTranslations("landing.stats");
   const yearsOfExcellence = new Date().getFullYear() - 1998;
 
   const stats = [
     {
       icon: CalendarDays,
-      label: "Years of Excellence",
+      label: t("yearsOfExcellence"),
       value: `${yearsOfExcellence}+`,
     },
-    { icon: Users, label: "Students", value: "700+" },
+    { icon: Users, label: t("students"), value: "700+" },
     {
       icon: GraduationCap,
-      label: "Faculty Members",
+      label: t("facultyMembers"),
       value: facultyCount > 0 ? `${facultyCount}+` : "—",
     },
     {
       icon: Trophy,
-      label: "Highest Board Score",
+      label: t("highestBoardScore"),
       value: highestPercentage > 0 ? `${highestPercentage}%` : "—",
     },
   ];

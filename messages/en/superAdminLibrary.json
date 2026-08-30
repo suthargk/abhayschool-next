@@ -1,0 +1,51 @@
+{
+  "page": {
+    "heading": "Library",
+    "description": "Manage the book catalogue shown on the public Library page, by class."
+  },
+  "newPage": {
+    "heading": "Add book"
+  },
+  "editPage": {
+    "heading": "Edit book"
+  },
+  "admin": {
+    "noClassesBefore": "No classes configured yet.",
+    "addClassLink": "Add a class",
+    "noClassesAfter": "to start building the library catalogue.",
+    "tabsAriaLabel": "Library catalogue by class",
+    "addBookTo": "Add book to {className}",
+    "bulkDeleteLabel": "{count, plural, one {# book} other {# books}}"
+  },
+  "form": {
+    "updating": "Updating…",
+    "classLabel": "Class",
+    "bookNameLabel": "Book name",
+    "bookNamePlaceholder": "e.g. Flamingo",
+    "subjectLabel": "Subject",
+    "subjectPlaceholder": "e.g. English",
+    "publicationLabel": "Publication",
+    "publicationPlaceholder": "e.g. N.C.E.R.T",
+    "saveFailed": "Save failed",
+    "updateStatusFailed": "Failed to update status",
+    "saveChanges": "Save changes",
+    "saveDraft": "Save draft"
+  },
+  "table": {
+    "searchPlaceholder": "Search by book name, subject, or publication...",
+    "deleteSelected": "Delete selected",
+    "emptyNoBooks": "No books in this class yet.",
+    "reorderSr": "Reorder",
+    "actionsSr": "Actions",
+    "clearToReorder": "Clear the search to drag and reorder.",
+    "dragToReorder": "Drag rows to change display order.",
+    "columns": {
+      "bookName": "Book name",
+      "subject": "Subject",
+      "publication": "Publication",
+      "status": "Status"
+    },
+    "confirmDeleteOneBook": "This will permanently remove this book from the library catalogue.",
+    "confirmDeleteManyBooks": "This will permanently remove these books from the library catalogue."
+  }
+}

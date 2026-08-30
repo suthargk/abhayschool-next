@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Suspense } from "react";
 import { GraduationCap, Plus } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -14,14 +15,15 @@ export default async function TeacherDashboardPage() {
   // request) — kept at the top level so the header renders immediately
   // instead of waiting on the stats/assignments queries below.
   const profile = await getCurrentProfile();
+  const t = await getTranslations("teacherDashboard.home");
 
   return (
     <div className="space-y-6">
       <div className="space-y-1">
         <h1 className="text-2xl font-semibold tracking-tight">
-          Welcome, {teacherFullName(profile) || "Teacher"}
+          {t("welcome", { name: teacherFullName(profile) || t("defaultTeacherName") })}
         </h1>
-        <p className="text-muted-foreground">Post and manage homework for your classes.</p>
+        <p className="text-muted-foreground">{t("subheading")}</p>
       </div>
 
       <Suspense fallback={<DashboardStatsSkeleton />}>
@@ -32,6 +34,7 @@ export default async function TeacherDashboardPage() {
 }
 
 async function DashboardStats({ profileId }) {
+  const t = await getTranslations("teacherDashboard.home");
   const [assignments, classes, homeworkCount] = await Promise.all([
     prisma.teacherAssignment.findMany({
       where: { teacherId: profileId },
@@ -46,24 +49,24 @@ async function DashboardStats({ profileId }) {
       <div className="rounded-xl border bg-card p-6">
         <div className="flex items-center gap-2 text-muted-foreground">
           <GraduationCap className="size-4" />
-          <span className="text-sm font-medium">Homework posted</span>
+          <span className="text-sm font-medium">{t("homeworkPosted")}</span>
         </div>
         <p className="mt-2 text-3xl font-semibold">{homeworkCount}</p>
       </div>
       <div className="rounded-xl border bg-card p-6">
         <div className="flex items-center justify-between">
-          <span className="text-sm font-medium text-muted-foreground">Your assignments</span>
+          <span className="text-sm font-medium text-muted-foreground">
+            {t("yourAssignments")}
+          </span>
           <Button asChild size="sm">
             <Link href="/teacher/homework/new">
               <Plus className="size-4" />
-              Add homework
+              {t("addHomework")}
             </Link>
           </Button>
         </div>
         {assignments.length === 0 ? (
-          <p className="mt-3 text-sm text-muted-foreground">
-            No classes/subjects assigned yet. Contact an admin.
-          </p>
+          <p className="mt-3 text-sm text-muted-foreground">{t("noAssignments")}</p>
         ) : (
           <ul className="mt-3 space-y-1 text-sm">
             {assignments.map((a) => (

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 
 import { getHomepageNewsNotices } from "@/lib/news-notices/cached-queries";
 
@@ -7,6 +8,7 @@ import { FeaturedNewsCard, NewsCard } from "./news-card";
 
 const NewsNotices = async () => {
   const items = await getHomepageNewsNotices();
+  const t = await getTranslations("landing.newsNotices");
 
   const [featured, ...rest] = items;
 
@@ -18,32 +20,32 @@ const NewsNotices = async () => {
       <div className="flex flex-col items-center gap-2">
         <h4 className="text-3xl font-semibold mb-2 text-center">
           <span aria-hidden className="mr-2">🎈</span>
-          <span>School Updates and Announcements</span>
+          <span>{t("heading")}</span>
           <span aria-hidden className="ml-2">🎈</span>
         </h4>
         <div className="h-1.5 w-20 rounded-full bg-gradient-to-r from-pink-400 to-red-400" />
         <div className="text-zinc-700 text-center dark:text-zinc-500">
-          Stay Informed with the Latest News and Important Notices
+          {t("description")}
         </div>
       </div>
 
       <div className="relative w-full max-w-5xl mt-10">
         <div className="flex items-center justify-between mb-5">
           <div className="uppercase text-sm font-medium tracking-wide text-pink-600 dark:text-pink-400">
-            Latest updates
+            {t("latestUpdates")}
           </div>
           <Link
             href="/news-notices"
             className="group flex items-center gap-1 text-sm font-medium text-red-500 dark:text-red-400"
           >
-            View all
+            {t("viewAll")}
             <ArrowUpRight className="size-4 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
           </Link>
         </div>
 
         {items.length === 0 ? (
           <div className="rounded-3xl border border-dashed border-zinc-300 p-16 text-center text-sm text-zinc-500 dark:border-zinc-700">
-            No news or notices yet.
+            {t("empty")}
           </div>
         ) : (
           <div className="space-y-5">

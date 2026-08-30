@@ -1,0 +1,67 @@
+{
+  "hero": {
+    "eyebrow": "स्कूल अपडेट",
+    "headingLine1": "अपडेट रहें",
+    "headingLine2": "समाचार एवं सूचनाएँ",
+    "description": "हमारे स्कूल की घोषणाएँ, कार्यक्रम, उपलब्धियाँ और महत्वपूर्ण जानकारी — सब एक ही स्थान पर।",
+    "browseUpdates": "अपडेट देखें"
+  },
+  "pinnedBanner": {
+    "importantNews": "महत्वपूर्ण समाचार",
+    "importantNotice": "महत्वपूर्ण सूचना",
+    "publishedOn": "{date} को प्रकाशित",
+    "readFullStory": "पूरा समाचार पढ़ें",
+    "readFullNotice": "पूरी सूचना पढ़ें"
+  },
+  "publicNewsCard": {
+    "readMore": "और पढ़ें"
+  },
+  "categories": {
+    "academic": "शैक्षणिक",
+    "admissions": "प्रवेश",
+    "examination": "परीक्षा",
+    "events": "कार्यक्रम",
+    "sports": "खेल",
+    "holidays": "अवकाश",
+    "transport": "परिवहन",
+    "parentInformation": "अभिभावक जानकारी",
+    "achievements": "उपलब्धियाँ",
+    "general": "सामान्य"
+  },
+  "explorer": {
+    "updating": "अपडेट हो रहा है…",
+    "searchPlaceholder": "समाचार और सूचनाएँ खोजें…",
+    "allCategories": "सभी श्रेणियाँ",
+    "allYears": "सभी शैक्षणिक वर्ष",
+    "tabAll": "सभी",
+    "tabNews": "समाचार",
+    "tabNotices": "सूचनाएँ",
+    "tabEvents": "कार्यक्रम",
+    "rangeAny": "कोई भी समय",
+    "rangeLast7Days": "पिछले 7 दिन",
+    "rangeLast30Days": "पिछले 30 दिन",
+    "rangeThisYear": "इस वर्ष",
+    "apply": "लागू करें",
+    "archiveYear": "संग्रह — {year}",
+    "clearYear": "वर्ष हटाएँ",
+    "noResults": "कोई परिणाम नहीं मिला। कृपया भिन्न खोज या फ़िल्टर आज़माएँ।",
+    "typeNews": "समाचार",
+    "showingResults": "{total} में से {from}–{to} दिखाए जा रहे हैं",
+    "previousPage": "← पिछला",
+    "nextPage": "अगला →",
+    "pageOf": "{totalPages} में से पृष्ठ {page}",
+    "browseArchive": "संग्रह देखें"
+  },
+  "detail": {
+    "backToList": "समाचार एवं सूचनाएँ पर वापस जाएँ",
+    "pinned": "पिन किया गया",
+    "typeNews": "समाचार",
+    "typeNotice": "सूचना",
+    "publishedOn": "{date} को प्रकाशित",
+    "lastUpdatedOn": "अंतिम बार {date} को अद्यतन",
+    "eventDate": "कार्यक्रम की तिथि",
+    "eventTime": "समय",
+    "venue": "स्थान",
+    "attachments": "संलग्नक"
+  }
+}

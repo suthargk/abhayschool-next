@@ -1,0 +1,57 @@
+export const LOCALES = ["en", "hi"];
+export const DEFAULT_LOCALE = "en";
+export const LOCALE_COOKIE = "NEXT_LOCALE";
+
+// Every namespace gets its own messages/{locale}/{namespace}.json file so
+// translation work on one section of the site never touches another's file.
+export const NAMESPACES = [
+  "common",
+  "landing",
+  "about",
+  "faculty",
+  "facilities",
+  "principalMessage",
+  "academics",
+  "achievements",
+  "gallery",
+  "admissions",
+  "newsNotices",
+  "testimonials",
+  "homework",
+  // teacher dashboard
+  "teacherShell",
+  "teacherAuth",
+  "teacherDashboard",
+  "teacherBlog",
+  "teacherClasses",
+  "teacherFacilities",
+  "teacherFaculty",
+  "teacherFaq",
+  "teacherGallery",
+  "teacherHomework",
+  "teacherLibrary",
+  "teacherNewsNotices",
+  "teacherPrincipalMessage",
+  "teacherTestimonials",
+  "teacherTimeTable",
+  "teacherToppers",
+  // super-admin dashboard
+  "superAdminShell",
+  "superAdminAuth",
+  "superAdminDashboard",
+  "superAdminFacilities",
+  "superAdminFaculty",
+  "superAdminRoutePlan",
+  "superAdminBlog",
+  "superAdminLibrary",
+  "superAdminTimeTable",
+  "superAdminClasses",
+  "superAdminToppers",
+  "superAdminAdmissions",
+  "superAdminGallery",
+  "superAdminFaq",
+  "superAdminTestimonials",
+  "superAdminPrincipalMessage",
+  "superAdminHomework",
+  "superAdminNewsNotices",
+];

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
 import Image from "next/image";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { Loader2, MoreHorizontal, UserRound } from "lucide-react";
 
 import {
@@ -54,21 +55,22 @@ function TestimonialAvatar({ photoUrl }) {
 }
 
 function RowActionsMenu({ item, pending, onDelete }) {
+  const tActions = useTranslations("common.actions");
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="size-8" disabled={pending}>
           <MoreHorizontal className="size-4" />
-          <span className="sr-only">Open menu</span>
+          <span className="sr-only">{tActions("openMenu")}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem asChild>
-          <Link href={`/teacher/testimonials/${item.id}/edit`}>Edit</Link>
+          <Link href={`/teacher/testimonials/${item.id}/edit`}>{tActions("edit")}</Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem className="text-destructive focus:text-destructive" onSelect={onDelete}>
-          Delete
+          {tActions("delete")}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -76,6 +78,8 @@ function RowActionsMenu({ item, pending, onDelete }) {
 }
 
 function TeacherTestimonialsFilters({ filters, pageSize, defaultPageSize, onPendingChange }) {
+  const t = useTranslations("teacherTestimonials.list");
+  const tActions = useTranslations("common.actions");
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [search, setSearch] = useState(filters.q);
@@ -117,13 +121,13 @@ function TeacherTestimonialsFilters({ filters, pageSize, defaultPageSize, onPend
         type="search"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        placeholder="Search by name, designation, or quote…"
+        placeholder={t("searchPlaceholder")}
         className="sm:max-w-xs"
         disabled={isPending}
       />
       <Button type="submit" size="sm" disabled={isPending}>
         {isPending ? <Loader2 className="size-4 animate-spin" /> : null}
-        Search
+        {tActions("search")}
       </Button>
       {filters.q ? (
         <Button
@@ -136,7 +140,7 @@ function TeacherTestimonialsFilters({ filters, pageSize, defaultPageSize, onPend
             navigate({ q: "" });
           }}
         >
-          Clear filters
+          {t("clearFilters")}
         </Button>
       ) : null}
     </form>
@@ -153,6 +157,8 @@ export function TeacherTestimonialsList({
   total,
   totalPages,
 }) {
+  const t = useTranslations("teacherTestimonials.list");
+  const tActions = useTranslations("common.actions");
   const router = useRouter();
   const [items, setItems] = useState(initialItems);
   const [selectedIds, setSelectedIds] = useState(() => new Set());
@@ -193,7 +199,7 @@ export function TeacherTestimonialsList({
   function requestBulkDelete() {
     setDeleteTarget({
       ids: Array.from(selectedIds),
-      label: `${selectedIds.size} item${selectedIds.size === 1 ? "" : "s"}`,
+      label: t("itemsLabel", { count: selectedIds.size }),
     });
   }
 
@@ -211,9 +217,9 @@ export function TeacherTestimonialsList({
             }),
           ),
           {
-            loading: `Deleting ${label}…`,
-            success: `Deleted ${label}`,
-            error: `Failed to delete ${label}`,
+            loading: t("deletingToast", { label }),
+            success: t("deletedToast", { label }),
+            error: t("deleteFailedToast", { label }),
           },
         )
         .unwrap();
@@ -243,9 +249,11 @@ export function TeacherTestimonialsList({
 
       {selectedIds.size > 0 ? (
         <div className="flex items-center gap-2">
-          <span className="text-sm text-muted-foreground">{selectedIds.size} selected</span>
+          <span className="text-sm text-muted-foreground">
+            {t("selectedCount", { count: selectedIds.size })}
+          </span>
           <Button variant="destructive" size="sm" onClick={requestBulkDelete}>
-            Delete selected
+            {t("deleteSelected")}
           </Button>
         </div>
       ) : null}
@@ -259,9 +267,7 @@ export function TeacherTestimonialsList({
 
         {items.length === 0 ? (
           <p className="rounded-md border border-dashed p-8 text-center text-sm text-muted-foreground">
-            {hasAnyTestimonials
-              ? "No testimonials match your search."
-              : "You haven't added any testimonials yet."}
+            {hasAnyTestimonials ? t("noResultsFiltered") : t("noResultsEmpty")}
           </p>
         ) : (
           <>
@@ -274,9 +280,9 @@ export function TeacherTestimonialsList({
                   <Checkbox
                     checked={allSelected ? true : someSelected ? "indeterminate" : false}
                     onCheckedChange={toggleSelectAll}
-                    aria-label="Select all rows"
+                    aria-label={t("selectAllRows")}
                   />
-                  Select all
+                  {t("selectAllLabel")}
                 </label>
               ) : null}
               {items.map((item) => (
@@ -287,7 +293,7 @@ export function TeacherTestimonialsList({
                         className="mt-1"
                         checked={selectedIds.has(item.id)}
                         onCheckedChange={() => toggleSelected(item.id)}
-                        aria-label={`Select ${item.name}`}
+                        aria-label={t("selectRow", { name: item.name })}
                       />
                       <TestimonialAvatar photoUrl={item.photoUrl} />
                       <div>
@@ -317,12 +323,12 @@ export function TeacherTestimonialsList({
                       <Checkbox
                         checked={allSelected ? true : someSelected ? "indeterminate" : false}
                         onCheckedChange={toggleSelectAll}
-                        aria-label="Select all rows"
+                        aria-label={t("selectAllRows")}
                       />
                     </TableHead>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Designation</TableHead>
-                    <TableHead>Quote</TableHead>
+                    <TableHead>{t("nameColumn")}</TableHead>
+                    <TableHead>{t("designationColumn")}</TableHead>
+                    <TableHead>{t("quoteColumn")}</TableHead>
                     <TableHead className="w-0" />
                   </TableRow>
                 </TableHeader>
@@ -333,7 +339,7 @@ export function TeacherTestimonialsList({
                         <Checkbox
                           checked={selectedIds.has(item.id)}
                           onCheckedChange={() => toggleSelected(item.id)}
-                          aria-label={`Select ${item.name}`}
+                          aria-label={t("selectRow", { name: item.name })}
                         />
                       </TableCell>
                       <TableCell className="font-medium">
@@ -379,14 +385,13 @@ export function TeacherTestimonialsList({
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete {deleteTarget?.label}?</AlertDialogTitle>
+            <AlertDialogTitle>{t("deleteTitle", { label: deleteTarget?.label ?? "" })}</AlertDialogTitle>
             <AlertDialogDescription>
-              This can&apos;t be undone. This will permanently delete{" "}
-              {deleteTarget?.ids.length === 1 ? "this item" : "these items"}.
+              {t("deleteDescription", { count: deleteTarget?.ids.length ?? 1 })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={deleting}>{tActions("cancel")}</AlertDialogCancel>
             <AlertDialogAction
               disabled={deleting}
               onClick={(event) => {
@@ -395,7 +400,7 @@ export function TeacherTestimonialsList({
               }}
               className={buttonVariants({ variant: "destructive" })}
             >
-              {deleting ? "Deleting…" : "Delete"}
+              {deleting ? tActions("deleting") : tActions("delete")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

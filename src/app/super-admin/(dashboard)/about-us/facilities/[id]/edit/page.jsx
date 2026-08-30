@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { ArrowLeft } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -9,6 +10,8 @@ import { prisma } from "@/lib/prisma";
 import { FacilityForm } from "../../components/facility-form";
 
 export default async function EditFacilityPage({ params }) {
+  const t = await getTranslations("superAdminFacilities.editPage");
+  const tCommon = await getTranslations("common.actions");
   const { id } = await params;
   const [item, profile] = await Promise.all([
     prisma.facility.findUnique({ where: { id } }),
@@ -23,10 +26,10 @@ export default async function EditFacilityPage({ params }) {
         <Button variant="ghost" size="sm" className="-ml-3" asChild>
           <Link href={`/super-admin/about-us/facilities?section=${item.section}`}>
             <ArrowLeft className="size-4" />
-            Back
+            {tCommon("back")}
           </Link>
         </Button>
-        <h1 className="text-2xl font-semibold tracking-tight">Edit facility</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">{t("heading")}</h1>
       </div>
       <FacilityForm initialItem={item} canPublish={profile?.role === "ADMIN"} />
     </div>

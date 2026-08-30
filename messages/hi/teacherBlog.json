@@ -1,0 +1,42 @@
+{
+  "list": {
+    "heading": "ब्लॉग",
+    "description": "आपके द्वारा प्रकाशित ब्लॉग पोस्ट।",
+    "newPost": "नई पोस्ट",
+    "searchPlaceholder": "शीर्षक या सारांश से खोजें…",
+    "clearFilters": "फ़िल्टर साफ़ करें",
+    "emptyNoPosts": "आपने अभी तक कोई ब्लॉग पोस्ट प्रकाशित नहीं की है।",
+    "emptyNoMatches": "आपकी खोज से मेल खाने वाली कोई पोस्ट नहीं मिली।",
+    "columnTitle": "शीर्षक",
+    "columnSummary": "सारांश",
+    "columnPublished": "प्रकाशित तिथि",
+    "publishedOn": "{date} को प्रकाशित",
+    "deleteDialog": {
+      "title": "{label} हटाएँ?",
+      "description": "इसे पूर्ववत नहीं किया जा सकता। इससे यह पोस्ट स्थायी रूप से हट जाएगी।"
+    },
+    "toast": {
+      "deleting": "{label} हटाई जा रही है…",
+      "deleted": "{label} हटा दी गई",
+      "deleteFailed": "{label} हटाने में विफल"
+    }
+  },
+  "form": {
+    "editHeading": "संपादित करें",
+    "newHeading": "नई पोस्ट",
+    "titleLabel": "शीर्षक",
+    "titlePlaceholder": "बोर्ड परीक्षाओं की तैयारी",
+    "summaryLabel": "संक्षिप्त विवरण",
+    "summaryPlaceholder": "सूची में दिखने वाला एक या दो पंक्ति का सारांश।",
+    "coverImageLabel": "कवर छवि",
+    "uploading": "अपलोड हो रहा है…",
+    "contentLabel": "सामग्री",
+    "contentPlaceholder": "यहाँ पोस्ट लिखें…",
+    "saveChanges": "परिवर्तन सहेजें",
+    "publish": "प्रकाशित करें",
+    "saving": "सहेजा जा रहा है…",
+    "publishNote": "यह पोस्ट तुरंत प्रकाशित हो जाती है और तत्काल स्कूल की वेबसाइट पर दिखाई देती है।",
+    "uploadFailed": "अपलोड विफल",
+    "saveFailed": "सहेजना विफल"
+  }
+}

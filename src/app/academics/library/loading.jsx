@@ -1,17 +1,20 @@
+import { useTranslations } from "next-intl";
+
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function LibraryLoading() {
+  const t = useTranslations("academics.library");
+
   return (
     <div className="min-h-screen px-4 pb-16 pt-[100px] md:px-10 md:pt-[102px] lg:px-20">
       <div className="mx-auto max-w-5xl space-y-8">
         <div className="space-y-3">
           <div>
             <h1 className="text-2xl font-semibold tracking-tight md:text-3xl">
-              School Library
+              {t("heading")}
             </h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              Explore our collection of academic and reference books,
-              organized by class, subject, and publication.
+              {t("description")}
             </p>
           </div>
           <Skeleton className="h-4 w-72" />

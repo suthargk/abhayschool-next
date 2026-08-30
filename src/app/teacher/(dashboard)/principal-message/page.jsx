@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { useTranslations } from "next-intl";
 
 import { Skeleton } from "@/components/ui/skeleton";
 import { prisma } from "@/lib/prisma";
@@ -6,13 +7,13 @@ import { prisma } from "@/lib/prisma";
 import { TeacherPrincipalMessageForm } from "./components/teacher-principal-message-form";
 
 export default function TeacherPrincipalMessagePage() {
+  const t = useTranslations("teacherPrincipalMessage.page");
+
   return (
     <div className="space-y-6">
       <div className="space-y-1">
-        <h1 className="text-2xl font-semibold tracking-tight">Principal&apos;s Message</h1>
-        <p className="text-muted-foreground">
-          Manage the content and photo shown on the public Principal&apos;s Message page.
-        </p>
+        <h1 className="text-2xl font-semibold tracking-tight">{t("heading")}</h1>
+        <p className="text-muted-foreground">{t("description")}</p>
       </div>
 
       <Suspense fallback={<PrincipalMessageFormSkeleton />}>

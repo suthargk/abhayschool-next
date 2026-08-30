@@ -2,6 +2,7 @@
 
 import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,6 +11,7 @@ import { Label } from "@/components/ui/label";
 const RESEND_COOLDOWN_SECONDS = 30;
 
 function VerifyForm() {
+  const t = useTranslations("teacherAuth.verify");
   const router = useRouter();
   const searchParams = useSearchParams();
   const email = searchParams.get("email") ?? "";
@@ -41,10 +43,10 @@ function VerifyForm() {
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        setError(data.error || "Couldn't resend the code. Try again.");
+        setError(data.error || t("resendError"));
         return;
       }
-      setResendMessage("A new code has been sent.");
+      setResendMessage(t("resendMessage"));
       setResendCooldown(RESEND_COOLDOWN_SECONDS);
     } finally {
       setResending(false);
@@ -63,7 +65,7 @@ function VerifyForm() {
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        setError(data.error || "That code is incorrect or has expired");
+        setError(data.error || t("verifyError"));
         return;
       }
 
@@ -77,16 +79,16 @@ function VerifyForm() {
     <div className="flex min-h-screen items-center justify-center bg-muted/40 px-4">
       <div className="w-full max-w-md space-y-6 rounded-xl border bg-card p-8 shadow-sm">
         <div className="space-y-1 text-center">
-          <h1 className="text-2xl font-semibold tracking-tight">Verify your email</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">{t("heading")}</h1>
           <p className="text-sm text-muted-foreground">
             {email
-              ? `Enter the 6-digit code we emailed to ${email}.`
-              : "Enter the 6-digit code we emailed you."}
+              ? t("instructionsWithEmail", { email })
+              : t("instructionsWithoutEmail")}
           </p>
         </div>
         <form onSubmit={onSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="token">Verification code</Label>
+            <Label htmlFor="token">{t("codeLabel")}</Label>
             <Input
               id="token"
               inputMode="numeric"
@@ -105,13 +107,15 @@ function VerifyForm() {
             </p>
           ) : null}
           <Button type="submit" className="w-full" disabled={loading || !email}>
-            {loading ? "Verifying…" : "Verify"}
+            {loading ? t("verifying") : t("verify")}
           </Button>
         </form>
         <div className="text-center text-sm">
           {resendMessage ? <p className="text-muted-foreground">{resendMessage}</p> : null}
           {resendCooldown > 0 ? (
-            <p className="text-muted-foreground">Resend code in {resendCooldown}s</p>
+            <p className="text-muted-foreground">
+              {t("resendCooldown", { seconds: resendCooldown })}
+            </p>
           ) : (
             <button
               type="button"
@@ -119,7 +123,7 @@ function VerifyForm() {
               disabled={resending || !email}
               className="font-medium text-primary hover:underline disabled:opacity-50 disabled:no-underline"
             >
-              {resending ? "Resending…" : "Resend code"}
+              {resending ? t("resending") : t("resendCode")}
             </button>
           )}
         </div>

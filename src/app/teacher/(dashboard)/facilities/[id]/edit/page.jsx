@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 
 import { Button } from "@/components/ui/button";
 import { FormSkeleton } from "@/components/form-skeleton";
@@ -10,19 +11,19 @@ import { prisma } from "@/lib/prisma";
 
 import { TeacherFacilityForm } from "../../components/teacher-facility-form";
 
-// Not async: the header has no data dependency, so it streams immediately
-// instead of waiting on the facility query below.
-export default function EditTeacherFacilityPage({ params }) {
+export default async function EditTeacherFacilityPage({ params }) {
+  const t = await getTranslations("teacherFacilities.form");
+  const tActions = await getTranslations("common.actions");
   return (
     <div className="space-y-6">
       <div className="space-y-1">
         <Button variant="ghost" size="sm" className="-ml-3" asChild>
           <Link href="/teacher/facilities">
             <ArrowLeft className="size-4" />
-            Back
+            {tActions("back")}
           </Link>
         </Button>
-        <h1 className="text-2xl font-semibold tracking-tight">Edit facility</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">{t("editHeading")}</h1>
       </div>
       <Suspense fallback={<FormSkeleton />}>
         <EditFacilityFormSection params={params} />

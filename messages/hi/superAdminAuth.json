@@ -1,0 +1,11 @@
+{
+  "login": {
+    "heading": "सुपर एडमिन साइन इन",
+    "subheading": "अपने डैशबोर्ड खाते से साइन इन करें।",
+    "emailLabel": "ईमेल",
+    "passwordLabel": "पासवर्ड",
+    "signIn": "साइन इन करें",
+    "signingIn": "साइन इन हो रहा है…",
+    "defaultError": "साइन इन असफल रहा"
+  }
+}

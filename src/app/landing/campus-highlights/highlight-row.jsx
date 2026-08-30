@@ -1,12 +1,15 @@
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 
 export function HighlightRow({ images }) {
+  const t = useTranslations("landing.campusHighlights");
+
   return (
     <div className="flex gap-5 lg:gap-10 [--tr-scale:0.75] lg:[--tr-scale:1]">
       {images.map((img) => {
         const transform = `translateY(calc(var(--tr-scale) * ${img.translateY}px)) translateX(calc(var(--tr-scale) * ${img.translateX}px)) rotate(calc(var(--tr-scale) * ${img.rotate}deg))`;
 
-        if (img.caption) {
+        if (img.captionKey) {
           return (
             <div
               key={img.id}
@@ -14,7 +17,7 @@ export function HighlightRow({ images }) {
               className="min-w-60 lg:min-w-72"
             >
               <h2 className="text-xl md:text-2xl lg:text-3xl font-bold  bg-clip-text text-transparent bg-gradient-to-b from-[#df4fca] to-[#ed4492] text-center w-full">
-                {img.caption}
+                {t(img.captionKey)}
               </h2>
             </div>
           );

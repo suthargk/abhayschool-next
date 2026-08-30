@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 
 import { Button } from "@/components/ui/button";
 
@@ -10,6 +11,8 @@ const SECTIONS = ["OVERVIEW", "SPORTS", "SAFETY", "FAQ"];
 export default async function NewTeacherFacilityPage({ searchParams }) {
   const params = await searchParams;
   const section = SECTIONS.includes(params.section) ? params.section : "OVERVIEW";
+  const t = await getTranslations("teacherFacilities.form");
+  const tActions = await getTranslations("common.actions");
 
   return (
     <div className="space-y-6">
@@ -17,10 +20,10 @@ export default async function NewTeacherFacilityPage({ searchParams }) {
         <Button variant="ghost" size="sm" className="-ml-3" asChild>
           <Link href={`/teacher/facilities?section=${section}`}>
             <ArrowLeft className="size-4" />
-            Back
+            {tActions("back")}
           </Link>
         </Button>
-        <h1 className="text-2xl font-semibold tracking-tight">Add facility</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">{t("newHeading")}</h1>
       </div>
       <TeacherFacilityForm initialSection={section} />
     </div>

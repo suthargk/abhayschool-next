@@ -3,11 +3,12 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { format } from "date-fns";
 import { ArrowLeft, Calendar, Clock, FileText, MapPin, Pin } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 
 import { prisma } from "@/lib/prisma";
 import { ContentRenderer } from "@/components/news-notices/content-renderer";
 import { cn } from "@/lib/utils";
-import { categoryBadgeClass, categoryLabel } from "@/lib/news-notices/categories";
+import { CATEGORY_LABEL_KEYS, categoryBadgeClass } from "@/lib/news-notices/categories";
 
 function formatFileSize(bytes) {
   if (!bytes) return "";
@@ -17,6 +18,8 @@ function formatFileSize(bytes) {
 
 export default async function NewsNoticeDetailPage({ params }) {
   const { slug } = await params;
+  const t = await getTranslations("newsNotices.detail");
+  const tCategories = await getTranslations("newsNotices.categories");
 
   const item = await prisma.newsNotice.findFirst({
     where: { slug, status: { in: ["PUBLISHED", "ARCHIVED"] } },
@@ -39,7 +42,7 @@ export default async function NewsNoticeDetailPage({ params }) {
         className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
       >
         <ArrowLeft className="size-4" />
-        Back to News &amp; Notices
+        {t("backToList")}
       </Link>
 
       <div className="space-y-4">
@@ -47,7 +50,7 @@ export default async function NewsNoticeDetailPage({ params }) {
           {item.pinned ? (
             <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800 dark:bg-amber-950 dark:text-amber-300">
               <Pin className="size-3" />
-              Pinned
+              {t("pinned")}
             </span>
           ) : null}
           <span
@@ -58,7 +61,7 @@ export default async function NewsNoticeDetailPage({ params }) {
                 : "bg-pink-100 text-pink-700 dark:bg-pink-500/10 dark:text-pink-300",
             )}
           >
-            {item.type === "NEWS" ? "News" : "Notice"}
+            {item.type === "NEWS" ? t("typeNews") : t("typeNotice")}
           </span>
           <span
             className={cn(
@@ -66,7 +69,7 @@ export default async function NewsNoticeDetailPage({ params }) {
               categoryBadgeClass(item.category),
             )}
           >
-            {categoryLabel(item.category)}
+            {tCategories(CATEGORY_LABEL_KEYS[item.category])}
           </span>
         </div>
         <h1 className="text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">
@@ -74,10 +77,14 @@ export default async function NewsNoticeDetailPage({ params }) {
         </h1>
         <p className="text-sm text-muted-foreground">
           {item.publishedAt
-            ? `Published ${format(new Date(item.publishedAt), "MMMM d, yyyy")}`
+            ? t("publishedOn", {
+                date: format(new Date(item.publishedAt), "MMMM d, yyyy"),
+              })
             : null}
           {wasUpdated
-            ? ` · Last updated ${format(new Date(item.updatedAt), "MMMM d, yyyy")}`
+            ? ` · ${t("lastUpdatedOn", {
+                date: format(new Date(item.updatedAt), "MMMM d, yyyy"),
+              })}`
             : null}
           {item.author?.email ? ` · ${item.author.email}` : null}
         </p>
@@ -100,7 +107,7 @@ export default async function NewsNoticeDetailPage({ params }) {
             <div className="flex items-start gap-2">
               <Calendar className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
               <div>
-                <div className="text-xs text-muted-foreground">Event date</div>
+                <div className="text-xs text-muted-foreground">{t("eventDate")}</div>
                 <div className="text-sm font-medium">
                   {format(new Date(item.eventDate), "MMMM d, yyyy")}
                 </div>
@@ -111,7 +118,7 @@ export default async function NewsNoticeDetailPage({ params }) {
             <div className="flex items-start gap-2">
               <Clock className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
               <div>
-                <div className="text-xs text-muted-foreground">Time</div>
+                <div className="text-xs text-muted-foreground">{t("eventTime")}</div>
                 <div className="text-sm font-medium">{item.eventTime}</div>
               </div>
             </div>
@@ -120,7 +127,7 @@ export default async function NewsNoticeDetailPage({ params }) {
             <div className="flex items-start gap-2">
               <MapPin className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
               <div>
-                <div className="text-xs text-muted-foreground">Venue</div>
+                <div className="text-xs text-muted-foreground">{t("venue")}</div>
                 <div className="text-sm font-medium">{item.venue}</div>
               </div>
             </div>
@@ -134,7 +141,7 @@ export default async function NewsNoticeDetailPage({ params }) {
 
       {item.attachments.length > 0 ? (
         <div className="space-y-2 border-t pt-6">
-          <h2 className="text-sm font-semibold">Attachments</h2>
+          <h2 className="text-sm font-semibold">{t("attachments")}</h2>
           <ul className="space-y-2">
             {item.attachments.map((a) => (
               <li key={a.id}>

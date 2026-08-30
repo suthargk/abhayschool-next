@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
 
@@ -19,6 +20,8 @@ function excerptFrom(content, maxLength = 220) {
 }
 
 export function PrincipalMessagePreview({ message }) {
+  const t = useTranslations("about.principalMessagePreview");
+
   if (!message) return null;
 
   const excerpt = excerptFrom(message.content);
@@ -28,7 +31,7 @@ export function PrincipalMessagePreview({ message }) {
       {message.photoUrl ? (
         <Image
           src={message.photoUrl}
-          alt={message.principalName || "Principal"}
+          alt={message.principalName || t("principalFallback")}
           width={160}
           height={160}
           className="mx-auto size-32 rounded-full border object-cover sm:size-40"
@@ -38,16 +41,18 @@ export function PrincipalMessagePreview({ message }) {
 
       <div className="space-y-4 text-center sm:text-left">
         <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-          Message from the Principal
+          {t("heading")}
         </h2>
         {excerpt ? (
           <p className="italic text-muted-foreground">&ldquo;{excerpt}&rdquo;</p>
         ) : null}
         {message.principalName ? (
-          <p className="font-medium">— {message.principalName}, Principal</p>
+          <p className="font-medium">
+            — {message.principalName}, {t("principalFallback")}
+          </p>
         ) : null}
         <Button asChild variant="link" className="h-auto p-0">
-          <Link href="/about/principal-message">Read Full Message →</Link>
+          <Link href="/about/principal-message">{t("readFullMessage")}</Link>
         </Button>
       </div>
     </section>

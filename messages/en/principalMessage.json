@@ -1,0 +1,117 @@
+{
+  "principalHero": {
+    "badge": "A Message from Our Principal",
+    "titleLine1": "Welcome to",
+    "titleLine2": "Our School Family",
+    "defaultName": "Our Principal",
+    "defaultDesignation": "Principal, Shri Abhay Nobles Senior Secondary School"
+  },
+  "principalMessageSection": {
+    "regards": "With warm regards,",
+    "signatureAlt": "Signature",
+    "signatureAltNamed": "{name}'s signature",
+    "defaultDesignation": "Principal, Shri Abhay Nobles Senior Secondary School"
+  },
+  "principalPhilosophy": {
+    "heading": "Our Educational Philosophy",
+    "description": "Five simple principles guide how we teach, and how we hope every student grows.",
+    "principles": {
+      "learn": {
+        "title": "Learn",
+        "description": "Build strong academic foundations that last a lifetime."
+      },
+      "think": {
+        "title": "Think",
+        "description": "Develop curiosity and critical thinking in everything we do."
+      },
+      "create": {
+        "title": "Create",
+        "description": "Encourage creativity, innovation, and the courage to try."
+      },
+      "lead": {
+        "title": "Lead",
+        "description": "Grow confidence, initiative, and responsibility."
+      },
+      "care": {
+        "title": "Care",
+        "description": "Build empathy, respect, and compassion for others."
+      }
+    }
+  },
+  "principalProfile": {
+    "heading": "About the Principal",
+    "defaultName": "Our Principal",
+    "principalSince": "Principal since",
+    "experience": "Experience",
+    "experienceYears": "{years}+ years",
+    "qualification": "Qualification",
+    "interests": "Areas of interest"
+  },
+  "principalVision": {
+    "heading": "My Vision for Our Students",
+    "quote": "I envision a school where every student feels valued, challenged, and inspired to learn — where academic achievement goes hand in hand with character, creativity, and compassion.",
+    "priorities": {
+      "academicExcellence": {
+        "title": "Academic Excellence",
+        "description": "Strong foundations and a lifelong love of learning."
+      },
+      "characterValues": {
+        "title": "Character & Values",
+        "description": "Integrity, empathy, and responsibility in everything we do."
+      },
+      "innovation": {
+        "title": "Innovation",
+        "description": "Technology, creativity, and problem-solving for tomorrow."
+      },
+      "wellbeing": {
+        "title": "Wellbeing",
+        "description": "A safe, supportive environment where every student can thrive."
+      }
+    }
+  },
+  "principalParentPartnership": {
+    "heading": "A Partnership With Parents",
+    "description": "A child's education is a shared responsibility — school, student, and family working together. Here's what you can expect from us, and how we hope to work with you.",
+    "commitments": [
+      "Regular communication about your child's progress and school life",
+      "Support for every student, academically and personally",
+      "Clear tracking of attendance and punctuality",
+      "Timely updates on academic performance",
+      "Attentive care for behaviour and emotional wellbeing",
+      "Opportunities to participate in school activities and events"
+    ]
+  },
+  "principalStudentMessage": {
+    "eyebrow": "To Our Students",
+    "message": "Be curious. Ask questions. Make mistakes, and learn from them. Support one another. Most importantly, never stop believing in what you can achieve."
+  },
+  "principalVideo": {
+    "badge": "Video Message",
+    "heading": "Watch a Message from Our Principal",
+    "iframeTitle": "A video message from the Principal"
+  },
+  "principalExploreLinks": {
+    "heading": "Explore Our School",
+    "links": {
+      "academics": {
+        "title": "Academics",
+        "description": "Our curriculum and approach to learning."
+      },
+      "facilities": {
+        "title": "Facilities",
+        "description": "The campus and spaces our students learn in."
+      },
+      "achievements": {
+        "title": "Achievements",
+        "description": "Students who have made us proud."
+      },
+      "gallery": {
+        "title": "Gallery",
+        "description": "Moments from life at our school."
+      }
+    }
+  },
+  "page": {
+    "emptyState": "The Principal's message will be published here soon."
+  }
+}

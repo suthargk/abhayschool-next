@@ -1,5 +1,7 @@
 "use client";
 
+import { useTranslations } from "next-intl";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -13,19 +15,20 @@ import {
 import { buttonVariants } from "@/components/ui/button";
 
 export function TestimonialDeleteDialog({ target, deleting, onOpenChange, onConfirm }) {
+  const t = useTranslations("superAdminTestimonials.deleteDialog");
+  const tCommon = useTranslations("common.actions");
+
   return (
     <AlertDialog open={target !== null} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Delete {target?.label}?</AlertDialogTitle>
+          <AlertDialogTitle>{t("title", { label: target?.label })}</AlertDialogTitle>
           <AlertDialogDescription>
-            This can&apos;t be undone. This will permanently remove{" "}
-            {target?.ids.length === 1 ? "this testimonial" : "these testimonials"} from the
-            homepage testimonials section.
+            {t("description", { count: target?.ids.length ?? 0 })}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
+          <AlertDialogCancel disabled={deleting}>{tCommon("cancel")}</AlertDialogCancel>
           <AlertDialogAction
             disabled={deleting}
             onClick={(event) => {
@@ -34,7 +37,7 @@ export function TestimonialDeleteDialog({ target, deleting, onOpenChange, onConf
             }}
             className={buttonVariants({ variant: "destructive" })}
           >
-            {deleting ? "Deleting..." : "Delete"}
+            {deleting ? tCommon("deleting") : tCommon("delete")}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

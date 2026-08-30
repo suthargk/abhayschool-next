@@ -1,0 +1,11 @@
+{
+  "home": {
+    "welcome": "Welcome, {name}",
+    "defaultTeacherName": "Teacher",
+    "subheading": "Post and manage homework for your classes.",
+    "homeworkPosted": "Homework posted",
+    "yourAssignments": "Your assignments",
+    "addHomework": "Add homework",
+    "noAssignments": "No classes/subjects assigned yet. Contact an admin."
+  }
+}

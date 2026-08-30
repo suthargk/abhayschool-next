@@ -1,0 +1,53 @@
+{
+  "page": {
+    "heading": "Testimonials",
+    "description": "Manage the testimonials marquee shown on the public homepage."
+  },
+  "admin": {
+    "addTestimonial": "Add testimonial"
+  },
+  "table": {
+    "searchPlaceholder": "Search by name, designation, or quote...",
+    "deleteSelected": "Delete selected",
+    "columnName": "Name",
+    "columnQuote": "Quote",
+    "columnStatus": "Status",
+    "columnActionsSr": "Actions",
+    "columnReorderSr": "Reorder",
+    "selectRowSr": "Select {name}",
+    "emptyState": "No testimonials yet.",
+    "noSearchResults": "No results match your search.",
+    "dragHint": "Drag rows to change display order.",
+    "clearSearchToReorderHint": "Clear the search to drag and reorder.",
+    "parentSubmitted": "Parent submitted"
+  },
+  "deleteDialog": {
+    "title": "Delete {label}?",
+    "description": "{count, plural, one {This can't be undone. This will permanently remove this testimonial from the homepage testimonials section.} other {This can't be undone. This will permanently remove these testimonials from the homepage testimonials section.}}",
+    "bulkDeleteLabel": "{count, plural, one {# testimonial} other {# testimonials}}"
+  },
+  "form": {
+    "addTitle": "Add testimonial",
+    "editTitle": "Edit testimonial",
+    "backToList": "Back",
+    "parentSubmissionNoticeWithPhone": "Submitted by a parent via the public form, verified by OTP at {phone}. Review before publishing.",
+    "parentSubmissionNotice": "Submitted by a parent via the public form, verified by OTP. Review before publishing.",
+    "photoLabel": "Photo",
+    "photoHelp": "Optional. A placeholder avatar is shown if left blank.",
+    "uploading": "Uploading…",
+    "nameLabel": "Name",
+    "namePlaceholder": "e.g. Priya Sharma",
+    "designationLabel": "Designation",
+    "designationPlaceholder": "e.g. Parent of Class VIII student",
+    "quoteLabel": "Quote",
+    "quotePlaceholder": "What did they say about the school?",
+    "saveChanges": "Save changes",
+    "saveDraft": "Save draft",
+    "saving": "Saving…",
+    "cancel": "Cancel",
+    "updating": "Updating…",
+    "uploadFailedError": "Upload failed",
+    "saveFailedError": "Save failed",
+    "statusUpdateFailedError": "Failed to update status"
+  }
+}

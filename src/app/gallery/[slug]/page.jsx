@@ -2,12 +2,14 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { format } from "date-fns";
 import { ArrowLeft } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 
 import { prisma } from "@/lib/prisma";
 import { GalleryPhotoGrid } from "@/components/gallery/photo-grid";
 
 export default async function GalleryAlbumDetailPage({ params }) {
   const { slug } = await params;
+  const t = await getTranslations("gallery.albumDetail");
 
   const album = await prisma.galleryAlbum.findFirst({
     where: { slug, status: "PUBLISHED" },
@@ -23,7 +25,7 @@ export default async function GalleryAlbumDetailPage({ params }) {
         className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
       >
         <ArrowLeft className="size-4" />
-        Back to Gallery
+        {t("backToGallery")}
       </Link>
 
       <div className="space-y-3">

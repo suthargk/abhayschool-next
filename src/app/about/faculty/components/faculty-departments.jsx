@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import {
   Atom,
   BookOpen,
@@ -29,16 +30,15 @@ function iconForDepartment(name) {
 }
 
 export function FacultyDepartments({ departments }) {
+  const t = useTranslations("faculty.facultyDepartments");
+
   if (departments.length === 0) return null;
 
   return (
     <section id="departments" className="space-y-8">
       <div className="mx-auto max-w-2xl space-y-2 text-center">
-        <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">Departments</h2>
-        <p className="text-muted-foreground">
-          Browse faculty by department, or use search and filters below to find someone
-          specific.
-        </p>
+        <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">{t("heading")}</h2>
+        <p className="text-muted-foreground">{t("description")}</p>
       </div>
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
@@ -54,9 +54,7 @@ export function FacultyDepartments({ departments }) {
                 <Icon className="size-5" />
               </span>
               <span className="font-medium">{name}</span>
-              <span className="text-xs text-muted-foreground">
-                {count} {count === 1 ? "Teacher" : "Teachers"}
-              </span>
+              <span className="text-xs text-muted-foreground">{t("teacherCount", { count })}</span>
             </Link>
           );
         })}

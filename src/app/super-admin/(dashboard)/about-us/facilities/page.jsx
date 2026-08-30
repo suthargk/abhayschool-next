@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -13,6 +14,7 @@ import { FacilityTable } from "./components/facility-table";
 const SECTIONS = ["OVERVIEW", "SPORTS", "SAFETY", "FAQ"];
 
 export default async function SuperAdminFacilitiesPage({ searchParams }) {
+  const t = await getTranslations("superAdminFacilities.page");
   const params = await searchParams;
   const section = SECTIONS.includes(params.section) ? params.section : "OVERVIEW";
 
@@ -20,15 +22,13 @@ export default async function SuperAdminFacilitiesPage({ searchParams }) {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div className="space-y-1">
-          <h1 className="text-2xl font-semibold tracking-tight">Facilities</h1>
-          <p className="text-muted-foreground">
-            Manage the campus facilities shown on the public Facilities page.
-          </p>
+          <h1 className="text-2xl font-semibold tracking-tight">{t("heading")}</h1>
+          <p className="text-muted-foreground">{t("description")}</p>
         </div>
         <Button asChild>
           <Link href={`/super-admin/about-us/facilities/new?section=${section}`}>
             <Plus className="size-4" />
-            Add facility
+            {t("addFacility")}
           </Link>
         </Button>
       </div>

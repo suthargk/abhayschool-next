@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { FileDown } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -15,7 +16,15 @@ import {
 import { cn } from "@/lib/utils";
 import { WEEKDAYS } from "@/data/weekdays";
 
-const SCHOOL_NAME = "Shri Abhay Nobles Senior Secondary School";
+// WEEKDAYS values from @/data/weekdays -> "academics.timeTable.weekdays" message keys
+const WEEKDAY_LABEL_KEYS = {
+  MONDAY: "monday",
+  TUESDAY: "tuesday",
+  WEDNESDAY: "wednesday",
+  THURSDAY: "thursday",
+  FRIDAY: "friday",
+  SATURDAY: "saturday",
+};
 
 function classShortLabel(label) {
   return label.replace(/^Class\s+/, "");
@@ -31,6 +40,7 @@ function chipClasses(active) {
 }
 
 export function TimeTableView({ slots, classes }) {
+  const t = useTranslations("academics.timeTable");
   const classesInUse = useMemo(() => {
     const present = new Set(slots.map((slot) => slot.class));
     return classes.filter((klass) => present.has(klass.value));
@@ -78,13 +88,13 @@ export function TimeTableView({ slots, classes }) {
 
       const doc = new jsPDF({ orientation: "landscape" });
       doc.setFontSize(14);
-      doc.text(SCHOOL_NAME, 14, 15);
+      doc.text(t("schoolName"), 14, 15);
       doc.setFontSize(11);
-      doc.text(`Time Table — ${selectedClassLabel}`, 14, 22);
+      doc.text(t("pdfTitle", { className: selectedClassLabel }), 14, 22);
 
       autoTable(doc, {
         startY: 28,
-        head: [["Period", ...daysInUse.map((day) => day.label)]],
+        head: [[t("periodColumn"), ...daysInUse.map((day) => t(`weekdays.${WEEKDAY_LABEL_KEYS[day.value]}`))]],
         body: periods.map((period) => [
           String(period),
           ...daysInUse.map((day) => {
@@ -116,7 +126,7 @@ export function TimeTableView({ slots, classes }) {
   if (classesInUse.length === 0) {
     return (
       <p className="rounded-md border border-dashed border-zinc-200 p-8 text-center text-sm text-zinc-500 dark:border-zinc-800 dark:text-zinc-400">
-        No time table has been published yet.
+        {t("emptyGlobal")}
       </p>
     );
   }
@@ -146,23 +156,23 @@ export function TimeTableView({ slots, classes }) {
           className="shrink-0 gap-1.5"
         >
           <FileDown className="size-4" />
-          {downloadingPdf ? "Preparing…" : "Download PDF"}
+          {downloadingPdf ? t("preparingPdf") : t("downloadPdf")}
         </Button>
       </div>
 
       {periods.length === 0 ? (
         <p className="rounded-md border border-dashed border-zinc-200 p-8 text-center text-sm text-zinc-500 dark:border-zinc-800 dark:text-zinc-400">
-          No time table has been published for this class yet.
+          {t("emptyClass")}
         </p>
       ) : (
         <div className="overflow-x-auto rounded-md border border-zinc-200 dark:border-zinc-800">
           <Table>
             <TableHeader>
               <TableRow className="bg-zinc-100 hover:bg-zinc-100 dark:bg-zinc-800 dark:hover:bg-zinc-800">
-                <TableHead className="text-zinc-900 dark:text-zinc-50">Period</TableHead>
+                <TableHead className="text-zinc-900 dark:text-zinc-50">{t("periodColumn")}</TableHead>
                 {daysInUse.map((day) => (
                   <TableHead key={day.value} className="text-zinc-900 dark:text-zinc-50">
-                    {day.label}
+                    {t(`weekdays.${WEEKDAY_LABEL_KEYS[day.value]}`)}
                   </TableHead>
                 ))}
               </TableRow>

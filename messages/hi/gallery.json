@@ -1,0 +1,80 @@
+{
+  "galleryHero": {
+    "badge": "गैलरी",
+    "headingLine1": "हमारा स्कूल",
+    "headingLine2": "तस्वीरों में",
+    "description": "हमारे परिसर, कक्षाओं, समारोहों, गतिविधियों और विद्यार्थी जीवन के पलों को देखें।",
+    "exploreGallery": "गैलरी देखें",
+    "photoCount": "हमारे एल्बमों में {count}+ तस्वीरें",
+    "fallbackAlt": "गैलरी तस्वीर",
+    "fallbackTitle": "हमारा स्कूल परिसर"
+  },
+  "categoryFilters": {
+    "all": "सभी"
+  },
+  "categories": {
+    "campus": "परिसर",
+    "events": "कार्यक्रम",
+    "sports": "खेल",
+    "academics": "शैक्षणिक",
+    "activities": "गतिविधियाँ",
+    "celebrations": "समारोह",
+    "trips": "यात्राएँ"
+  },
+  "filters": {
+    "searchPlaceholder": "एल्बम खोजें…",
+    "allYears": "सभी वर्ष",
+    "allMonths": "सभी महीने",
+    "search": "खोजें",
+    "searching": "खोज रहे हैं…",
+    "clear": "साफ़ करें",
+    "months": [
+      "जनवरी",
+      "फरवरी",
+      "मार्च",
+      "अप्रैल",
+      "मई",
+      "जून",
+      "जुलाई",
+      "अगस्त",
+      "सितंबर",
+      "अक्टूबर",
+      "नवंबर",
+      "दिसंबर"
+    ]
+  },
+  "featuredAlbum": {
+    "heading": "विशेष एल्बम",
+    "photoCount": "{count, plural, one {# तस्वीर} other {# तस्वीरें}} →"
+  },
+  "latestMoments": {
+    "heading": "हमारे परिसर से नवीनतम",
+    "description": "स्कूल भर के हाल के पल।",
+    "viewAll": "सभी तस्वीरें देखें →"
+  },
+  "albumGrid": {
+    "photoCount": "{count, plural, one {# तस्वीर} other {# तस्वीरें}}"
+  },
+  "yearArchive": {
+    "heading": "वर्षवार संग्रह",
+    "albumCount": "{count, plural, one {# एल्बम} other {# एल्बम}}"
+  },
+  "cta": {
+    "heading": "स्वयं आकर देखें",
+    "description": "तस्वीरें केवल कहानी का एक हिस्सा दिखाती हैं। हमारे परिसर में आइए और स्कूल जीवन तथा सुविधाओं को स्वयं अनुभव कीजिए।",
+    "exploreCampus": "परिसर देखें",
+    "meetFaculty": "हमारे शिक्षकों से मिलें"
+  },
+  "page": {
+    "albumsHeading": "फ़ोटो एल्बम",
+    "albumsDescription": "हमारे परिसर और आयोजनों के हर एल्बम को देखें।",
+    "emptyNoAlbums": "अभी तक कोई एल्बम प्रकाशित नहीं हुआ है। जल्द ही फिर देखें!",
+    "emptyNoResults": "आपकी खोज से मेल खाता कोई एल्बम नहीं मिला।",
+    "previous": "← पिछला",
+    "next": "अगला →",
+    "pageOf": "कुल {total} में से पृष्ठ {page}"
+  },
+  "albumDetail": {
+    "backToGallery": "गैलरी पर वापस जाएँ"
+  }
+}

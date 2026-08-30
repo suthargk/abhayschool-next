@@ -6,6 +6,7 @@ import { useEffect, useState, useTransition } from "react";
 import { format } from "date-fns";
 import { toast } from "sonner";
 import { Loader2, MoreHorizontal } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 import {
   AlertDialog,
@@ -38,21 +39,22 @@ import { DataTablePagination } from "@/components/data-table-pagination";
 import { cn } from "@/lib/utils";
 
 function RowActionsMenu({ item, pending, onDelete }) {
+  const tActions = useTranslations("common.actions");
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="size-8" disabled={pending}>
           <MoreHorizontal className="size-4" />
-          <span className="sr-only">Open menu</span>
+          <span className="sr-only">{tActions("openMenu")}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem asChild>
-          <Link href={`/teacher/blog/${item.id}/edit`}>Edit</Link>
+          <Link href={`/teacher/blog/${item.id}/edit`}>{tActions("edit")}</Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem className="text-destructive focus:text-destructive" onSelect={onDelete}>
-          Delete
+          {tActions("delete")}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -60,6 +62,8 @@ function RowActionsMenu({ item, pending, onDelete }) {
 }
 
 function TeacherBlogFilters({ filters, pageSize, defaultPageSize, onPendingChange }) {
+  const t = useTranslations("teacherBlog.list");
+  const tActions = useTranslations("common.actions");
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [search, setSearch] = useState(filters.q);
@@ -101,14 +105,14 @@ function TeacherBlogFilters({ filters, pageSize, defaultPageSize, onPendingChang
         type="search"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        placeholder="Search by title or summary…"
+        placeholder={t("searchPlaceholder")}
         className="sm:max-w-xs"
         disabled={isPending}
       />
 
       <Button type="submit" size="sm" disabled={isPending}>
         {isPending ? <Loader2 className="size-4 animate-spin" /> : null}
-        Search
+        {tActions("search")}
       </Button>
       {hasActiveFilters ? (
         <Button
@@ -121,7 +125,7 @@ function TeacherBlogFilters({ filters, pageSize, defaultPageSize, onPendingChang
             navigate({ q: "" });
           }}
         >
-          Clear filters
+          {t("clearFilters")}
         </Button>
       ) : null}
     </form>
@@ -138,6 +142,8 @@ export function TeacherBlogList({
   total,
   totalPages,
 }) {
+  const t = useTranslations("teacherBlog.list");
+  const tActions = useTranslations("common.actions");
   const router = useRouter();
   const [items, setItems] = useState(initialItems);
   const [deleteTarget, setDeleteTarget] = useState(null);
@@ -162,9 +168,13 @@ export function TeacherBlogList({
       await toast
         .promise(
           fetch(`/api/teacher/blog/${id}`, { method: "DELETE" }).then((res) => {
-            if (!res.ok) throw new Error("Delete failed");
+            if (!res.ok) throw new Error(t("toast.deleteFailed", { label }));
           }),
-          { loading: `Deleting ${label}…`, success: `Deleted ${label}`, error: `Failed to delete ${label}` },
+          {
+            loading: t("toast.deleting", { label }),
+            success: t("toast.deleted", { label }),
+            error: t("toast.deleteFailed", { label }),
+          },
         )
         .unwrap();
       setItems((prev) => prev.filter((i) => i.id !== id));
@@ -195,7 +205,7 @@ export function TeacherBlogList({
 
         {items.length === 0 ? (
           <p className="rounded-md border border-dashed p-8 text-center text-sm text-muted-foreground">
-            {hasAnyPosts ? "No posts match your search." : "You haven't published any blog posts yet."}
+            {hasAnyPosts ? t("emptyNoMatches") : t("emptyNoPosts")}
           </p>
         ) : (
           <>
@@ -213,7 +223,9 @@ export function TeacherBlogList({
                     <p className="line-clamp-2 text-sm text-muted-foreground">{item.summary}</p>
                   ) : null}
                   <p className="text-xs text-muted-foreground">
-                    Published {format(new Date(item.publishedAt ?? item.createdAt), "d MMM yyyy")}
+                    {t("publishedOn", {
+                      date: format(new Date(item.publishedAt ?? item.createdAt), "d MMM yyyy"),
+                    })}
                   </p>
                 </div>
               ))}
@@ -224,9 +236,9 @@ export function TeacherBlogList({
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Title</TableHead>
-                    <TableHead>Summary</TableHead>
-                    <TableHead>Published</TableHead>
+                    <TableHead>{t("columnTitle")}</TableHead>
+                    <TableHead>{t("columnSummary")}</TableHead>
+                    <TableHead>{t("columnPublished")}</TableHead>
                     <TableHead className="w-0" />
                   </TableRow>
                 </TableHeader>
@@ -269,13 +281,13 @@ export function TeacherBlogList({
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete {deleteTarget?.label}?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This can&apos;t be undone. This will permanently delete this post.
-            </AlertDialogDescription>
+            <AlertDialogTitle>
+              {t("deleteDialog.title", { label: deleteTarget?.label ?? "" })}
+            </AlertDialogTitle>
+            <AlertDialogDescription>{t("deleteDialog.description")}</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={deleting}>{tActions("cancel")}</AlertDialogCancel>
             <AlertDialogAction
               disabled={deleting}
               onClick={(event) => {
@@ -284,7 +296,7 @@ export function TeacherBlogList({
               }}
               className={buttonVariants({ variant: "destructive" })}
             >
-              {deleting ? "Deleting…" : "Delete"}
+              {deleting ? tActions("deleting") : tActions("delete")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

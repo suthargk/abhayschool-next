@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Suspense } from "react";
 import { Plus } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 
 import { Button } from "@/components/ui/button";
 import { TableSkeleton } from "@/components/table-skeleton";
@@ -12,20 +13,22 @@ import { TeacherBlogList } from "./components/teacher-blog-list";
 
 const DEFAULT_PAGE_SIZE = 10;
 
-// Not async: the header below has no data dependency, so it streams
-// immediately on every nav click instead of waiting on the list's queries.
-export default function TeacherBlogPage({ searchParams }) {
+// Async only for the translations lookup — the header itself has no data
+// dependency, so it still streams immediately instead of waiting on the
+// list's queries below.
+export default async function TeacherBlogPage({ searchParams }) {
+  const t = await getTranslations("teacherBlog.list");
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div className="space-y-1">
-          <h1 className="text-2xl font-semibold tracking-tight">Blog</h1>
-          <p className="text-muted-foreground">Blog posts you&apos;ve published.</p>
+          <h1 className="text-2xl font-semibold tracking-tight">{t("heading")}</h1>
+          <p className="text-muted-foreground">{t("description")}</p>
         </div>
         <Button asChild>
           <Link href="/teacher/blog/new">
             <Plus className="size-4" />
-            New post
+            {t("newPost")}
           </Link>
         </Button>
       </div>

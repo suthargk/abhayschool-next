@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Suspense } from "react";
+import { useTranslations } from "next-intl";
 import { Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -15,17 +16,19 @@ const DEFAULT_PAGE_SIZE = 10;
 // Not async: the header below has no data dependency, so it streams
 // immediately on every nav click instead of waiting on the list's queries.
 export default function TeacherHomeworkPage({ searchParams }) {
+  const t = useTranslations("teacherHomework.page");
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div className="space-y-1">
-          <h1 className="text-2xl font-semibold tracking-tight">Homework</h1>
-          <p className="text-muted-foreground">Homework you&apos;ve posted.</p>
+          <h1 className="text-2xl font-semibold tracking-tight">{t("heading")}</h1>
+          <p className="text-muted-foreground">{t("description")}</p>
         </div>
         <Button asChild>
           <Link href="/teacher/homework/new">
             <Plus className="size-4" />
-            Add homework
+            {t("addHomework")}
           </Link>
         </Button>
       </div>

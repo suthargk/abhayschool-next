@@ -1,3 +1,5 @@
+import { useTranslations } from "next-intl";
+
 import {
   Accordion,
   AccordionContent,
@@ -6,11 +8,13 @@ import {
 } from "@/components/ui/accordion";
 
 export function FacilitiesFaq({ items }) {
+  const t = useTranslations("facilities.facilitiesFaq");
+
   return (
     <section className="mx-auto max-w-3xl space-y-8">
       <div className="space-y-2 text-center">
         <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-          Frequently Asked Questions
+          {t("heading")}
         </h2>
       </div>
 

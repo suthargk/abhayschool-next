@@ -4,10 +4,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
+import { useTranslations } from "next-intl";
 import { formatDistanceToNow } from "date-fns";
 import { Toaster } from "sonner";
 
 import { ModeToggle } from "@/components/mode-toggle";
+import { LanguageSelect } from "@/components/language-select";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -56,96 +58,98 @@ import {
   Users,
 } from "lucide-react";
 
-const DASHBOARD_ITEM = { href: "/super-admin", label: "Dashboard", icon: LayoutDashboard };
+const DASHBOARD_ITEM = { href: "/super-admin", labelKey: "dashboard", icon: LayoutDashboard };
 const ADMISSIONS_HREF = "/super-admin/admissions";
 const TESTIMONIALS_HREF = "/super-admin/homepage/testimonials";
 const TEACHERS_HREF = "/super-admin/teachers";
 
+// items use `featureKey` when the label is shared with the teacher sidebar
+// (translated via "common.teacherFeatures"), or `labelKey` for super-admin-only
+// items (translated via "superAdminShell").
 const navSections = [
   {
-    title: null,
-    items: [{ href: ADMISSIONS_HREF, label: "Admissions", icon: ClipboardList }],
+    titleKey: null,
+    items: [{ href: ADMISSIONS_HREF, labelKey: "admissions", icon: ClipboardList }],
   },
   {
-    title: "Homepage",
+    titleKey: "sectionHomepage",
     items: [
-      { href: "/super-admin/homepage/faq", label: "FAQ", icon: HelpCircle },
+      { href: "/super-admin/homepage/faq", featureKey: "FAQ", icon: HelpCircle },
       {
         href: "/super-admin/homepage/testimonials",
-        label: "Testimonials",
+        featureKey: "TESTIMONIALS",
         icon: Quote,
       },
     ],
   },
   {
-    title: "About us",
+    titleKey: "sectionAboutUs",
     items: [
       {
         href: "/super-admin/principal-message",
-        label: "Principal's Message",
+        featureKey: "PRINCIPAL_MESSAGE",
         icon: MessageSquareQuote,
       },
-      { href: "/super-admin/about-us/faculty", label: "Faculty", icon: Users },
-      { href: "/super-admin/about-us/facilities", label: "Facilities", icon: Building2 },
+      { href: "/super-admin/about-us/faculty", featureKey: "FACULTY", icon: Users },
+      { href: "/super-admin/about-us/facilities", featureKey: "FACILITIES", icon: Building2 },
       {
         href: "/super-admin/about-us/route-plan",
-        label: "Route plan of school buses",
+        labelKey: "busRoutePlan",
         icon: Bus,
       },
     ],
   },
   {
-    title: null,
+    titleKey: null,
     items: [
-      { href: "/super-admin/gallery", label: "Gallery", icon: ImageIcon },
+      { href: "/super-admin/gallery", featureKey: "GALLERY", icon: ImageIcon },
       {
         href: "/super-admin/news-notices",
-        label: "News & Notices",
+        featureKey: "NEWS_NOTICES",
         icon: Megaphone,
       },
       {
         href: "/super-admin/homework",
-        label: "Homework",
+        labelKey: "homework",
         icon: GraduationCap,
       },
-      { href: TEACHERS_HREF, label: "Teachers", icon: UserCheck },
+      { href: TEACHERS_HREF, labelKey: "teachers", icon: UserCheck },
     ],
   },
   {
-    title: "Academic",
+    titleKey: "sectionAcademic",
     items: [
-      { href: "/super-admin/classes", label: "Classes", icon: Layers },
-      { href: "/super-admin/academic/library", label: "Library", icon: Library },
+      { href: "/super-admin/classes", featureKey: "CLASSES", icon: Layers },
+      { href: "/super-admin/academic/library", featureKey: "LIBRARY", icon: Library },
       {
         href: "/super-admin/academic/time-table",
-        label: "Time Table",
+        featureKey: "TIME_TABLE",
         icon: CalendarClock,
       },
-      { href: "/super-admin/academic/blog", label: "Blog", icon: Newspaper },
+      { href: "/super-admin/academic/blog", featureKey: "BLOG", icon: Newspaper },
     ],
   },
   {
-    title: "Achievements",
+    titleKey: "sectionAchievements",
     items: [
       {
         href: "/super-admin/achievements/toppers",
-        label: "Toppers",
+        featureKey: "TOPPERS",
         icon: Trophy,
       },
     ],
   },
 ];
 
-const ALL_NAV_ITEMS = [
-  DASHBOARD_ITEM,
-  ...navSections.flatMap((section) => section.items),
-].sort((a, b) => b.href.length - a.href.length);
+function resolveLabel(item, t, tFeatures) {
+  return item.featureKey ? tFeatures(item.featureKey) : t(item.labelKey);
+}
 
-function getPageTitle(pathname) {
-  const match = ALL_NAV_ITEMS.find(
+function getPageTitle(pathname, allNavItems, fallback) {
+  const match = allNavItems.find(
     (item) => pathname === item.href || pathname?.startsWith(`${item.href}/`)
   );
-  return match?.label ?? "Dashboard";
+  return match?.label ?? fallback;
 }
 
 function getInitials(email) {
@@ -239,6 +243,19 @@ export function SuperAdminShell({
   });
   const pathname = usePathname();
   const { resolvedTheme } = useTheme();
+  const t = useTranslations("superAdminShell");
+  const tFeatures = useTranslations("common.teacherFeatures");
+
+  const dashboardItem = { ...DASHBOARD_ITEM, label: t(DASHBOARD_ITEM.labelKey) };
+  const resolvedSections = navSections.map((section) => ({
+    ...section,
+    title: section.titleKey ? t(section.titleKey) : null,
+    items: section.items.map((item) => ({ ...item, label: resolveLabel(item, t, tFeatures) })),
+  }));
+  const allNavItems = [
+    dashboardItem,
+    ...resolvedSections.flatMap((section) => section.items),
+  ].sort((a, b) => b.href.length - a.href.length);
 
   async function handleLogout() {
     await fetch("/api/super-admin/logout", { method: "POST" });
@@ -267,7 +284,7 @@ export function SuperAdminShell({
                   <div className="grid flex-1 text-left text-sm leading-tight">
                     <span className="truncate font-semibold">Abhay Nobles</span>
                     <span className="truncate text-xs text-sidebar-foreground/70">
-                      Super admin
+                      {t("superAdmin")}
                     </span>
                   </div>
                 </Link>
@@ -279,11 +296,11 @@ export function SuperAdminShell({
           <SidebarGroup>
             <SidebarGroupContent>
               <SidebarMenu>
-                <NavLink {...DASHBOARD_ITEM} />
+                <NavLink {...dashboardItem} />
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
-          {navSections.map((section) => (
+          {resolvedSections.map((section) => (
             <SidebarGroup key={section.title ?? section.items[0].href}>
               {section.title ? (
                 <SidebarGroupLabel>{section.title}</SidebarGroupLabel>
@@ -326,10 +343,10 @@ export function SuperAdminShell({
                     </Avatar>
                     <div className="grid flex-1 text-left text-sm leading-tight">
                       <span className="truncate font-medium">
-                        {profile?.role === "ADMIN" ? "Admin" : "Editor"}
+                        {profile?.role === "ADMIN" ? t("admin") : t("editor")}
                       </span>
                       <span className="truncate text-xs text-sidebar-foreground/70">
-                        {profile?.email ?? "Signed in"}
+                        {profile?.email ?? t("signedIn")}
                       </span>
                     </div>
                     <ChevronsUpDown className="ml-auto size-4" />
@@ -344,13 +361,13 @@ export function SuperAdminShell({
                   <DropdownMenuItem asChild>
                     <Link href="/" target="_blank" rel="noopener noreferrer">
                       <ExternalLink className="size-4" />
-                      View public site
+                      {t("viewPublicSite")}
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleLogout}>
                     <LogOut className="size-4" />
-                    Log out
+                    {t("logOut")}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -362,14 +379,15 @@ export function SuperAdminShell({
         <header className="flex h-14 shrink-0 items-center gap-2 border-b px-4 sm:px-6">
           <SidebarTrigger className="-ml-1" />
           <Separator orientation="vertical" className="h-4" />
-          <h1 className="truncate text-sm font-medium">{getPageTitle(pathname)}</h1>
+          <h1 className="truncate text-sm font-medium">{getPageTitle(pathname, allNavItems, t("dashboard"))}</h1>
           <div className="ml-auto flex items-center gap-1">
+            <LanguageSelect triggerClassName="h-8 w-[92px] border-none bg-transparent shadow-none" />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button
                   type="button"
                   className="relative inline-flex size-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-                  aria-label="Notifications"
+                  aria-label={t("notifications")}
                 >
                   <Bell className="size-4" />
                   {notifications.length > 0 ? (
@@ -380,11 +398,11 @@ export function SuperAdminShell({
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" sideOffset={8} className="w-80">
-                <div className="px-2 py-1.5 text-sm font-medium">Notifications</div>
+                <div className="px-2 py-1.5 text-sm font-medium">{t("notifications")}</div>
                 <DropdownMenuSeparator />
                 {notifications.length === 0 ? (
                   <p className="px-2 py-3 text-sm text-muted-foreground">
-                    No new notifications.
+                    {t("noNewNotifications")}
                   </p>
                 ) : (
                   notifications.map((item) => {
@@ -420,7 +438,7 @@ export function SuperAdminShell({
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex size-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-              aria-label="View public site"
+              aria-label={t("viewPublicSite")}
             >
               <ExternalLink className="size-4" />
             </Link>

@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,6 +10,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
 export function TeacherFaqForm({ initialItem }) {
+  const t = useTranslations("teacherFaq.form");
+  const tCommon = useTranslations("common.actions");
   const router = useRouter();
   const isEdit = Boolean(initialItem);
 
@@ -34,7 +37,7 @@ export function TeacherFaqForm({ initialItem }) {
         },
       );
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Save failed");
+      if (!res.ok) throw new Error(data.error || t("saveFailed"));
       router.push("/teacher/faq");
       router.refresh();
     } catch (err) {
@@ -47,25 +50,25 @@ export function TeacherFaqForm({ initialItem }) {
   return (
     <form onSubmit={handleSubmit} className="max-w-xl space-y-6">
       <div className="space-y-2">
-        <Label htmlFor="faq-question">Question</Label>
+        <Label htmlFor="faq-question">{t("questionLabel")}</Label>
         <Input
           id="faq-question"
           value={question}
           onChange={(e) => setQuestion(e.target.value)}
           required
-          placeholder="e.g. What is the admission process?"
+          placeholder={t("questionPlaceholder")}
         />
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="faq-answer">Answer</Label>
+        <Label htmlFor="faq-answer">{t("answerLabel")}</Label>
         <Textarea
           id="faq-answer"
           value={answer}
           onChange={(e) => setAnswer(e.target.value)}
           required
           rows={5}
-          placeholder="Write a clear, concise answer shown in the accordion."
+          placeholder={t("answerPlaceholder")}
         />
       </div>
 
@@ -77,15 +80,13 @@ export function TeacherFaqForm({ initialItem }) {
 
       <div className="flex gap-2">
         <Button type="submit" disabled={saving}>
-          {saving ? "Saving…" : isEdit ? "Save changes" : "Publish"}
+          {saving ? t("saving") : isEdit ? t("saveChanges") : t("publish")}
         </Button>
         <Button type="button" variant="outline" onClick={() => router.push("/teacher/faq")}>
-          Cancel
+          {tCommon("cancel")}
         </Button>
       </div>
-      <p className="text-xs text-muted-foreground">
-        This FAQ is published immediately and appears on the school website right away.
-      </p>
+      <p className="text-xs text-muted-foreground">{t("publishNote")}</p>
     </form>
   );
 }

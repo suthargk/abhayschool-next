@@ -1,0 +1,63 @@
+{
+  "page": {
+    "heading": "टॉपर्स",
+    "description": "आपके द्वारा जोड़े गए टॉपर्स।",
+    "addTopper": "टॉपर जोड़ें"
+  },
+  "new": {
+    "heading": "टॉपर जोड़ें"
+  },
+  "edit": {
+    "heading": "टॉपर संपादित करें"
+  },
+  "form": {
+    "photoLabel": "फ़ोटो",
+    "uploading": "अपलोड हो रहा है…",
+    "photoHelp": "वैकल्पिक। खाली छोड़ने पर कार्ड में बिना छवि के दिखाया जाएगा।",
+    "nameLabel": "नाम",
+    "namePlaceholder": "जैसे आरव शर्मा",
+    "yearLabel": "वर्ष",
+    "yearPlaceholder": "जैसे 2026",
+    "classLabel": "कक्षा",
+    "streamLabel": "स्ट्रीम",
+    "streamPlaceholder": "स्ट्रीम चुनें",
+    "rankLabel": "रैंक",
+    "rankPlaceholder": "जैसे 1",
+    "percentageLabel": "प्रतिशत",
+    "percentagePlaceholder": "जैसे 97.8",
+    "marksObtainedLabel": "प्राप्त अंक",
+    "marksObtainedPlaceholder": "जैसे 489",
+    "marksTotalLabel": "कुल अंक",
+    "marksTotalPlaceholder": "जैसे 500",
+    "saving": "सहेजा जा रहा है…",
+    "saveChanges": "परिवर्तन सहेजें",
+    "publish": "प्रकाशित करें",
+    "publishNote": "यह टॉपर तुरंत प्रकाशित हो जाता है और तत्काल स्कूल की वेबसाइट पर दिखाई देता है।",
+    "uploadFailed": "अपलोड विफल",
+    "saveFailed": "सहेजना विफल"
+  },
+  "list": {
+    "searchPlaceholder": "नाम या वर्ष से खोजें…",
+    "clearFilters": "फ़िल्टर साफ़ करें",
+    "noResultsFiltered": "आपकी खोज से मेल खाता कोई टॉपर नहीं मिला।",
+    "noResultsEmpty": "आपने अभी तक कोई टॉपर नहीं जोड़ा है।",
+    "selectAllRows": "सभी पंक्तियाँ चुनें",
+    "selectAllLabel": "सभी चुनें",
+    "selectRow": "{name} को चुनें",
+    "selectedCount": "{count} चयनित",
+    "deleteSelected": "चयनित हटाएँ",
+    "nameColumn": "नाम",
+    "classColumn": "कक्षा",
+    "streamColumn": "स्ट्रीम",
+    "yearColumn": "वर्ष",
+    "rankColumn": "रैंक",
+    "percentageColumn": "प्रतिशत",
+    "rankValue": "रैंक {rank}",
+    "itemsLabel": "{count, plural, one {# आइटम} other {# आइटम}}",
+    "deleteTitle": "{label} हटाएँ?",
+    "deleteDescription": "इसे पूर्ववत नहीं किया जा सकता। {count, plural, one {यह आइटम स्थायी रूप से हट जाएगा।} other {ये आइटम स्थायी रूप से हट जाएंगे।}}",
+    "deletingToast": "{label} हटाया जा रहा है…",
+    "deletedToast": "{label} हटा दिया गया",
+    "deleteFailedToast": "{label} हटाने में विफल"
+  }
+}

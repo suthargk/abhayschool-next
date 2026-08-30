@@ -2,12 +2,13 @@ import Link from "next/link";
 import Image from "next/image";
 import { format } from "date-fns";
 import { ArrowUpRight, Megaphone, Newspaper, Pin } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 import { cn } from "@/lib/utils";
 
 const TYPE_META = {
   NEWS: {
-    label: "News",
+    labelKey: "typeNews",
     icon: Newspaper,
     badge: "bg-pink-100 text-pink-700 dark:bg-pink-500/10 dark:text-pink-300",
     badgeOnDark: "bg-white/15 text-white backdrop-blur-sm",
@@ -15,7 +16,7 @@ const TYPE_META = {
     gradient: "bg-gradient-to-br from-pink-500 via-pink-500 to-rose-600",
   },
   NOTICE: {
-    label: "Notice",
+    labelKey: "typeNotice",
     icon: Megaphone,
     badge: "bg-red-100 text-red-700 dark:bg-red-500/10 dark:text-red-300",
     badgeOnDark: "bg-white/15 text-white backdrop-blur-sm",
@@ -25,7 +26,9 @@ const TYPE_META = {
 };
 
 export const FeaturedNewsCard = ({ item }) => {
+  const t = useTranslations("landing.newsNotices");
   const meta = TYPE_META[item.type] ?? TYPE_META.NEWS;
+  const label = t(meta.labelKey);
   const Icon = meta.icon;
   const hasImage = Boolean(item.coverImageUrl);
 
@@ -65,7 +68,7 @@ export const FeaturedNewsCard = ({ item }) => {
             )}
           >
             <Icon className="size-3.5" />
-            {meta.label}
+            {label}
           </span>
           {item.pinned ? (
             <span className="flex size-8 items-center justify-center rounded-full bg-white/15 backdrop-blur-sm">
@@ -88,7 +91,7 @@ export const FeaturedNewsCard = ({ item }) => {
               <span>{format(new Date(item.publishedAt), "MMM d, yyyy")}</span>
             ) : null}
             <span className="flex items-center gap-1 font-medium text-white transition-transform duration-200 group-hover:translate-x-0.5">
-              Read more
+              {t("readMore")}
               <ArrowUpRight className="size-4" />
             </span>
           </div>
@@ -99,7 +102,9 @@ export const FeaturedNewsCard = ({ item }) => {
 };
 
 export const NewsCard = ({ item }) => {
+  const t = useTranslations("landing.newsNotices");
   const meta = TYPE_META[item.type] ?? TYPE_META.NEWS;
+  const label = t(meta.labelKey);
   const Icon = meta.icon;
 
   return (
@@ -124,7 +129,7 @@ export const NewsCard = ({ item }) => {
               meta.badge,
             )}
           >
-            {meta.label}
+            {label}
           </span>
           {item.pinned ? <Pin className="size-3 text-amber-500" /> : null}
           {item.publishedAt ? (

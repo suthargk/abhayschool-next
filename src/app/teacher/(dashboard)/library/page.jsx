@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Suspense } from "react";
+import { useTranslations } from "next-intl";
 import { Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -12,17 +13,19 @@ import { TeacherLibraryList } from "./components/teacher-library-list";
 // Not async: the header below has no data dependency, so it streams
 // immediately on every nav click instead of waiting on the list's queries.
 export default function TeacherLibraryPage({ searchParams }) {
+  const t = useTranslations("teacherLibrary.page");
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div className="space-y-1">
-          <h1 className="text-2xl font-semibold tracking-tight">Library</h1>
-          <p className="text-muted-foreground">Library books you&apos;ve posted.</p>
+          <h1 className="text-2xl font-semibold tracking-tight">{t("heading")}</h1>
+          <p className="text-muted-foreground">{t("description")}</p>
         </div>
         <Button asChild>
           <Link href="/teacher/library/new">
             <Plus className="size-4" />
-            Add book
+            {t("addBook")}
           </Link>
         </Button>
       </div>

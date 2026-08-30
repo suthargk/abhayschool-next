@@ -1,0 +1,42 @@
+{
+  "list": {
+    "heading": "Blog",
+    "description": "Blog posts you've published.",
+    "newPost": "New post",
+    "searchPlaceholder": "Search by title or summary…",
+    "clearFilters": "Clear filters",
+    "emptyNoPosts": "You haven't published any blog posts yet.",
+    "emptyNoMatches": "No posts match your search.",
+    "columnTitle": "Title",
+    "columnSummary": "Summary",
+    "columnPublished": "Published",
+    "publishedOn": "Published {date}",
+    "deleteDialog": {
+      "title": "Delete {label}?",
+      "description": "This can't be undone. This will permanently delete this post."
+    },
+    "toast": {
+      "deleting": "Deleting {label}…",
+      "deleted": "Deleted {label}",
+      "deleteFailed": "Failed to delete {label}"
+    }
+  },
+  "form": {
+    "editHeading": "Edit",
+    "newHeading": "New post",
+    "titleLabel": "Title",
+    "titlePlaceholder": "Preparing for board exams",
+    "summaryLabel": "Short description",
+    "summaryPlaceholder": "A one or two sentence summary shown in lists.",
+    "coverImageLabel": "Cover image",
+    "uploading": "Uploading…",
+    "contentLabel": "Content",
+    "contentPlaceholder": "Write the post here…",
+    "saveChanges": "Save changes",
+    "publish": "Publish",
+    "saving": "Saving…",
+    "publishNote": "This post is published immediately and appears on the school website right away.",
+    "uploadFailed": "Upload failed",
+    "saveFailed": "Save failed"
+  }
+}

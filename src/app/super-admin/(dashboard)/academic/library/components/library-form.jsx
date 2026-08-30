@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -17,6 +18,9 @@ import {
 
 export function LibraryForm({ initialItem, classes, defaultClass, canPublish }) {
   const router = useRouter();
+  const t = useTranslations("superAdminLibrary.form");
+  const tCommon = useTranslations("common.actions");
+  const tStatus = useTranslations("common.status");
   const isEdit = Boolean(initialItem);
 
   const [klass, setKlass] = useState(
@@ -47,7 +51,7 @@ export function LibraryForm({ initialItem, classes, defaultClass, canPublish }) 
         },
       );
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Save failed");
+      if (!res.ok) throw new Error(data.error || t("saveFailed"));
       router.push("/super-admin/academic/library");
       router.refresh();
     } catch (err) {
@@ -67,7 +71,7 @@ export function LibraryForm({ initialItem, classes, defaultClass, canPublish }) 
         body: JSON.stringify({ publish: status !== "PUBLISHED" }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to update status");
+      if (!res.ok) throw new Error(data.error || t("updateStatusFailed"));
       setStatus(data.item.status);
       router.refresh();
     } catch (err) {
@@ -81,7 +85,7 @@ export function LibraryForm({ initialItem, classes, defaultClass, canPublish }) 
     <form onSubmit={handleSubmit} className="max-w-xl space-y-6">
       {isEdit ? (
         <div className="flex items-center gap-2">
-          <Badge variant="outline">{status === "PUBLISHED" ? "Published" : "Draft"}</Badge>
+          <Badge variant="outline">{status === "PUBLISHED" ? tStatus("published") : tStatus("draft")}</Badge>
           {canPublish ? (
             <Button
               type="button"
@@ -90,14 +94,14 @@ export function LibraryForm({ initialItem, classes, defaultClass, canPublish }) 
               disabled={publishing}
               onClick={handleTogglePublish}
             >
-              {publishing ? "Updating…" : status === "PUBLISHED" ? "Unpublish" : "Publish"}
+              {publishing ? t("updating") : status === "PUBLISHED" ? tCommon("unpublish") : tCommon("publish")}
             </Button>
           ) : null}
         </div>
       ) : null}
 
       <div className="space-y-2">
-        <Label htmlFor="library-class">Class</Label>
+        <Label htmlFor="library-class">{t("classLabel")}</Label>
         <Select value={klass} onValueChange={setKlass}>
           <SelectTrigger id="library-class">
             <SelectValue />
@@ -113,35 +117,35 @@ export function LibraryForm({ initialItem, classes, defaultClass, canPublish }) 
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="library-book-name">Book name</Label>
+        <Label htmlFor="library-book-name">{t("bookNameLabel")}</Label>
         <Input
           id="library-book-name"
           value={bookName}
           onChange={(e) => setBookName(e.target.value)}
           required
-          placeholder="e.g. Flamingo"
+          placeholder={t("bookNamePlaceholder")}
         />
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-2">
-          <Label htmlFor="library-subject">Subject</Label>
+          <Label htmlFor="library-subject">{t("subjectLabel")}</Label>
           <Input
             id="library-subject"
             value={subject}
             onChange={(e) => setSubject(e.target.value)}
             required
-            placeholder="e.g. English"
+            placeholder={t("subjectPlaceholder")}
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="library-publication">Publication</Label>
+          <Label htmlFor="library-publication">{t("publicationLabel")}</Label>
           <Input
             id="library-publication"
             value={publication}
             onChange={(e) => setPublication(e.target.value)}
             required
-            placeholder="e.g. N.C.E.R.T"
+            placeholder={t("publicationPlaceholder")}
           />
         </div>
       </div>
@@ -154,14 +158,14 @@ export function LibraryForm({ initialItem, classes, defaultClass, canPublish }) 
 
       <div className="flex gap-2">
         <Button type="submit" disabled={saving}>
-          {saving ? "Saving…" : isEdit ? "Save changes" : "Save draft"}
+          {saving ? tCommon("saving") : isEdit ? t("saveChanges") : t("saveDraft")}
         </Button>
         <Button
           type="button"
           variant="outline"
           onClick={() => router.push("/super-admin/academic/library")}
         >
-          Cancel
+          {tCommon("cancel")}
         </Button>
       </div>
     </form>

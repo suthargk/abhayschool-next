@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,9 +14,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { WEEKDAYS } from "@/data/weekdays";
+import { WEEKDAYS, WEEKDAY_LABEL_KEYS } from "@/data/weekdays";
 
 export function TeacherTimeTableForm({ initialItem, classes }) {
+  const t = useTranslations("teacherTimeTable.form");
+  const tActions = useTranslations("common.actions");
+  const tWeekdays = useTranslations("academics.timeTable");
   const router = useRouter();
   const isEdit = Boolean(initialItem);
 
@@ -54,7 +58,7 @@ export function TeacherTimeTableForm({ initialItem, classes }) {
         },
       );
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Save failed");
+      if (!res.ok) throw new Error(data.error || t("saveFailed"));
       router.push("/teacher/time-table");
       router.refresh();
     } catch (err) {
@@ -65,19 +69,14 @@ export function TeacherTimeTableForm({ initialItem, classes }) {
   }
 
   if (classes.length === 0) {
-    return (
-      <p className="max-w-xl text-sm text-muted-foreground">
-        No classes are configured yet. Contact an admin to add one before posting a time table
-        slot.
-      </p>
-    );
+    return <p className="max-w-xl text-sm text-muted-foreground">{t("noClasses")}</p>;
   }
 
   return (
     <form onSubmit={handleSubmit} className="max-w-xl space-y-6">
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-2">
-          <Label htmlFor="time-table-class">Class</Label>
+          <Label htmlFor="time-table-class">{t("classLabel")}</Label>
           <Select value={klass} onValueChange={setKlass}>
             <SelectTrigger id="time-table-class">
               <SelectValue />
@@ -92,7 +91,7 @@ export function TeacherTimeTableForm({ initialItem, classes }) {
           </Select>
         </div>
         <div className="space-y-2">
-          <Label htmlFor="time-table-day">Day</Label>
+          <Label htmlFor="time-table-day">{t("dayLabel")}</Label>
           <Select value={day} onValueChange={setDay}>
             <SelectTrigger id="time-table-day">
               <SelectValue />
@@ -100,7 +99,7 @@ export function TeacherTimeTableForm({ initialItem, classes }) {
             <SelectContent>
               {WEEKDAYS.map((d) => (
                 <SelectItem key={d.value} value={d.value}>
-                  {d.label}
+                  {tWeekdays(`weekdays.${WEEKDAY_LABEL_KEYS[d.value]}`)}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -110,7 +109,7 @@ export function TeacherTimeTableForm({ initialItem, classes }) {
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-2">
-          <Label htmlFor="time-table-period">Period</Label>
+          <Label htmlFor="time-table-period">{t("periodLabel")}</Label>
           <Input
             id="time-table-period"
             type="number"
@@ -119,34 +118,34 @@ export function TeacherTimeTableForm({ initialItem, classes }) {
             value={period}
             onChange={(e) => setPeriod(e.target.value)}
             required
-            placeholder="e.g. 1"
+            placeholder={t("periodPlaceholder")}
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="time-table-subject">Subject</Label>
+          <Label htmlFor="time-table-subject">{t("subjectLabel")}</Label>
           <Input
             id="time-table-subject"
             value={subject}
             onChange={(e) => setSubject(e.target.value)}
             required
-            placeholder="e.g. Mathematics"
+            placeholder={t("subjectPlaceholder")}
           />
         </div>
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="time-table-teacher">Teacher (optional)</Label>
+        <Label htmlFor="time-table-teacher">{t("teacherLabel")}</Label>
         <Input
           id="time-table-teacher"
           value={teacherName}
           onChange={(e) => setTeacherName(e.target.value)}
-          placeholder="e.g. Mrs. Sharma"
+          placeholder={t("teacherPlaceholder")}
         />
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-2">
-          <Label htmlFor="time-table-start">Start time (optional)</Label>
+          <Label htmlFor="time-table-start">{t("startTimeLabel")}</Label>
           <Input
             id="time-table-start"
             type="time"
@@ -155,7 +154,7 @@ export function TeacherTimeTableForm({ initialItem, classes }) {
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="time-table-end">End time (optional)</Label>
+          <Label htmlFor="time-table-end">{t("endTimeLabel")}</Label>
           <Input
             id="time-table-end"
             type="time"
@@ -173,15 +172,13 @@ export function TeacherTimeTableForm({ initialItem, classes }) {
 
       <div className="flex gap-2">
         <Button type="submit" disabled={saving}>
-          {saving ? "Saving…" : isEdit ? "Save changes" : "Publish"}
+          {saving ? t("saving") : isEdit ? t("saveChanges") : t("publish")}
         </Button>
         <Button type="button" variant="outline" onClick={() => router.push("/teacher/time-table")}>
-          Cancel
+          {tActions("cancel")}
         </Button>
       </div>
-      <p className="text-xs text-muted-foreground">
-        This will be published immediately and appears on the school website right away.
-      </p>
+      <p className="text-xs text-muted-foreground">{t("publishNote")}</p>
     </form>
   );
 }

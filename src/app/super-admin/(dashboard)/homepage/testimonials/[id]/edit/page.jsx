@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { ArrowLeft } from "lucide-react";
 
 import { FormSkeleton } from "@/components/form-skeleton";
@@ -12,6 +13,8 @@ import { TestimonialForm } from "../../components/testimonial-form";
 
 export default async function EditTestimonialPage({ params }) {
   const { id } = await params;
+  const t = await getTranslations("superAdminTestimonials.form");
+  const tCommon = await getTranslations("common.actions");
 
   return (
     <div className="space-y-6">
@@ -19,10 +22,10 @@ export default async function EditTestimonialPage({ params }) {
         <Button variant="ghost" size="sm" className="-ml-3" asChild>
           <Link href="/super-admin/homepage/testimonials">
             <ArrowLeft className="size-4" />
-            Back
+            {tCommon("back")}
           </Link>
         </Button>
-        <h1 className="text-2xl font-semibold tracking-tight">Edit testimonial</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">{t("editTitle")}</h1>
       </div>
       <Suspense fallback={<FormSkeleton />}>
         <EditTestimonialSection id={id} />

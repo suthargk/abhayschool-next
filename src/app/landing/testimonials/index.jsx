@@ -1,6 +1,7 @@
 "use client";
 
 import { keyframes, styled } from "@stitches/react";
+import { useTranslations } from "next-intl";
 import React from "react";
 import TestimonialItem from "./testimonial-item";
 
@@ -14,15 +15,14 @@ const moveUp = keyframes({
 });
 
 const Testimonials = ({ items }) => {
+  const t = useTranslations("landing.testimonials");
+
   return (
     <section className="flex flex-col lg:flex-row gap-8 lg:gap-10 p-6 sm:p-10 md:p-16 lg:p-20 pb-0 lg:justify-between">
       <div className="w-full lg:w-96 flex flex-col gap-4 shrink-0">
-        <h2 className="uppercase">Trusted by parents</h2>
-        <h1 className="text-3xl sm:text-4xl font-medium">750 Students</h1>
-        <p className="">
-          who have witnessed our commitment to quality education, nurturing
-          environments, and student success.
-        </p>
+        <h2 className="uppercase">{t("heading")}</h2>
+        <h1 className="text-3xl sm:text-4xl font-medium">{t("studentsCount")}</h1>
+        <p className="">{t("description")}</p>
       </div>
       <div className="h-[360px] sm:h-[420px] lg:h-[500px] w-full lg:w-[700px] overflow-hidden relative">
         <div className="w-full pt-10 sm:pt-16 lg:pt-20 absolute left-0 right-0 top-0 z-10 bg-[linear-gradient(to_bottom,rgba(255,255,255),rgba(255,255,255,0))] dark:bg-[linear-gradient(to_bottom,rgba(18,18,18),rgba(18,18,18,0))]"></div>

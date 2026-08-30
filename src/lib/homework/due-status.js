@@ -6,17 +6,26 @@ function startOfDay(date) {
   return d;
 }
 
+/** label keys resolve against the "homework.dueStatus" message namespace */
+export const DUE_STATUS_LABEL_KEYS = {
+  OVERDUE: "overdue",
+  DUE_TODAY: "dueToday",
+  DUE_TOMORROW: "dueTomorrow",
+  DUE_SOON: "dueSoon",
+  UPCOMING: "upcoming",
+};
+
 /** Classifies a due date relative to today, for public display (no per-student tracking). */
 export function dueStatus(dueDate, now = new Date()) {
   const diffDays = Math.round(
     (startOfDay(dueDate).getTime() - startOfDay(now).getTime()) / DAY_MS,
   );
 
-  if (diffDays < 0) return { value: "OVERDUE", label: "Overdue" };
-  if (diffDays === 0) return { value: "DUE_TODAY", label: "Due Today" };
-  if (diffDays === 1) return { value: "DUE_TOMORROW", label: "Due Tomorrow" };
-  if (diffDays <= 3) return { value: "DUE_SOON", label: "Due Soon" };
-  return { value: "UPCOMING", label: "Upcoming" };
+  if (diffDays < 0) return { value: "OVERDUE" };
+  if (diffDays === 0) return { value: "DUE_TODAY" };
+  if (diffDays === 1) return { value: "DUE_TOMORROW" };
+  if (diffDays <= 3) return { value: "DUE_SOON" };
+  return { value: "UPCOMING" };
 }
 
 export const DUE_STATUS_BADGE_CLASS = {

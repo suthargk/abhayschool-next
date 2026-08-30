@@ -1,10 +1,13 @@
 import Link from "next/link";
 import Image from "next/image";
 import { ImageOff } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 import { cn } from "@/lib/utils";
 
 export function LatestMoments({ albums }) {
+  const t = useTranslations("gallery.latestMoments");
+
   if (albums.length === 0) return null;
 
   return (
@@ -12,17 +15,15 @@ export function LatestMoments({ albums }) {
       <div className="flex items-end justify-between gap-4">
         <div className="space-y-1">
           <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-            Latest From Our Campus
+            {t("heading")}
           </h2>
-          <p className="text-muted-foreground">
-            Recent moments from across the school.
-          </p>
+          <p className="text-muted-foreground">{t("description")}</p>
         </div>
         <a
           href="#gallery-albums"
           className="shrink-0 text-sm font-medium text-violet-600 hover:underline dark:text-violet-400"
         >
-          View All Photos →
+          {t("viewAll")}
         </a>
       </div>
 

@@ -1,0 +1,133 @@
+{
+  "aboutHero": {
+    "eyebrow": "About Us",
+    "headingLine1": "About Shri Abhay Nobles",
+    "headingLine2": "Senior Secondary School",
+    "description": "Nurturing curious minds, building strong character, and preparing students for a confident future since 1998.",
+    "exploreCampus": "Explore Our Campus",
+    "meetFaculty": "Meet Our Faculty"
+  },
+  "whoWeAre": {
+    "heading": "A Place to Learn, Grow & Belong",
+    "description": "Shri Abhay Nobles Senior Secondary School is committed to providing a supportive and engaging learning environment where students develop academically, socially, and personally. Affiliated with the Rajasthan Board of Secondary Education (RBSE), we welcome students from Nursery through Class XII.",
+    "stats": {
+      "established": "Established",
+      "students": "Students",
+      "faculty": "Faculty",
+      "classes": "Classes",
+      "classesValue": "Nursery–XII"
+    }
+  },
+  "visionMission": {
+    "visionHeading": "Our Vision",
+    "visionDescription": "To inspire every student to become a confident, responsible, and lifelong learner who contributes meaningfully to the world around them.",
+    "missionHeading": "Our Mission",
+    "missionPoints": [
+      "Provide a strong academic foundation rooted in curiosity and critical thinking",
+      "Nurture creativity, collaboration, and character alongside academics",
+      "Create a safe, respectful, and inclusive environment for every student",
+      "Prepare students to adapt and thrive in a changing world"
+    ]
+  },
+  "coreValues": {
+    "heading": "Our Core Values",
+    "description": "The principles that guide how we teach, learn, and grow together.",
+    "items": [
+      {
+        "title": "Integrity",
+        "description": "Doing the right thing, even when no one is watching."
+      },
+      {
+        "title": "Curiosity",
+        "description": "Learning beyond the classroom, always asking why."
+      },
+      {
+        "title": "Respect",
+        "description": "Valuing every individual and their perspective."
+      },
+      {
+        "title": "Excellence",
+        "description": "Always striving to improve and do our best work."
+      },
+      {
+        "title": "Compassion",
+        "description": "Supporting and caring for one another."
+      },
+      {
+        "title": "Responsibility",
+        "description": "Taking ownership of our actions and choices."
+      }
+    ]
+  },
+  "principalMessagePreview": {
+    "heading": "Message from the Principal",
+    "principalFallback": "Principal",
+    "readFullMessage": "Read Full Message →"
+  },
+  "whatMakesUsDifferent": {
+    "heading": "What Makes Us Different",
+    "description": "Why families choose Shri Abhay Nobles Senior Secondary School.",
+    "items": [
+      {
+        "title": "Experienced & Caring Faculty",
+        "description": "Dedicated educators who know and support every student."
+      },
+      {
+        "title": "Student-Centered Learning",
+        "description": "Teaching that adapts to how each student learns best."
+      },
+      {
+        "title": "Strong Academic Foundation",
+        "description": "An RBSE curriculum from Nursery through Class XII."
+      },
+      {
+        "title": "Sports & Extracurriculars",
+        "description": "Space to compete, create, and grow beyond the classroom."
+      },
+      {
+        "title": "Safe & Inclusive Environment",
+        "description": "A campus where every student feels welcome and secure."
+      },
+      {
+        "title": "Individual Student Support",
+        "description": "Attention and guidance tailored to each child's needs."
+      }
+    ]
+  },
+  "academicPhilosophy": {
+    "heading": "Learning Beyond Textbooks",
+    "description": "We blend experiential and project-based learning with collaborative work and critical thinking, so students don't just memorize concepts — they understand and apply them.",
+    "steps": ["Concept", "Explore", "Apply", "Create", "Reflect"],
+    "exploreAcademics": "Explore Academics →"
+  },
+  "facilitiesPreview": {
+    "heading": "A Campus Designed for Learning",
+    "description": "Smart classrooms, labs, a library, and sports facilities that support every student.",
+    "exploreFacilities": "Explore Our Facilities →"
+  },
+  "facultyPreview": {
+    "heading": "Faculty & Staff",
+    "description": "The people behind the school — experienced, dedicated, and invested in every student's growth.",
+    "facultyMembers": "Faculty Members",
+    "yearsAvgExperience": "Years Average Experience",
+    "meetFaculty": "Meet Our Faculty →"
+  },
+  "achievementsPreview": {
+    "heading": "Proud of What Our Students Achieve",
+    "description": "Celebrating the academic milestones our students reach every year.",
+    "toppersFeatured": "Toppers Featured",
+    "highestBoardScore": "Highest Board Score",
+    "viewAllAchievements": "View All Achievements →"
+  },
+  "galleryPreview": {
+    "heading": "Life at Shri Abhay Nobles",
+    "description": "Students, classrooms, events, sports, and campus life in pictures.",
+    "viewGallery": "View Gallery →"
+  },
+  "aboutCta": {
+    "heading": "Come See What Makes Us Different",
+    "description": "Get to know our campus, our people, and our approach to education.",
+    "exploreFacilities": "Explore Facilities",
+    "meetFaculty": "Meet Our Faculty"
+  }
+}

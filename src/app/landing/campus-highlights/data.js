@@ -65,7 +65,7 @@ export const campusLowerImages = [
     translateY: 160,
     rotate: 0,
     translateX: 0,
-    caption: "Keeping teachers, families, and kids connected",
+    captionKey: "mobileHeading",
   },
   {
     id: 3,

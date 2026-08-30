@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
 import { format } from "date-fns";
 import { Loader2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,13 +18,27 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import { CATEGORIES } from "@/lib/news-notices/categories";
+import { CATEGORIES, CATEGORY_LABEL_KEYS } from "@/lib/news-notices/categories";
 import peppaNewsImage from "../../../../public/peppa_news.png";
 
 import { TAB_TABS, RANGE_OPTIONS } from "../constants";
 import { PinnedBanner } from "./pinned-banner";
 import { NoticeRow } from "./notice-row";
 import { PublicNewsCard } from "./public-news-card";
+
+const TAB_LABEL_KEYS = {
+  ALL: "tabAll",
+  NEWS: "tabNews",
+  NOTICE: "tabNotices",
+  EVENTS: "tabEvents",
+};
+
+const RANGE_LABEL_KEYS = {
+  ALL: "rangeAny",
+  "7": "rangeLast7Days",
+  "30": "rangeLast30Days",
+  "365": "rangeThisYear",
+};
 
 export function NewsNoticesExplorer({
   q,
@@ -42,6 +57,8 @@ export function NewsNoticesExplorer({
   yearOptions,
   archiveYears,
 }) {
+  const t = useTranslations("newsNotices.explorer");
+  const tCategories = useTranslations("newsNotices.categories");
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [search, setSearch] = useState(q);
@@ -89,21 +106,21 @@ export function NewsNoticesExplorer({
 
       <div className="space-y-4">
         <div className="flex flex-wrap items-center gap-2">
-          {TAB_TABS.map((t) => (
+          {TAB_TABS.map((tabOption) => (
             <Button
-              key={t.value}
-              variant={tab === t.value ? "default" : "outline"}
+              key={tabOption.value}
+              variant={tab === tabOption.value ? "default" : "outline"}
               size="sm"
               disabled={isPending}
-              onClick={() => navigate({ tab: t.value, page: 1 })}
+              onClick={() => navigate({ tab: tabOption.value, page: 1 })}
             >
-              {t.label}
+              {t(TAB_LABEL_KEYS[tabOption.value])}
             </Button>
           ))}
           {isPending ? (
             <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
               <Loader2 className="size-3.5 animate-spin" />
-              Updating…
+              {t("updating")}
             </span>
           ) : null}
         </div>
@@ -116,7 +133,7 @@ export function NewsNoticesExplorer({
             type="search"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search news and notices…"
+            placeholder={t("searchPlaceholder")}
             className="h-11 sm:max-w-xs"
           />
           {tab !== "EVENTS" ? (
@@ -126,13 +143,13 @@ export function NewsNoticesExplorer({
               disabled={isPending}
             >
               <SelectTrigger className="h-11 sm:w-44">
-                <SelectValue placeholder="All categories" />
+                <SelectValue placeholder={t("allCategories")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="ALL">All categories</SelectItem>
+                <SelectItem value="ALL">{t("allCategories")}</SelectItem>
                 {CATEGORIES.map((c) => (
                   <SelectItem key={c.value} value={c.value}>
-                    {c.label}
+                    {tCategories(CATEGORY_LABEL_KEYS[c.value])}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -144,10 +161,10 @@ export function NewsNoticesExplorer({
             disabled={isPending}
           >
             <SelectTrigger className="h-11 sm:w-44">
-              <SelectValue placeholder="All academic years" />
+              <SelectValue placeholder={t("allYears")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="ALL">All academic years</SelectItem>
+              <SelectItem value="ALL">{t("allYears")}</SelectItem>
               {yearOptions.map((y) => (
                 <SelectItem key={y} value={y}>
                   {y}
@@ -161,19 +178,19 @@ export function NewsNoticesExplorer({
             disabled={isPending}
           >
             <SelectTrigger className="h-11 sm:w-40">
-              <SelectValue placeholder="Any time" />
+              <SelectValue placeholder={t(RANGE_LABEL_KEYS.ALL)} />
             </SelectTrigger>
             <SelectContent>
               {RANGE_OPTIONS.map((r) => (
                 <SelectItem key={r.value} value={r.value}>
-                  {r.label}
+                  {t(RANGE_LABEL_KEYS[r.value])}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
           <Button type="submit" className="h-11 px-6" disabled={isPending}>
             {isPending ? <Loader2 className="size-4 animate-spin" /> : null}
-            Apply
+            {t("apply")}
           </Button>
         </form>
       </div>
@@ -188,14 +205,14 @@ export function NewsNoticesExplorer({
         {isArchiveView ? (
           <div className="flex items-center justify-between">
             <h2 className="text-sm font-medium text-muted-foreground">
-              Archive — {year}
+              {t("archiveYear", { year })}
             </h2>
             <button
               type="button"
               className="text-sm text-muted-foreground underline-offset-4 hover:underline"
               onClick={() => navigate({ year: "ALL", page: 1 })}
             >
-              Clear year
+              {t("clearYear")}
             </button>
           </div>
         ) : null}
@@ -209,9 +226,7 @@ export function NewsNoticesExplorer({
               height={364}
               className="h-auto w-24 -rotate-2 select-none drop-shadow-md"
             />
-            <p className="text-sm text-muted-foreground">
-              No results found. Try a different search or filter.
-            </p>
+            <p className="text-sm text-muted-foreground">{t("noResults")}</p>
           </div>
         ) : tab === "NEWS" ? (
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -251,7 +266,7 @@ export function NewsNoticesExplorer({
                   </div>
                   <div className="min-w-0 flex-1">
                     <span className="text-xs font-medium uppercase tracking-wide text-pink-600 dark:text-pink-400">
-                      News
+                      {t("typeNews")}
                     </span>
                     <h3 className="truncate font-semibold leading-snug">
                       {item.title}
@@ -279,7 +294,7 @@ export function NewsNoticesExplorer({
       {total > 0 ? (
         <div className="flex flex-col items-center gap-4 border-t pt-6 text-sm sm:flex-row sm:justify-between">
           <span className="text-muted-foreground">
-            Showing {showingFrom}–{showingTo} of {total}
+            {t("showingResults", { from: showingFrom, to: showingTo, total })}
           </span>
           {totalPages > 1 ? (
             <div className="flex items-center gap-3">
@@ -289,10 +304,10 @@ export function NewsNoticesExplorer({
                 disabled={isPending || page <= 1}
                 onClick={() => navigate({ page: page - 1 })}
               >
-                ← Previous
+                {t("previousPage")}
               </Button>
               <span className="text-muted-foreground">
-                Page {page} of {totalPages}
+                {t("pageOf", { page, totalPages })}
               </span>
               <Button
                 variant="outline"
@@ -300,7 +315,7 @@ export function NewsNoticesExplorer({
                 disabled={isPending || page >= totalPages}
                 onClick={() => navigate({ page: page + 1 })}
               >
-                Next →
+                {t("nextPage")}
               </Button>
             </div>
           ) : null}
@@ -309,7 +324,7 @@ export function NewsNoticesExplorer({
 
       <div className="space-y-3 border-t pt-8">
         <h2 className="text-sm font-medium text-muted-foreground">
-          Browse archive
+          {t("browseArchive")}
         </h2>
         <div className="flex flex-wrap gap-2">
           {archiveYears.map((y) => (

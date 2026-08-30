@@ -1,0 +1,11 @@
+{
+  "login": {
+    "heading": "Super admin sign in",
+    "subheading": "Sign in with your dashboard account.",
+    "emailLabel": "Email",
+    "passwordLabel": "Password",
+    "signIn": "Sign in",
+    "signingIn": "Signing in…",
+    "defaultError": "Sign in failed"
+  }
+}

@@ -1,10 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { UserRound } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 
 export function FacultyCard({ item }) {
+  const t = useTranslations("faculty.facultyCard");
+
   return (
     <Link
       href={`/about/faculty/${item.id}`}
@@ -40,12 +43,12 @@ export function FacultyCard({ item }) {
 
         {item.experienceYears != null ? (
           <p className="text-xs text-muted-foreground">
-            {item.experienceYears} year{item.experienceYears === 1 ? "" : "s"} of experience
+            {t("experienceYears", { count: item.experienceYears })}
           </p>
         ) : null}
 
         <span className="inline-block text-sm font-medium text-violet-600 dark:text-violet-400">
-          View Profile →
+          {t("viewProfile")}
         </span>
       </div>
     </Link>

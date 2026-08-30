@@ -1,0 +1,51 @@
+{
+  "page": {
+    "heading": "समय सारणी",
+    "description": "आपके द्वारा पोस्ट किए गए समय सारणी स्लॉट।",
+    "addSlot": "स्लॉट जोड़ें"
+  },
+  "new": {
+    "heading": "स्लॉट जोड़ें"
+  },
+  "edit": {
+    "heading": "संपादित करें"
+  },
+  "form": {
+    "noClasses": "अभी तक कोई कक्षा कॉन्फ़िगर नहीं की गई है। समय सारणी स्लॉट पोस्ट करने से पहले किसी एडमिन से संपर्क करें।",
+    "classLabel": "कक्षा",
+    "dayLabel": "दिन",
+    "periodLabel": "पीरियड",
+    "periodPlaceholder": "जैसे 1",
+    "subjectLabel": "विषय",
+    "subjectPlaceholder": "जैसे गणित",
+    "teacherLabel": "शिक्षक (वैकल्पिक)",
+    "teacherPlaceholder": "जैसे श्रीमती शर्मा",
+    "startTimeLabel": "प्रारंभ समय (वैकल्पिक)",
+    "endTimeLabel": "समाप्ति समय (वैकल्पिक)",
+    "saving": "सहेजा जा रहा है…",
+    "saveChanges": "परिवर्तन सहेजें",
+    "publish": "प्रकाशित करें",
+    "publishNote": "यह तुरंत प्रकाशित हो जाएगा और तत्काल स्कूल की वेबसाइट पर दिखाई देगा।",
+    "saveFailed": "सहेजना विफल"
+  },
+  "list": {
+    "searchPlaceholder": "विषय या शिक्षक से खोजें…",
+    "allClasses": "सभी कक्षाएँ",
+    "allDays": "सभी दिन",
+    "clearFilters": "फ़िल्टर साफ़ करें",
+    "noResultsFiltered": "आपकी खोज/फ़िल्टर से कोई स्लॉट मेल नहीं खाता।",
+    "noResultsEmpty": "आपने अभी तक कोई समय सारणी स्लॉट पोस्ट नहीं किया है।",
+    "classColumn": "कक्षा",
+    "dayColumn": "दिन",
+    "periodColumn": "पीरियड",
+    "subjectColumn": "विषय",
+    "teacherColumn": "शिक्षक",
+    "timeColumn": "समय",
+    "periodValue": "पीरियड {period}",
+    "deleteTitle": "{label} हटाएँ?",
+    "deleteDescription": "इसे पूर्ववत नहीं किया जा सकता। इससे यह समय सारणी स्लॉट स्थायी रूप से हट जाएगा।",
+    "deletingToast": "{label} हटाया जा रहा है…",
+    "deletedToast": "{label} हटा दिया गया",
+    "deleteFailedToast": "{label} हटाने में विफल"
+  }
+}

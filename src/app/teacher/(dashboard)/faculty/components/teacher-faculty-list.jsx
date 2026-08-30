@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Loader2, MoreHorizontal, UserRound } from "lucide-react";
 
@@ -36,7 +37,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
-import { facultyCategoryLabel } from "@/data/faculty-categories";
+import { FACULTY_CATEGORY_LABEL_KEYS } from "@/data/faculty-categories";
 
 function FacultyAvatar({ item }) {
   return (
@@ -51,21 +52,22 @@ function FacultyAvatar({ item }) {
 }
 
 function RowActionsMenu({ item, onDelete }) {
+  const tCommon = useTranslations("common.actions");
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="size-8">
           <MoreHorizontal className="size-4" />
-          <span className="sr-only">Open menu</span>
+          <span className="sr-only">{tCommon("openMenu")}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem asChild>
-          <Link href={`/teacher/faculty/${item.id}/edit`}>Edit</Link>
+          <Link href={`/teacher/faculty/${item.id}/edit`}>{tCommon("edit")}</Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem className="text-destructive focus:text-destructive" onSelect={onDelete}>
-          Delete
+          {tCommon("delete")}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -73,6 +75,8 @@ function RowActionsMenu({ item, onDelete }) {
 }
 
 function TeacherFacultyFilters({ filters, onPendingChange }) {
+  const t = useTranslations("teacherFaculty.list");
+  const tCommon = useTranslations("common.actions");
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [search, setSearch] = useState(filters.q);
@@ -101,13 +105,13 @@ function TeacherFacultyFilters({ filters, onPendingChange }) {
         type="search"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        placeholder="Search by name, designation, or department…"
+        placeholder={t("searchPlaceholder")}
         className="sm:max-w-xs"
         disabled={isPending}
       />
       <Button type="submit" size="sm" disabled={isPending}>
         {isPending ? <Loader2 className="size-4 animate-spin" /> : null}
-        Search
+        {tCommon("search")}
       </Button>
       {filters.q ? (
         <Button
@@ -122,7 +126,7 @@ function TeacherFacultyFilters({ filters, onPendingChange }) {
             });
           }}
         >
-          Clear
+          {tCommon("clear")}
         </Button>
       ) : null}
     </form>
@@ -130,6 +134,8 @@ function TeacherFacultyFilters({ filters, onPendingChange }) {
 }
 
 export function TeacherFacultyList({ initialItems, filters, hasAnyFaculty }) {
+  const t = useTranslations("teacherFaculty.list");
+  const tCategories = useTranslations("teacherFaculty.categories");
   const router = useRouter();
   const [items, setItems] = useState(initialItems);
   const [deleteTarget, setDeleteTarget] = useState(null);
@@ -154,7 +160,11 @@ export function TeacherFacultyList({ initialItems, filters, hasAnyFaculty }) {
           fetch(`/api/teacher/faculty/${id}`, { method: "DELETE" }).then((res) => {
             if (!res.ok) throw new Error("Delete failed");
           }),
-          { loading: `Deleting ${label}…`, success: `Deleted ${label}`, error: `Failed to delete ${label}` },
+          {
+            loading: t("deletingToast", { label }),
+            success: t("deletedToast", { label }),
+            error: t("deleteFailedToast", { label }),
+          },
         )
         .unwrap();
       setItems((prev) => prev.filter((i) => i.id !== id));
@@ -180,7 +190,7 @@ export function TeacherFacultyList({ initialItems, filters, hasAnyFaculty }) {
 
         {items.length === 0 ? (
           <p className="rounded-md border border-dashed p-8 text-center text-sm text-muted-foreground">
-            {hasAnyFaculty ? "No faculty match your search." : "You haven't added any faculty yet."}
+            {hasAnyFaculty ? t("noResultsFiltered") : t("noResultsEmpty")}
           </p>
         ) : (
           <>
@@ -207,7 +217,7 @@ export function TeacherFacultyList({ initialItems, filters, hasAnyFaculty }) {
                     ) : null}
                   </div>
                   <div className="pl-[52px]">
-                    <Badge variant="secondary">{facultyCategoryLabel(item.category)}</Badge>
+                    <Badge variant="secondary">{tCategories(FACULTY_CATEGORY_LABEL_KEYS[item.category])}</Badge>
                   </div>
                 </div>
               ))}
@@ -218,10 +228,10 @@ export function TeacherFacultyList({ initialItems, filters, hasAnyFaculty }) {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Designation</TableHead>
-                    <TableHead>Department</TableHead>
-                    <TableHead>Category</TableHead>
+                    <TableHead>{t("nameColumn")}</TableHead>
+                    <TableHead>{t("designationColumn")}</TableHead>
+                    <TableHead>{t("departmentColumn")}</TableHead>
+                    <TableHead>{t("categoryColumn")}</TableHead>
                     <TableHead className="w-0" />
                   </TableRow>
                 </TableHeader>
@@ -242,7 +252,7 @@ export function TeacherFacultyList({ initialItems, filters, hasAnyFaculty }) {
                         {item.department || "—"}
                       </TableCell>
                       <TableCell>
-                        <Badge variant="secondary">{facultyCategoryLabel(item.category)}</Badge>
+                        <Badge variant="secondary">{tCategories(FACULTY_CATEGORY_LABEL_KEYS[item.category])}</Badge>
                       </TableCell>
                       <TableCell>
                         <RowActionsMenu item={item} onDelete={() => requestDelete(item)} />
@@ -262,13 +272,11 @@ export function TeacherFacultyList({ initialItems, filters, hasAnyFaculty }) {
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete {deleteTarget?.label}?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This can&apos;t be undone. This will permanently delete this faculty profile.
-            </AlertDialogDescription>
+            <AlertDialogTitle>{t("deleteTitle", { label: deleteTarget?.label })}</AlertDialogTitle>
+            <AlertDialogDescription>{t("deleteDescription")}</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={deleting}>{t("deleteCancel")}</AlertDialogCancel>
             <AlertDialogAction
               disabled={deleting}
               onClick={(event) => {
@@ -277,7 +285,7 @@ export function TeacherFacultyList({ initialItems, filters, hasAnyFaculty }) {
               }}
               className={buttonVariants({ variant: "destructive" })}
             >
-              {deleting ? "Deleting…" : "Delete"}
+              {deleting ? t("deleting") : t("deleteConfirm")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

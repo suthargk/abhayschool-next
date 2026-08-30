@@ -1,0 +1,54 @@
+{
+  "login": {
+    "heading": "Teacher sign in",
+    "subheading": "Sign in with your teacher account.",
+    "verifiedNotice": "Email verified! An admin needs to approve your account before you can log in.",
+    "emailLabel": "Email",
+    "passwordLabel": "Password",
+    "signIn": "Sign in",
+    "signingIn": "Signing in…",
+    "noAccount": "Don't have an account?",
+    "signUp": "Sign up",
+    "defaultError": "Sign in failed"
+  },
+  "signup": {
+    "heading": "Teacher sign up",
+    "subheading": "Use your @{domain} email address. An admin will approve your account before you can log in.",
+    "firstNameLabel": "First name",
+    "lastNameLabel": "Last name",
+    "emailLabel": "Email",
+    "phoneLabel": "Mobile number",
+    "phonePlaceholder": "98765 43210",
+    "photoLabel": "Photo (optional)",
+    "photoHint": "If you skip this, your initials will be used instead.",
+    "passwordLabel": "Password",
+    "confirmPasswordLabel": "Confirm password",
+    "signUp": "Sign up",
+    "signingUp": "Signing up…",
+    "alreadyHaveAccount": "Already have an account?",
+    "logIn": "Log in",
+    "passwordMismatch": "Passwords don't match",
+    "defaultError": "Sign up failed"
+  },
+  "verify": {
+    "heading": "Verify your email",
+    "instructionsWithEmail": "Enter the 6-digit code we emailed to {email}.",
+    "instructionsWithoutEmail": "Enter the 6-digit code we emailed you.",
+    "codeLabel": "Verification code",
+    "verify": "Verify",
+    "verifying": "Verifying…",
+    "resendMessage": "A new code has been sent.",
+    "resendCooldown": "Resend code in {seconds}s",
+    "resendCode": "Resend code",
+    "resending": "Resending…",
+    "resendError": "Couldn't resend the code. Try again.",
+    "verifyError": "That code is incorrect or has expired"
+  },
+  "pending": {
+    "revokedHeading": "Account access revoked",
+    "revokedMessage": "This teacher account no longer has access. Contact the school office if you think this is a mistake.",
+    "awaitingHeading": "Awaiting approval",
+    "awaitingMessage": "Thanks for signing up! An admin needs to approve your account before you can log in and post homework. Check back soon.",
+    "signOut": "Sign out"
+  }
+}

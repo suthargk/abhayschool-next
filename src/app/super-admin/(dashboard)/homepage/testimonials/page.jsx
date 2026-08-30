@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { getTranslations } from "next-intl/server";
 
 import { TableSkeleton } from "@/components/table-skeleton";
 import { getCurrentProfile } from "@/lib/auth";
@@ -6,14 +7,14 @@ import { prisma } from "@/lib/prisma";
 
 import { TestimonialAdmin } from "./components/testimonial-admin";
 
-export default function SuperAdminTestimonialsPage() {
+export default async function SuperAdminTestimonialsPage() {
+  const t = await getTranslations("superAdminTestimonials.page");
+
   return (
     <div className="space-y-6">
       <div className="space-y-1">
-        <h1 className="text-2xl font-semibold tracking-tight">Testimonials</h1>
-        <p className="text-muted-foreground">
-          Manage the testimonials marquee shown on the public homepage.
-        </p>
+        <h1 className="text-2xl font-semibold tracking-tight">{t("heading")}</h1>
+        <p className="text-muted-foreground">{t("description")}</p>
       </div>
 
       <Suspense fallback={<TableSkeleton />}>

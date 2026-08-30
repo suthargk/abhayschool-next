@@ -1,0 +1,55 @@
+{
+  "page": {
+    "heading": "Apply for Admission",
+    "description": "Fill in your child's details below and our admissions team will get in touch with you shortly."
+  },
+  "form": {
+    "studentNameLabel": "Student's name *",
+    "studentNamePlaceholder": "e.g. Aarav Sharma",
+    "dateOfBirthLabel": "Date of birth",
+    "dateOfBirthPlaceholder": "Select date of birth",
+    "genderLabel": "Gender",
+    "genderPlaceholder": "Select gender",
+    "genderOptions": {
+      "male": "Male",
+      "female": "Female",
+      "other": "Other"
+    },
+    "classAppliedForLabel": "Class applying for *",
+    "classPlaceholder": "Select class",
+    "classOptions": {
+      "nursery": "Nursery",
+      "lkg": "LKG",
+      "ukg": "UKG",
+      "classI": "Class I",
+      "classII": "Class II",
+      "classIII": "Class III",
+      "classIV": "Class IV",
+      "classV": "Class V",
+      "classVI": "Class VI",
+      "classVII": "Class VII",
+      "classVIII": "Class VIII",
+      "classIX": "Class IX",
+      "classX": "Class X",
+      "classXI": "Class XI",
+      "classXII": "Class XII"
+    },
+    "parentNameLabel": "Parent/guardian name *",
+    "parentNamePlaceholder": "e.g. Rohit Sharma",
+    "phoneLabel": "Mobile number *",
+    "phonePlaceholder": "10-digit mobile number",
+    "emailLabel": "Email",
+    "previousSchoolLabel": "Previous school",
+    "previousSchoolPlaceholder": "If applicable",
+    "addressLabel": "Address",
+    "addressPlaceholder": "Current residential address",
+    "messageLabel": "Anything else you'd like us to know?",
+    "messagePlaceholder": "Optional",
+    "defaultError": "Something went wrong. Please try again.",
+    "submitting": "Submitting…",
+    "submit": "Submit application",
+    "successHeading": "Thank you!",
+    "successMessage": "We've received your admission enquiry. Our admissions team will contact you shortly.",
+    "successEmailNote": "We've also sent a confirmation to your email."
+  }
+}

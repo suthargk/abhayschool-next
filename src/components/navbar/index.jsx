@@ -1,5 +1,6 @@
 import * as React from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 import navigationCategory from "@/Helper/navigation";
 import { cn } from "@/lib/utils";
@@ -14,25 +15,30 @@ import {
 } from "../ui/navigation-menu";
 
 export function Navbar() {
+  const t = useTranslations("common");
+
   return (
     <NavigationMenu className="col-start-2 mx-auto hidden rounded-[6px] border border-zinc-150 bg-white/60 p-0.5 backdrop-blur-lg backdrop-saturate-100 dark:border-zinc-900 dark:bg-zinc-950/60 md:block">
       <NavigationMenuList className="">
         {navigationCategory.map((category) => {
           return (
-            <NavigationMenuItem key={category.title}>
+            <NavigationMenuItem key={category.key}>
               {category.subCategories.length ? (
                 <>
                   <NavigationMenuTrigger className="font-light text-zinc-500 bg-transparent dark:text-zinc-300 h-auto rounded-[4px]">
-                    {category.title}
+                    {t(`nav.${category.key}`)}
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
                     <ul className="grid gap-3 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
                       {category.subCategories.map((subCategory, index) => {
+                        const title = t(`nav.${subCategory.key}`);
+                        const description = t(`nav.${subCategory.key}Description`);
+
                         if (index === 0) {
                           const Icon = category.icon;
                           return (
                             <li
-                              key={subCategory.title}
+                              key={subCategory.key}
                               className="row-span-4 backdrop-blur-lg backdrop-saturate-100"
                             >
                               <NavigationMenuLink asChild>
@@ -42,10 +48,10 @@ export function Navbar() {
                                 >
                                   <Icon className="h-8 w-8" />
                                   <div className="mb-1 mt-3 text-lg font-medium">
-                                    {subCategory.title}
+                                    {title}
                                   </div>
                                   <p className="text-sm leading-tight font-light text-muted-foreground">
-                                    {subCategory.description}
+                                    {description}
                                   </p>
                                 </Link>
                               </NavigationMenuLink>
@@ -55,15 +61,15 @@ export function Navbar() {
 
                         return (
                           <ListItem
-                            key={subCategory.title}
+                            key={subCategory.key}
                             href={
                               subCategory.absolute
                                 ? subCategory.href
                                 : category.href + subCategory.href
                             }
-                            title={subCategory.title}
+                            title={title}
                           >
-                            {subCategory.description}
+                            {description}
                           </ListItem>
                         );
                       })}
@@ -76,7 +82,7 @@ export function Navbar() {
                     href={category.href}
                     className={`${navigationMenuTriggerStyle()} bg-transparent font-light text-zinc-500 dark:text-zinc-300 h-auto p-1 px-2 rounded-[4px]`}
                   >
-                    {category.title}
+                    {t(`nav.${category.key}`)}
                   </Link>
                 </NavigationMenuLink>
               )}

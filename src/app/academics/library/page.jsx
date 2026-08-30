@@ -1,3 +1,5 @@
+import { getTranslations } from "next-intl/server";
+
 import { prisma } from "@/lib/prisma";
 
 import { LibraryCatalog } from "./components/library-catalog";
@@ -5,6 +7,7 @@ import { LibraryCatalog } from "./components/library-catalog";
 export const revalidate = 60;
 
 export default async function LibraryPage() {
+  const t = await getTranslations("academics.library");
   const [books, classes] = await Promise.all([
     prisma.libraryBook.findMany({
       where: { status: "PUBLISHED" },
@@ -28,11 +31,10 @@ export default async function LibraryPage() {
         <div className="space-y-3">
           <div>
             <h1 className="text-2xl font-semibold tracking-tight md:text-3xl">
-              School Library
+              {t("heading")}
             </h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              Explore our collection of academic and reference books,
-              organized by class, subject, and publication.
+              {t("description")}
             </p>
           </div>
           <div className="flex flex-wrap gap-x-2 gap-y-1 text-sm text-muted-foreground">
@@ -40,20 +42,20 @@ export default async function LibraryPage() {
               <span className="font-medium text-foreground">
                 {books.length}
               </span>{" "}
-              {books.length === 1 ? "book" : "books"}
+              {t("bookWord", { count: books.length })}
             </span>
             <span aria-hidden="true">·</span>
             <span>
               <span className="font-medium text-foreground">
                 {subjectCount}
               </span>{" "}
-              {subjectCount === 1 ? "subject" : "subjects"}
+              {t("subjectWord", { count: subjectCount })}
             </span>
             {classRange ? (
               <>
                 <span aria-hidden="true">·</span>
                 <span>
-                  Classes{" "}
+                  {t("classesLabel")}{" "}
                   <span className="font-medium text-foreground">
                     {classRange}
                   </span>

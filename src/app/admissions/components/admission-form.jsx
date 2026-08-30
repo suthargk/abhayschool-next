@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { CheckCircle2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
 import { DatePicker } from "@/components/ui/date-picker";
@@ -16,22 +17,24 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 
+// Values are stored/submitted as-is (English) for backend consistency; only
+// the displayed label is translated via the `classOptions` message key below.
 const CLASS_OPTIONS = [
-  "Nursery",
-  "LKG",
-  "UKG",
-  "Class I",
-  "Class II",
-  "Class III",
-  "Class IV",
-  "Class V",
-  "Class VI",
-  "Class VII",
-  "Class VIII",
-  "Class IX",
-  "Class X",
-  "Class XI",
-  "Class XII",
+  { value: "Nursery", labelKey: "nursery" },
+  { value: "LKG", labelKey: "lkg" },
+  { value: "UKG", labelKey: "ukg" },
+  { value: "Class I", labelKey: "classI" },
+  { value: "Class II", labelKey: "classII" },
+  { value: "Class III", labelKey: "classIII" },
+  { value: "Class IV", labelKey: "classIV" },
+  { value: "Class V", labelKey: "classV" },
+  { value: "Class VI", labelKey: "classVI" },
+  { value: "Class VII", labelKey: "classVII" },
+  { value: "Class VIII", labelKey: "classVIII" },
+  { value: "Class IX", labelKey: "classIX" },
+  { value: "Class X", labelKey: "classX" },
+  { value: "Class XI", labelKey: "classXI" },
+  { value: "Class XII", labelKey: "classXII" },
 ];
 
 const INITIAL_FORM = {
@@ -48,6 +51,7 @@ const INITIAL_FORM = {
 };
 
 export function AdmissionForm() {
+  const t = useTranslations("admissions.form");
   const [form, setForm] = useState(INITIAL_FORM);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
@@ -69,7 +73,7 @@ export function AdmissionForm() {
         body: JSON.stringify(form),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Something went wrong. Please try again.");
+      if (!res.ok) throw new Error(data.error || t("defaultError"));
       setSubmitted(true);
     } catch (err) {
       setError(err.message);
@@ -82,11 +86,10 @@ export function AdmissionForm() {
     return (
       <div className="flex flex-col items-center gap-3 rounded-2xl border bg-card px-6 py-14 text-center">
         <CheckCircle2 className="size-10 text-emerald-500" />
-        <h2 className="text-xl font-semibold tracking-tight">Thank you!</h2>
+        <h2 className="text-xl font-semibold tracking-tight">{t("successHeading")}</h2>
         <p className="max-w-sm text-muted-foreground">
-          We&apos;ve received your admission enquiry. Our admissions team will contact you
-          shortly.
-          {form.email ? " We've also sent a confirmation to your email." : ""}
+          {t("successMessage")}
+          {form.email ? ` ${t("successEmailNote")}` : ""}
         </p>
       </div>
     );
@@ -96,22 +99,22 @@ export function AdmissionForm() {
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-2">
-          <Label htmlFor="studentName">Student&apos;s name *</Label>
+          <Label htmlFor="studentName">{t("studentNameLabel")}</Label>
           <Input
             id="studentName"
             value={form.studentName}
             onChange={(e) => update("studentName", e.target.value)}
             required
-            placeholder="e.g. Aarav Sharma"
+            placeholder={t("studentNamePlaceholder")}
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="dateOfBirth">Date of birth</Label>
+          <Label htmlFor="dateOfBirth">{t("dateOfBirthLabel")}</Label>
           <DatePicker
             id="dateOfBirth"
             value={form.dateOfBirth}
             onChange={(iso) => update("dateOfBirth", iso ?? "")}
-            placeholder="Select date of birth"
+            placeholder={t("dateOfBirthPlaceholder")}
             captionLayout="dropdown"
             startMonth={new Date(new Date().getFullYear() - 20, 0)}
             endMonth={new Date()}
@@ -122,32 +125,32 @@ export function AdmissionForm() {
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-2">
-          <Label htmlFor="gender">Gender</Label>
+          <Label htmlFor="gender">{t("genderLabel")}</Label>
           <Select value={form.gender} onValueChange={(value) => update("gender", value)}>
             <SelectTrigger id="gender">
-              <SelectValue placeholder="Select gender" />
+              <SelectValue placeholder={t("genderPlaceholder")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="Male">Male</SelectItem>
-              <SelectItem value="Female">Female</SelectItem>
-              <SelectItem value="Other">Other</SelectItem>
+              <SelectItem value="Male">{t("genderOptions.male")}</SelectItem>
+              <SelectItem value="Female">{t("genderOptions.female")}</SelectItem>
+              <SelectItem value="Other">{t("genderOptions.other")}</SelectItem>
             </SelectContent>
           </Select>
         </div>
         <div className="space-y-2">
-          <Label htmlFor="classAppliedFor">Class applying for *</Label>
+          <Label htmlFor="classAppliedFor">{t("classAppliedForLabel")}</Label>
           <Select
             value={form.classAppliedFor}
             onValueChange={(value) => update("classAppliedFor", value)}
             required
           >
             <SelectTrigger id="classAppliedFor">
-              <SelectValue placeholder="Select class" />
+              <SelectValue placeholder={t("classPlaceholder")} />
             </SelectTrigger>
             <SelectContent>
               {CLASS_OPTIONS.map((option) => (
-                <SelectItem key={option} value={option}>
-                  {option}
+                <SelectItem key={option.value} value={option.value}>
+                  {t(`classOptions.${option.labelKey}`)}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -157,31 +160,31 @@ export function AdmissionForm() {
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-2">
-          <Label htmlFor="parentName">Parent/guardian name *</Label>
+          <Label htmlFor="parentName">{t("parentNameLabel")}</Label>
           <Input
             id="parentName"
             value={form.parentName}
             onChange={(e) => update("parentName", e.target.value)}
             required
-            placeholder="e.g. Rohit Sharma"
+            placeholder={t("parentNamePlaceholder")}
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="phone">Mobile number *</Label>
+          <Label htmlFor="phone">{t("phoneLabel")}</Label>
           <Input
             id="phone"
             type="tel"
             value={form.phone}
             onChange={(e) => update("phone", e.target.value)}
             required
-            placeholder="10-digit mobile number"
+            placeholder={t("phonePlaceholder")}
           />
         </div>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="email">{t("emailLabel")}</Label>
           <Input
             id="email"
             type="email"
@@ -191,34 +194,34 @@ export function AdmissionForm() {
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="previousSchool">Previous school</Label>
+          <Label htmlFor="previousSchool">{t("previousSchoolLabel")}</Label>
           <Input
             id="previousSchool"
             value={form.previousSchool}
             onChange={(e) => update("previousSchool", e.target.value)}
-            placeholder="If applicable"
+            placeholder={t("previousSchoolPlaceholder")}
           />
         </div>
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="address">Address</Label>
+        <Label htmlFor="address">{t("addressLabel")}</Label>
         <Input
           id="address"
           value={form.address}
           onChange={(e) => update("address", e.target.value)}
-          placeholder="Current residential address"
+          placeholder={t("addressPlaceholder")}
         />
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="message">Anything else you&apos;d like us to know?</Label>
+        <Label htmlFor="message">{t("messageLabel")}</Label>
         <Textarea
           id="message"
           value={form.message}
           onChange={(e) => update("message", e.target.value)}
           rows={4}
-          placeholder="Optional"
+          placeholder={t("messagePlaceholder")}
         />
       </div>
 
@@ -229,7 +232,7 @@ export function AdmissionForm() {
       ) : null}
 
       <Button type="submit" size="lg" disabled={submitting} className="w-full sm:w-auto">
-        {submitting ? "Submitting…" : "Submit application"}
+        {submitting ? t("submitting") : t("submit")}
       </Button>
     </form>
   );

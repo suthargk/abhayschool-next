@@ -1,0 +1,56 @@
+{
+  "page": {
+    "heading": "Homework",
+    "description": "Homework you've posted.",
+    "addHomework": "Add homework"
+  },
+  "newPage": {
+    "heading": "Add homework"
+  },
+  "editPage": {
+    "heading": "Edit"
+  },
+  "form": {
+    "classLabel": "Class",
+    "classPlaceholder": "Select a class",
+    "subjectLabel": "Subject",
+    "subjectPlaceholder": "Select a subject",
+    "titleLabel": "Title",
+    "titlePlaceholder": "Chapter 5 — Linear Equations",
+    "assignedDateLabel": "Assigned date",
+    "dueDateLabel": "Due date",
+    "instructionsLabel": "Instructions",
+    "instructionsPlaceholder": "Describe the assignment, pages, and expectations…",
+    "attachmentsLabel": "Attachments",
+    "uploadFailed": "Upload failed",
+    "dueDateRequired": "Due date is required",
+    "saveFailed": "Save failed",
+    "noAssignments": "You don't have any classes/subjects assigned yet. Contact an admin to get set up before posting homework.",
+    "saving": "Saving…",
+    "saveChanges": "Save changes",
+    "publish": "Publish",
+    "publishNote": "This homework is published immediately and appears on the school website right away."
+  },
+  "list": {
+    "searchPlaceholder": "Search by title or subject…",
+    "allClasses": "All classes",
+    "allSubjects": "All subjects",
+    "allStatuses": "All statuses",
+    "dueDatePlaceholder": "Due date",
+    "clearFilters": "Clear filters",
+    "deleteSelected": "Delete selected",
+    "noResultsFiltered": "No homework matches your search/filters.",
+    "noResultsEmpty": "You haven't posted any homework yet.",
+    "titleColumn": "Title",
+    "classColumn": "Class",
+    "subjectColumn": "Subject",
+    "dueColumn": "Due",
+    "statusColumn": "Status",
+    "dueOn": "Due {date}",
+    "statusUpdateFailed": "Couldn't update status",
+    "bulkDeleteLabel": "{count, plural, one {# item} other {# items}}",
+    "deletingToast": "Deleting {label}…",
+    "deletedToast": "Deleted {label}",
+    "deleteFailedToast": "Failed to delete {label}"
+  }
+}

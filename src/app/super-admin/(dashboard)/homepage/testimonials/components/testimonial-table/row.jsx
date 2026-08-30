@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { useTranslations } from "next-intl";
 import {
   Check,
   Circle,
@@ -37,6 +38,9 @@ export function TestimonialRow({
   onTogglePublish,
   onDelete,
 }) {
+  const t = useTranslations("superAdminTestimonials.table");
+  const tCommon = useTranslations("common.actions");
+  const tStatus = useTranslations("common.status");
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: item.id,
     disabled: dragDisabled,
@@ -68,7 +72,7 @@ export function TestimonialRow({
           <Checkbox
             checked={selected}
             onCheckedChange={(checked) => onToggleSelect(Boolean(checked))}
-            aria-label={`Select ${item.name}`}
+            aria-label={t("selectRowSr", { name: item.name })}
           />
         </TableCell>
       ) : null}
@@ -114,12 +118,12 @@ export function TestimonialRow({
             ) : (
               <CircleDashed className="size-3.5" />
             )}
-            {item.status === "PUBLISHED" ? "Published" : "Draft"}
+            {item.status === "PUBLISHED" ? tStatus("published") : tStatus("draft")}
           </Badge>
           {item.source === "PARENT" ? (
             <Badge variant="secondary" className="gap-1">
               <UserRoundCheck className="size-3" />
-              Parent submitted
+              {t("parentSubmitted")}
             </Badge>
           ) : null}
         </div>
@@ -129,21 +133,23 @@ export function TestimonialRow({
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon" className="size-8" disabled={pending}>
               <MoreHorizontal className="size-4" />
-              <span className="sr-only">Open menu</span>
+              <span className="sr-only">{tCommon("openMenu")}</span>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem asChild>
-              <Link href={`/super-admin/homepage/testimonials/${item.id}/edit`}>Edit</Link>
+              <Link href={`/super-admin/homepage/testimonials/${item.id}/edit`}>
+                {tCommon("edit")}
+              </Link>
             </DropdownMenuItem>
             {canPublish ? (
               <>
                 <DropdownMenuItem onSelect={onTogglePublish}>
-                  {item.status === "PUBLISHED" ? "Unpublish" : "Publish"}
+                  {item.status === "PUBLISHED" ? tCommon("unpublish") : tCommon("publish")}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem className="text-destructive focus:text-destructive" onSelect={onDelete}>
-                  Delete
+                  {tCommon("delete")}
                 </DropdownMenuItem>
               </>
             ) : null}

@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import { Award, LayoutGrid, Users } from "lucide-react";
 
 function StatTile({ icon: Icon, label, value }) {
@@ -11,6 +12,8 @@ function StatTile({ icon: Icon, label, value }) {
 }
 
 export function FacultyStats({ faculty }) {
+  const t = useTranslations("faculty.facultyStats");
+
   if (faculty.length === 0) return null;
 
   const departments = new Set(faculty.map((f) => f.department).filter(Boolean));
@@ -23,9 +26,19 @@ export function FacultyStats({ faculty }) {
       : null;
 
   const stats = [
-    { icon: Users, label: "Faculty Members", value: `${faculty.length}+` },
-    ...(avgExperience ? [{ icon: Award, label: "Average Experience", value: `${avgExperience}+ years` }] : []),
-    ...(departments.size > 0 ? [{ icon: LayoutGrid, label: "Departments", value: `${departments.size}+` }] : []),
+    { icon: Users, label: t("facultyMembers"), value: t("countSuffix", { count: faculty.length }) },
+    ...(avgExperience
+      ? [
+          {
+            icon: Award,
+            label: t("averageExperience"),
+            value: t("avgExperienceValue", { count: avgExperience }),
+          },
+        ]
+      : []),
+    ...(departments.size > 0
+      ? [{ icon: LayoutGrid, label: t("departments"), value: t("countSuffix", { count: departments.size }) }]
+      : []),
   ];
 
   return (

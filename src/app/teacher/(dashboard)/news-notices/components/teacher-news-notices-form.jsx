@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { FileText, Loader2, Paperclip, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -19,7 +20,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { RichTextEditor } from "@/components/news-notices/rich-text-editor";
-import { CATEGORIES } from "@/lib/news-notices/categories";
+import { CATEGORIES, CATEGORY_LABEL_KEYS } from "@/lib/news-notices/categories";
 import { currentAcademicYear } from "@/lib/news-notices/academic-year";
 
 function formatFileSize(bytes) {
@@ -29,6 +30,9 @@ function formatFileSize(bytes) {
 }
 
 export function TeacherNewsNoticeForm({ initialItem }) {
+  const t = useTranslations("teacherNewsNotices.form");
+  const tCategories = useTranslations("newsNotices.categories");
+  const tCommon = useTranslations("common.actions");
   const router = useRouter();
   const isEdit = Boolean(initialItem);
 
@@ -68,7 +72,7 @@ export function TeacherNewsNoticeForm({ initialItem }) {
         body: formData,
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Upload failed");
+      if (!res.ok) throw new Error(data.error || t("uploadFailed"));
       setCoverImageUrl(data.url);
     } catch (err) {
       setError(err.message);
@@ -92,7 +96,7 @@ export function TeacherNewsNoticeForm({ initialItem }) {
         body: formData,
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Upload failed");
+      if (!res.ok) throw new Error(data.error || t("uploadFailed"));
       setAttachments((prev) => [
         ...prev,
         {
@@ -146,7 +150,7 @@ export function TeacherNewsNoticeForm({ initialItem }) {
         },
       );
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Save failed");
+      if (!res.ok) throw new Error(data.error || t("saveFailed"));
       router.push("/teacher/news-notices");
       router.refresh();
     } catch (err) {
@@ -159,11 +163,11 @@ export function TeacherNewsNoticeForm({ initialItem }) {
   return (
     <form onSubmit={handleSubmit} className="max-w-3xl space-y-6">
       <div className="space-y-2">
-        <Label>Content type</Label>
+        <Label>{t("contentTypeLabel")}</Label>
         <div className="flex gap-2">
           {[
-            { value: "NEWS", label: "News" },
-            { value: "NOTICE", label: "Notice" },
+            { value: "NEWS", label: t("typeNews") },
+            { value: "NOTICE", label: t("typeNotice") },
           ].map((option) => (
             <Button
               key={option.value}
@@ -179,15 +183,15 @@ export function TeacherNewsNoticeForm({ initialItem }) {
 
       <div className="grid gap-6 sm:grid-cols-2">
         <div className="space-y-2">
-          <Label htmlFor="category">Category</Label>
+          <Label htmlFor="category">{t("categoryLabel")}</Label>
           <Select value={category} onValueChange={setCategory}>
             <SelectTrigger id="category">
-              <SelectValue placeholder="Select a category" />
+              <SelectValue placeholder={t("categoryPlaceholder")} />
             </SelectTrigger>
             <SelectContent>
               {CATEGORIES.map((c) => (
                 <SelectItem key={c.value} value={c.value}>
-                  {c.label}
+                  {tCategories(CATEGORY_LABEL_KEYS[c.value])}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -195,34 +199,34 @@ export function TeacherNewsNoticeForm({ initialItem }) {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="academic-year">Academic year</Label>
+          <Label htmlFor="academic-year">{t("academicYearLabel")}</Label>
           <Input
             id="academic-year"
             value={academicYear}
             onChange={(e) => setAcademicYear(e.target.value)}
-            placeholder="2026-27"
+            placeholder={t("academicYearPlaceholder")}
           />
         </div>
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="title">Title</Label>
+        <Label htmlFor="title">{t("titleLabel")}</Label>
         <Input
           id="title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           required
-          placeholder="New product update"
+          placeholder={t("titlePlaceholder")}
         />
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="summary">Short description</Label>
+        <Label htmlFor="summary">{t("summaryLabel")}</Label>
         <Textarea
           id="summary"
           value={summary}
           onChange={(e) => setSummary(e.target.value)}
-          placeholder="A one or two sentence summary shown in lists."
+          placeholder={t("summaryPlaceholder")}
           rows={3}
         />
       </div>
@@ -230,16 +234,16 @@ export function TeacherNewsNoticeForm({ initialItem }) {
       <div className="flex flex-wrap gap-6 rounded-md border p-4">
         <label className="flex items-center gap-2 text-sm font-medium">
           <Checkbox checked={pinned} onCheckedChange={(v) => setPinned(v === true)} />
-          Pinned — keep at the top of the list
+          {t("pinnedLabel")}
         </label>
         <label className="flex items-center gap-2 text-sm font-medium">
           <Checkbox checked={featured} onCheckedChange={(v) => setFeatured(v === true)} />
-          Featured — highlight on the homepage
+          {t("featuredLabel")}
         </label>
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="cover-image">Cover image</Label>
+        <Label htmlFor="cover-image">{t("coverImageLabel")}</Label>
         {coverImageUrl ? (
           <div className="relative w-full max-w-sm overflow-hidden rounded-md border">
             <Image
@@ -271,65 +275,64 @@ export function TeacherNewsNoticeForm({ initialItem }) {
         )}
         {uploading ? (
           <p className="flex items-center gap-2 text-xs text-muted-foreground">
-            <Loader2 className="size-3 animate-spin" /> Uploading…
+            <Loader2 className="size-3 animate-spin" /> {t("uploading")}
           </p>
         ) : null}
       </div>
 
       <div className="space-y-2">
-        <Label>Content</Label>
+        <Label>{t("contentLabel")}</Label>
         <RichTextEditor
           content={content}
           onChange={setContent}
-          placeholder="Write the article or notice here…"
+          placeholder={t("contentPlaceholder")}
         />
       </div>
 
       <div className="space-y-4 rounded-md border p-4">
-        <Label className="text-sm font-semibold">Event details (optional)</Label>
+        <Label className="text-sm font-semibold">{t("eventDetailsLabel")}</Label>
         <div className="grid gap-4 sm:grid-cols-3">
           <div className="space-y-2">
             <Label htmlFor="event-date" className="text-xs font-normal text-muted-foreground">
-              Event date
+              {t("eventDateLabel")}
             </Label>
             <DatePicker value={eventDate} onChange={setEventDate} />
           </div>
           <div className="space-y-2">
             <Label htmlFor="event-time" className="text-xs font-normal text-muted-foreground">
-              Time
+              {t("eventTimeLabel")}
             </Label>
             <Input
               id="event-time"
               value={eventTime}
               onChange={(e) => setEventTime(e.target.value)}
-              placeholder="9:00 AM – 1:00 PM"
+              placeholder={t("eventTimePlaceholder")}
             />
           </div>
           <div className="space-y-2">
             <Label htmlFor="venue" className="text-xs font-normal text-muted-foreground">
-              Venue
+              {t("venueLabel")}
             </Label>
             <Input
               id="venue"
               value={venue}
               onChange={(e) => setVenue(e.target.value)}
-              placeholder="School Auditorium"
+              placeholder={t("venuePlaceholder")}
             />
           </div>
         </div>
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="expiry-date">Expiry date (optional)</Label>
+        <Label htmlFor="expiry-date">{t("expiryDateLabel")}</Label>
         <p className="text-xs text-muted-foreground">
-          After this date the notice moves out of the active list but stays available in the
-          archive.
+          {t("expiryDateHelp")}
         </p>
         <DatePicker value={expiresAt} onChange={setExpiresAt} />
       </div>
 
       <div className="space-y-2">
-        <Label>Attachments</Label>
+        <Label>{t("attachmentsLabel")}</Label>
         {attachments.length > 0 ? (
           <ul className="space-y-2">
             {attachments.map((a, i) => (
@@ -383,18 +386,18 @@ export function TeacherNewsNoticeForm({ initialItem }) {
 
       <div className="flex gap-2">
         <Button type="submit" disabled={saving || uploading || uploadingAttachment}>
-          {saving ? "Saving…" : isEdit ? "Save changes" : "Publish"}
+          {saving ? t("saving") : isEdit ? t("saveChanges") : t("publish")}
         </Button>
         <Button
           type="button"
           variant="outline"
           onClick={() => router.push("/teacher/news-notices")}
         >
-          Cancel
+          {tCommon("cancel")}
         </Button>
       </div>
       <p className="text-xs text-muted-foreground">
-        This is published immediately and appears on the school website right away.
+        {t("publishNote")}
       </p>
     </form>
   );

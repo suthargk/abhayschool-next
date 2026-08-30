@@ -1,22 +1,23 @@
 import Image from "next/image";
 import { MessageCircleHeart } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 export function PrincipalHero({ item }) {
-  const name = item?.principalName || "Our Principal";
-  const designation =
-    item?.designation || "Principal, Shri Abhay Nobles Senior Secondary School";
+  const t = useTranslations("principalMessage.principalHero");
+  const name = item?.principalName || t("defaultName");
+  const designation = item?.designation || t("defaultDesignation");
 
   return (
     <section className="flex flex-col items-center gap-6 px-4 pb-4 pt-28 text-center sm:pt-32">
       <span className="inline-flex items-center gap-1.5 text-sm font-medium text-violet-600 dark:text-violet-400">
         <MessageCircleHeart className="size-4" />
-        A Message from Our Principal
+        {t("badge")}
       </span>
 
       <h1 className="text-3xl font-semibold sm:text-5xl">
-        <span className="block">Welcome to</span>
+        <span className="block">{t("titleLine1")}</span>
         <span className="block bg-clip-text text-transparent bg-gradient-to-b from-[#8371fa] to-[#c25ff9]">
-          Our School Family
+          {t("titleLine2")}
         </span>
       </h1>
 

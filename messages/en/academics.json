@@ -1,0 +1,61 @@
+{
+  "page": {
+    "heading": "Academics",
+    "description": "Programs, updates, and stories from our academic team."
+  },
+  "explorer": {
+    "searchPlaceholder": "Search academic posts…",
+    "search": "Search",
+    "empty": "No results found. Try a different search or check back soon!",
+    "previous": "← Previous",
+    "next": "Next →",
+    "loading": "Loading…",
+    "pageOf": "Page {page} of {totalPages}"
+  },
+  "postDetail": {
+    "backToAcademics": "Back to Academics"
+  },
+  "library": {
+    "heading": "School Library",
+    "description": "Explore our collection of academic and reference books, organized by class, subject, and publication.",
+    "bookWord": "{count, plural, one {book} other {books}}",
+    "subjectWord": "{count, plural, one {subject} other {subjects}}",
+    "classesLabel": "Classes",
+    "searchPlaceholder": "Search by book name, subject, publication, or class...",
+    "allClasses": "All Classes",
+    "allSubjects": "All subjects",
+    "allPublications": "All publications",
+    "clearFilters": "Clear filters",
+    "columnClass": "Class",
+    "columnBookName": "Book Name",
+    "columnSubject": "Subject",
+    "columnPublicationHeader": "Publications",
+    "detailPublication": "Publication",
+    "noBooksFound": "No books found.",
+    "showingRange": "Showing {start}–{end} of {count} {count, plural, one {book} other {books}}",
+    "noBooksMatchFilters": "No books match your search or filters.",
+    "noBooksYet": "No books listed yet.",
+    "previous": "Previous",
+    "next": "Next",
+    "pageOf": "Page {page} of {totalPages}"
+  },
+  "timeTable": {
+    "heading": "Time Table",
+    "description": "Weekly class schedule, organized by class, day, and period.",
+    "schoolName": "Shri Abhay Nobles Senior Secondary School",
+    "weekdays": {
+      "monday": "Monday",
+      "tuesday": "Tuesday",
+      "wednesday": "Wednesday",
+      "thursday": "Thursday",
+      "friday": "Friday",
+      "saturday": "Saturday"
+    },
+    "pdfTitle": "Time Table — {className}",
+    "periodColumn": "Period",
+    "downloadPdf": "Download PDF",
+    "preparingPdf": "Preparing…",
+    "emptyGlobal": "No time table has been published yet.",
+    "emptyClass": "No time table has been published for this class yet."
+  }
+}

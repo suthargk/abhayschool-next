@@ -3,6 +3,7 @@ export const revalidate = 60;
 import { Suspense } from "react";
 
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 
 import { prisma } from "@/lib/prisma";
 import { Button } from "@/components/ui/button";
@@ -77,6 +78,7 @@ async function LandingPrincipalMessage() {
 }
 
 async function LandingToppers() {
+  const t = await getTranslations("landing.toppers");
   const latestYear = await resolveLatestTopperYear();
 
   const toppers = latestYear
@@ -99,7 +101,7 @@ async function LandingToppers() {
       <AchievementStats toppers={toppers} />
       <div className="text-center">
         <Button asChild size="lg" variant="outline">
-          <Link href="/achievements/toppers">View All Achievements →</Link>
+          <Link href="/achievements/toppers">{t("viewAll")}</Link>
         </Button>
       </div>
     </div>
@@ -107,6 +109,7 @@ async function LandingToppers() {
 }
 
 async function LandingTestimonials() {
+  const t = await getTranslations("landing.testimonials");
   const testimonials = await prisma.testimonial.findMany({
     where: { status: "PUBLISHED" },
     orderBy: [{ position: "asc" }],
@@ -119,7 +122,7 @@ async function LandingTestimonials() {
       <Testimonials items={testimonials} />
       <div className="text-center">
         <Button asChild size="lg" variant="outline">
-          <Link href="/testimonials">View All Testimonials →</Link>
+          <Link href="/testimonials">{t("viewAll")}</Link>
         </Button>
       </div>
     </div>

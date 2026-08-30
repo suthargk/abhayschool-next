@@ -2,6 +2,8 @@ import { Suspense } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Camera, ChevronDown, ImageOff, Images } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
 
 import { prisma } from "@/lib/prisma";
 import { Badge } from "@/components/ui/badge";
@@ -24,6 +26,8 @@ const MOSAIC_LAYOUT = [
 ];
 
 export function GalleryHero() {
+  const t = useTranslations("gallery.galleryHero");
+
   return (
     <section className="flex flex-col items-center gap-6 px-4 pb-4 pt-28 text-center sm:pt-32">
       <Badge
@@ -31,21 +35,20 @@ export function GalleryHero() {
         className="animate-fade-up-from-top [animation-fill-mode:both]"
       >
         <Camera className="size-3.5" />
-        Gallery
+        {t("badge")}
       </Badge>
 
       <h1
         className="animate-fade-up-from-top text-3xl font-semibold [animation-delay:60ms] [animation-fill-mode:both] sm:text-5xl"
       >
-        <span className="block">Our School</span>
+        <span className="block">{t("headingLine1")}</span>
         <span className="block bg-clip-text text-transparent bg-gradient-to-b from-[#8371fa] to-[#c25ff9]">
-          In Pictures
+          {t("headingLine2")}
         </span>
       </h1>
 
       <p className="max-w-xl animate-fade-up-from-top text-muted-foreground [animation-delay:120ms] [animation-fill-mode:both]">
-        Explore moments from our campus, classrooms, celebrations, activities,
-        and student life.
+        {t("description")}
       </p>
 
       <Suspense fallback={<HeroMosaicSkeleton />}>
@@ -56,7 +59,7 @@ export function GalleryHero() {
         href="#gallery-albums"
         className="mt-2 inline-flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-foreground"
       >
-        Explore Gallery
+        {t("exploreGallery")}
         <ChevronDown className="size-4" />
       </a>
     </section>
@@ -64,6 +67,7 @@ export function GalleryHero() {
 }
 
 async function HeroMosaic() {
+  const t = await getTranslations("gallery.galleryHero");
   const [albums, photoCount] = await Promise.all([
     prisma.galleryAlbum.findMany({
       where: { status: "PUBLISHED", coverImageUrl: { not: null } },
@@ -78,7 +82,7 @@ async function HeroMosaic() {
   while (tiles.length < 5) {
     tiles.push({
       id: `fallback-${tiles.length}`,
-      title: "Our school campus",
+      title: t("fallbackTitle"),
       coverImageUrl: FALLBACK_IMAGES[tiles.length % FALLBACK_IMAGES.length],
       isFallback: true,
     });
@@ -89,7 +93,7 @@ async function HeroMosaic() {
       {photoCount > 0 ? (
         <span className="inline-flex items-center gap-1.5 text-sm text-muted-foreground">
           <Images className="size-4" />
-          {photoCount.toLocaleString()}+ photos across our albums
+          {t("photoCount", { count: photoCount.toLocaleString() })}
         </span>
       ) : null}
 
@@ -107,7 +111,7 @@ async function HeroMosaic() {
             {tile.coverImageUrl ? (
               <Image
                 src={tile.coverImageUrl}
-                alt={tile.title ?? "Gallery photo"}
+                alt={tile.title ?? t("fallbackAlt")}
                 fill
                 sizes="(max-width: 640px) 33vw, 400px"
                 className="object-cover transition-transform duration-500 group-hover:scale-105"

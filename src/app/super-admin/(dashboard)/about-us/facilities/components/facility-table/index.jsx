@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import {
   DndContext,
   KeyboardSensor,
@@ -27,6 +28,9 @@ import { FacilityDeleteDialog } from "./delete-dialog";
 import { FacilityRow } from "./row";
 
 export function FacilityTable({ initialItems, canPublish }) {
+  const t = useTranslations("superAdminFacilities.table");
+  const tCommon = useTranslations("common.actions");
+  const tTable = useTranslations("common.table");
   const router = useRouter();
   const [items, setItems] = useState(initialItems);
   const [search, setSearch] = useState("");
@@ -95,7 +99,7 @@ export function FacilityTable({ initialItems, canPublish }) {
   function requestBulkDelete() {
     const ids = Array.from(selected);
     if (ids.length === 0) return;
-    setDeleteTarget({ ids, label: `${ids.length} ${ids.length === 1 ? "entry" : "entries"}` });
+    setDeleteTarget({ ids, label: t("bulkDeleteLabel", { count: ids.length }) });
   }
 
   async function confirmDelete() {
@@ -147,18 +151,18 @@ export function FacilityTable({ initialItems, canPublish }) {
             type="search"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search by title or description..."
+            placeholder={t("searchPlaceholder")}
             className="pl-8"
           />
         </div>
         {canPublish && selected.size > 0 ? (
           <div className="flex items-center gap-2">
-            <span className="text-sm text-muted-foreground">{selected.size} selected</span>
+            <span className="text-sm text-muted-foreground">{tTable("rowsSelected", { count: selected.size })}</span>
             <Button type="button" variant="destructive" size="sm" onClick={requestBulkDelete}>
-              Delete selected
+              {t("deleteSelected")}
             </Button>
             <Button type="button" variant="ghost" size="sm" onClick={() => setSelected(new Set())}>
-              Clear
+              {tCommon("clear")}
             </Button>
           </div>
         ) : null}
@@ -166,11 +170,11 @@ export function FacilityTable({ initialItems, canPublish }) {
 
       {items.length === 0 ? (
         <p className="rounded-md border border-dashed p-8 text-center text-sm text-muted-foreground">
-          Nothing in this section yet.
+          {t("emptySection")}
         </p>
       ) : filtered.length === 0 ? (
         <p className="rounded-md border border-dashed p-8 text-center text-sm text-muted-foreground">
-          No results match your search.
+          {tTable("noResults")}
         </p>
       ) : (
         <div className="rounded-md border">
@@ -183,22 +187,22 @@ export function FacilityTable({ initialItems, canPublish }) {
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-8">
-                    <span className="sr-only">Reorder</span>
+                    <span className="sr-only">{t("columns.reorder")}</span>
                   </TableHead>
                   {canPublish ? (
                     <TableHead className="w-8">
                       <Checkbox
                         checked={allFilteredSelected ? true : someFilteredSelected ? "indeterminate" : false}
                         onCheckedChange={(checked) => toggleSelectAllFiltered(Boolean(checked))}
-                        aria-label="Select all"
+                        aria-label={tCommon("selectAll")}
                       />
                     </TableHead>
                   ) : null}
-                  <TableHead>Title</TableHead>
-                  <TableHead>Description</TableHead>
-                  <TableHead>Status</TableHead>
+                  <TableHead>{t("columns.title")}</TableHead>
+                  <TableHead>{t("columns.description")}</TableHead>
+                  <TableHead>{t("columns.status")}</TableHead>
                   <TableHead className="w-10">
-                    <span className="sr-only">Actions</span>
+                    <span className="sr-only">{t("columns.actions")}</span>
                   </TableHead>
                 </TableRow>
               </TableHeader>
@@ -225,9 +229,9 @@ export function FacilityTable({ initialItems, canPublish }) {
       )}
 
       {dragDisabled ? (
-        <p className="text-xs text-muted-foreground">Clear the search to drag and reorder.</p>
+        <p className="text-xs text-muted-foreground">{t("dragHintDisabled")}</p>
       ) : (
-        <p className="text-xs text-muted-foreground">Drag rows to change display order.</p>
+        <p className="text-xs text-muted-foreground">{t("dragHint")}</p>
       )}
 
       <FacilityDeleteDialog

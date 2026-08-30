@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { MoreHorizontal, Sparkles } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 import {
   AlertDialog,
@@ -50,21 +51,22 @@ function FacilityThumb({ item }) {
 }
 
 function RowActionsMenu({ item, onDelete }) {
+  const tActions = useTranslations("common.actions");
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="size-8">
           <MoreHorizontal className="size-4" />
-          <span className="sr-only">Open menu</span>
+          <span className="sr-only">{tActions("openMenu")}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem asChild>
-          <Link href={`/teacher/facilities/${item.id}/edit`}>Edit</Link>
+          <Link href={`/teacher/facilities/${item.id}/edit`}>{tActions("edit")}</Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem className="text-destructive focus:text-destructive" onSelect={onDelete}>
-          Delete
+          {tActions("delete")}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -72,6 +74,8 @@ function RowActionsMenu({ item, onDelete }) {
 }
 
 export function TeacherFacilityList({ initialItems, section }) {
+  const t = useTranslations("teacherFacilities.list");
+  const tActions = useTranslations("common.actions");
   const router = useRouter();
   const [items, setItems] = useState(initialItems);
   const [deleteTarget, setDeleteTarget] = useState(null);
@@ -94,9 +98,13 @@ export function TeacherFacilityList({ initialItems, section }) {
       await toast
         .promise(
           fetch(`/api/teacher/facilities/${id}`, { method: "DELETE" }).then((res) => {
-            if (!res.ok) throw new Error("Delete failed");
+            if (!res.ok) throw new Error(t("toast.deleteFailed", { label }));
           }),
-          { loading: `Deleting ${label}…`, success: `Deleted ${label}`, error: `Failed to delete ${label}` },
+          {
+            loading: t("toast.deleting", { label }),
+            success: t("toast.deleted", { label }),
+            error: t("toast.deleteFailed", { label }),
+          },
         )
         .unwrap();
       setItems((prev) => prev.filter((i) => i.id !== id));
@@ -113,7 +121,7 @@ export function TeacherFacilityList({ initialItems, section }) {
     <div className="space-y-4">
       {items.length === 0 ? (
         <p className="rounded-md border border-dashed p-8 text-center text-sm text-muted-foreground">
-          You haven&apos;t added any facilities in this section yet.
+          {t("empty")}
         </p>
       ) : (
         <>
@@ -135,7 +143,7 @@ export function TeacherFacilityList({ initialItems, section }) {
                 ) : null}
                 {!isFaq && item.featured ? (
                   <div className="pl-[52px]">
-                    <Badge variant="secondary">Featured</Badge>
+                    <Badge variant="secondary">{t("featuredBadge")}</Badge>
                   </div>
                 ) : null}
               </div>
@@ -147,9 +155,9 @@ export function TeacherFacilityList({ initialItems, section }) {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>{isFaq ? "Question" : "Title"}</TableHead>
-                  <TableHead>{isFaq ? "Answer" : "Summary"}</TableHead>
-                  {!isFaq ? <TableHead>Featured</TableHead> : null}
+                  <TableHead>{isFaq ? t("columnQuestion") : t("columnTitle")}</TableHead>
+                  <TableHead>{isFaq ? t("columnAnswer") : t("columnSummary")}</TableHead>
+                  {!isFaq ? <TableHead>{t("columnFeatured")}</TableHead> : null}
                   <TableHead className="w-0" />
                 </TableRow>
               </TableHeader>
@@ -170,7 +178,11 @@ export function TeacherFacilityList({ initialItems, section }) {
                     </TableCell>
                     {!isFaq ? (
                       <TableCell>
-                        {item.featured ? <Badge variant="secondary">Featured</Badge> : "—"}
+                        {item.featured ? (
+                          <Badge variant="secondary">{t("featuredBadge")}</Badge>
+                        ) : (
+                          "—"
+                        )}
                       </TableCell>
                     ) : null}
                     <TableCell>
@@ -190,13 +202,13 @@ export function TeacherFacilityList({ initialItems, section }) {
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete {deleteTarget?.label}?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This can&apos;t be undone. This will permanently delete this facility entry.
-            </AlertDialogDescription>
+            <AlertDialogTitle>
+              {t("deleteDialog.title", { label: deleteTarget?.label ?? "" })}
+            </AlertDialogTitle>
+            <AlertDialogDescription>{t("deleteDialog.description")}</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={deleting}>{tActions("cancel")}</AlertDialogCancel>
             <AlertDialogAction
               disabled={deleting}
               onClick={(event) => {
@@ -205,7 +217,7 @@ export function TeacherFacilityList({ initialItems, section }) {
               }}
               className={buttonVariants({ variant: "destructive" })}
             >
-              {deleting ? "Deleting…" : "Delete"}
+              {deleting ? tActions("deleting") : tActions("delete")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

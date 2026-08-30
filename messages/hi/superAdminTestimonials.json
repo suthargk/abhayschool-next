@@ -1,0 +1,53 @@
+{
+  "page": {
+    "heading": "अभिमत",
+    "description": "सार्वजनिक होमपेज पर दिखाए जाने वाले अभिमत मार्की को प्रबंधित करें।"
+  },
+  "admin": {
+    "addTestimonial": "अभिमत जोड़ें"
+  },
+  "table": {
+    "searchPlaceholder": "नाम, पदनाम या कथन से खोजें...",
+    "deleteSelected": "चयनित हटाएं",
+    "columnName": "नाम",
+    "columnQuote": "कथन",
+    "columnStatus": "स्थिति",
+    "columnActionsSr": "कार्रवाइयाँ",
+    "columnReorderSr": "क्रम बदलें",
+    "selectRowSr": "{name} चुनें",
+    "emptyState": "अभी तक कोई अभिमत नहीं है।",
+    "noSearchResults": "आपकी खोज से मेल खाने वाला कोई परिणाम नहीं मिला।",
+    "dragHint": "प्रदर्शन क्रम बदलने के लिए पंक्तियों को खींचें।",
+    "clearSearchToReorderHint": "खींचकर क्रम बदलने के लिए खोज साफ़ करें।",
+    "parentSubmitted": "अभिभावक द्वारा सबमिट किया गया"
+  },
+  "deleteDialog": {
+    "title": "{label} हटाएं?",
+    "description": "{count, plural, one {इसे पूर्ववत नहीं किया जा सकता। इससे यह अभिमत होमपेज के अभिमत अनुभाग से स्थायी रूप से हट जाएगा।} other {इसे पूर्ववत नहीं किया जा सकता। इससे ये अभिमत होमपेज के अभिमत अनुभाग से स्थायी रूप से हट जाएंगे।}}",
+    "bulkDeleteLabel": "{count, plural, one {# अभिमत} other {# अभिमत}}"
+  },
+  "form": {
+    "addTitle": "अभिमत जोड़ें",
+    "editTitle": "अभिमत संपादित करें",
+    "backToList": "वापस",
+    "parentSubmissionNoticeWithPhone": "यह अभिभावक द्वारा सार्वजनिक फ़ॉर्म के माध्यम से सबमिट किया गया है, जिसे {phone} पर OTP से सत्यापित किया गया है। प्रकाशित करने से पहले समीक्षा करें।",
+    "parentSubmissionNotice": "यह अभिभावक द्वारा सार्वजनिक फ़ॉर्म के माध्यम से सबमिट किया गया है, जिसे OTP से सत्यापित किया गया है। प्रकाशित करने से पहले समीक्षा करें।",
+    "photoLabel": "फ़ोटो",
+    "photoHelp": "वैकल्पिक। खाली छोड़ने पर एक प्लेसहोल्डर अवतार दिखाया जाता है।",
+    "uploading": "अपलोड हो रहा है…",
+    "nameLabel": "नाम",
+    "namePlaceholder": "जैसे प्रिया शर्मा",
+    "designationLabel": "पदनाम",
+    "designationPlaceholder": "जैसे कक्षा VIII के विद्यार्थी के अभिभावक",
+    "quoteLabel": "कथन",
+    "quotePlaceholder": "उन्होंने स्कूल के बारे में क्या कहा?",
+    "saveChanges": "परिवर्तन सहेजें",
+    "saveDraft": "प्रारूप सहेजें",
+    "saving": "सहेजा जा रहा है…",
+    "cancel": "रद्द करें",
+    "updating": "अद्यतन हो रहा है…",
+    "uploadFailedError": "अपलोड विफल रहा",
+    "saveFailedError": "सहेजना विफल रहा",
+    "statusUpdateFailedError": "स्थिति अद्यतन करने में विफल"
+  }
+}

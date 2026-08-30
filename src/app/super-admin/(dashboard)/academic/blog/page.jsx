@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { Plus } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 
 import { Button } from "@/components/ui/button";
 import { TableSkeleton } from "@/components/table-skeleton";
@@ -14,6 +15,7 @@ const DEFAULT_PAGE_SIZE = 10;
 
 export default async function SuperAdminAcademicBlogPage({ searchParams }) {
   const params = await searchParams;
+  const t = await getTranslations("superAdminBlog.page");
 
   const q = typeof params.q === "string" ? params.q.trim() : "";
   const page = Math.max(1, Number(params.page) || 1);
@@ -24,16 +26,16 @@ export default async function SuperAdminAcademicBlogPage({ searchParams }) {
       <div className="flex items-center justify-between">
         <div className="space-y-1">
           <h1 className="text-2xl font-semibold tracking-tight">
-            Academic Blog
+            {t("heading")}
           </h1>
           <p className="text-muted-foreground">
-            Manage posts shown on the Academics page.
+            {t("description")}
           </p>
         </div>
         <Button asChild>
           <Link href="/super-admin/academic/blog/new">
             <Plus className="size-4" />
-            Create
+            {t("create")}
           </Link>
         </Button>
       </div>

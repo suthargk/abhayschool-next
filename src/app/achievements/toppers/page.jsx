@@ -1,8 +1,9 @@
 import { Suspense } from "react";
 
+import { getTranslations } from "next-intl/server";
+
 import { prisma } from "@/lib/prisma";
 import { Skeleton } from "@/components/ui/skeleton";
-import { topperStreamLabel } from "@/data/topper-classes";
 
 import { CelebrationBackground } from "./components/celebration-background";
 import { ToppersHero } from "./components/toppers-hero";
@@ -15,6 +16,13 @@ import { AchievementsCta } from "./components/achievements-cta";
 export const revalidate = 60;
 
 const STREAM_ORDER = ["SCIENCE", "COMMERCE", "ARTS"];
+
+// TOPPER_STREAMS values from @/data/topper-classes -> "achievements.page" message keys
+const STREAM_LABEL_KEYS = {
+  SCIENCE: "streamScience",
+  COMMERCE: "streamCommerce",
+  ARTS: "streamArts",
+};
 
 async function resolveYear(requestedYear) {
   const years = (
@@ -57,19 +65,21 @@ export default async function ToppersPage({ searchParams }) {
 }
 
 async function ToppersYearFilter({ requestedYear }) {
+  const t = await getTranslations("achievements.page");
   const { years, year } = await resolveYear(requestedYear);
 
   if (years.length === 0) return null;
 
   return (
     <div className="flex items-center gap-2 pt-2">
-      <span className="text-sm text-muted-foreground">Academic Year</span>
+      <span className="text-sm text-muted-foreground">{t("academicYear")}</span>
       <YearFilter year={year} years={years} />
     </div>
   );
 }
 
 async function ToppersBody({ requestedYear }) {
+  const t = await getTranslations("achievements.page");
   const { year } = await resolveYear(requestedYear);
 
   const toppers = year
@@ -82,20 +92,18 @@ async function ToppersBody({ requestedYear }) {
   if (toppers.length === 0) {
     return (
       <div className="flex flex-col items-center gap-3 rounded-lg border border-dashed p-10 text-center">
-        <p className="text-sm text-muted-foreground">
-          Toppers will be published here soon.
-        </p>
+        <p className="text-sm text-muted-foreground">{t("emptyState")}</p>
       </div>
     );
   }
 
-  const classX = toppers.filter((t) => t.class === "CLASS_X");
-  const classXII = toppers.filter((t) => t.class === "CLASS_XII");
+  const classX = toppers.filter((topper) => topper.class === "CLASS_X");
+  const classXII = toppers.filter((topper) => topper.class === "CLASS_XII");
   const classXIIByStream = STREAM_ORDER.map((stream) => ({
     stream,
-    items: classXII.filter((t) => t.stream === stream),
+    items: classXII.filter((topper) => topper.stream === stream),
   })).filter((group) => group.items.length > 0);
-  const classXIIUnstreamed = classXII.filter((t) => !t.stream);
+  const classXIIUnstreamed = classXII.filter((topper) => !topper.stream);
 
   const featured = [...toppers]
     .sort((a, b) => b.percentage - a.percentage || a.rank - b.rank)
@@ -111,7 +119,7 @@ async function ToppersBody({ requestedYear }) {
         {classX.length > 0 ? (
           <section className="space-y-4">
             <h2 className="text-2xl font-semibold tracking-tight">
-              Class X Toppers
+              {t("classXHeading")}
             </h2>
             <TopperGrid toppers={classX} />
           </section>
@@ -120,12 +128,12 @@ async function ToppersBody({ requestedYear }) {
         {classXIIByStream.length > 0 || classXIIUnstreamed.length > 0 ? (
           <section className="space-y-6">
             <h2 className="text-2xl font-semibold tracking-tight">
-              Class XII Toppers
+              {t("classXIIHeading")}
             </h2>
             {classXIIByStream.map((group) => (
               <div key={group.stream} className="space-y-4">
                 <h3 className="text-lg font-semibold text-muted-foreground">
-                  {topperStreamLabel(group.stream)}
+                  {t(STREAM_LABEL_KEYS[group.stream])}
                 </h3>
                 <TopperGrid toppers={group.items} />
               </div>

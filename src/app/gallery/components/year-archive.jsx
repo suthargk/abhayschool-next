@@ -1,12 +1,15 @@
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 export function YearArchive({ years }) {
+  const t = useTranslations("gallery.yearArchive");
+
   if (years.length === 0) return null;
 
   return (
     <section className="space-y-6 border-t pt-10">
       <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-        Year Archive
+        {t("heading")}
       </h2>
       <div className="flex flex-wrap gap-3">
         {years.map(({ year, count }) => (
@@ -18,7 +21,7 @@ export function YearArchive({ years }) {
             <span className="font-medium">{year}</span>
             <span className="text-muted-foreground">
               {" "}
-              · {count} album{count === 1 ? "" : "s"}
+              · {t("albumCount", { count })}
             </span>
           </Link>
         ))}

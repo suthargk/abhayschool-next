@@ -16,3 +16,16 @@ export const TOPPER_STREAMS = [
 export function topperStreamLabel(value) {
   return TOPPER_STREAMS.find((s) => s.value === value)?.label ?? value;
 }
+
+// value -> message key, for locale-aware display. Reuses the labels already
+// translated under "achievements.featuredToppers" (classX/classXII/stream*).
+export const TOPPER_CLASS_LABEL_KEYS = {
+  CLASS_X: "classX",
+  CLASS_XII: "classXII",
+};
+
+export const TOPPER_STREAM_LABEL_KEYS = {
+  SCIENCE: "streamScience",
+  COMMERCE: "streamCommerce",
+  ARTS: "streamArts",
+};

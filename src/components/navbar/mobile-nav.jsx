@@ -3,13 +3,15 @@
 import * as React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
+import { useLocale, useTranslations } from "next-intl";
 import { motion } from "framer-motion";
 import { Globe, Menu, Monitor, Moon, Sun } from "lucide-react";
 
 import navigationCategory from "@/Helper/navigation";
 import { LANGUAGES } from "@/Helper/languages";
+import { LOCALE_COOKIE } from "@/i18n/config";
 import { cn } from "@/lib/utils";
 import { Button, buttonVariants } from "../ui/button";
 import {
@@ -63,22 +65,21 @@ function NavPill({ href, isActive, children }) {
 
 export function MobileNav() {
   const pathname = usePathname();
+  const router = useRouter();
   const { theme, setTheme } = useTheme();
+  const locale = useLocale();
+  const t = useTranslations("common");
   const [open, setOpen] = React.useState(false);
   const [pendingTheme, setPendingTheme] = React.useState(theme);
-  const [pendingLanguage, setPendingLanguage] = React.useState(
-    LANGUAGES[0].value
-  );
+  const [pendingLanguage, setPendingLanguage] = React.useState(locale);
 
   React.useEffect(() => {
     setPendingTheme(theme);
   }, [theme]);
 
   React.useEffect(() => {
-    if (typeof window === "undefined") return;
-    const storedLanguage = localStorage.getItem("language");
-    if (storedLanguage) setPendingLanguage(storedLanguage);
-  }, []);
+    setPendingLanguage(locale);
+  }, [locale]);
 
   const links = navigationCategory.filter(
     (category) => !category.subCategories.length
@@ -88,8 +89,12 @@ export function MobileNav() {
   );
 
   const handleApplyPreferences = () => {
-    localStorage.setItem("language", pendingLanguage);
     setTheme(pendingTheme);
+
+    if (pendingLanguage !== locale) {
+      document.cookie = `${LOCALE_COOKIE}=${pendingLanguage}; path=/; max-age=31536000`;
+      router.refresh();
+    }
   };
 
   return (
@@ -109,7 +114,7 @@ export function MobileNav() {
         className="flex h-full w-full flex-col gap-0 overflow-hidden border-l-0 bg-background p-0 text-foreground sm:max-w-full"
       >
         <SheetHeader className="sr-only">
-          <SheetTitle>Menu</SheetTitle>
+          <SheetTitle>{t("mobileNav.menu")}</SheetTitle>
         </SheetHeader>
 
         <div className="flex shrink-0 items-center gap-2.5 px-5 pb-2 pt-5">
@@ -130,35 +135,35 @@ export function MobileNav() {
             animate="open"
           >
             {links.map((category) => (
-              <motion.div key={category.title} variants={itemVariants}>
+              <motion.div key={category.key} variants={itemVariants}>
                 <NavPill
                   href={category.href}
                   isActive={pathname === category.href}
                 >
-                  {category.title}
+                  {t(`nav.${category.key}`)}
                 </NavPill>
               </motion.div>
             ))}
 
             {sections.map((category) => (
               <motion.div
-                key={category.title}
+                key={category.key}
                 variants={itemVariants}
                 className="mt-6"
               >
                 <div className="mb-1 px-4 text-sm font-semibold text-foreground">
-                  {category.title}
+                  {t(`nav.${category.key}`)}
                 </div>
                 {category.subCategories.map((subCategory, index) => {
                   const href = getSubHref(category, subCategory, index);
 
                   return (
                     <NavPill
-                      key={subCategory.title}
+                      key={subCategory.key}
                       href={href}
                       isActive={pathname === href}
                     >
-                      {subCategory.title}
+                      {t(`nav.${subCategory.key}`)}
                     </NavPill>
                   );
                 })}
@@ -170,7 +175,7 @@ export function MobileNav() {
               className="mt-6 border-t border-border pt-6"
             >
               <div className="mb-1 px-4 text-sm font-semibold text-foreground">
-                Preferences
+                {t("mobileNav.preferences")}
               </div>
 
               <div className="flex items-center gap-3 px-4 py-2.5">
@@ -180,7 +185,7 @@ export function MobileNav() {
                   onValueChange={setPendingLanguage}
                 >
                   <SelectTrigger className="h-9 flex-1 border-none bg-muted/60 shadow-none">
-                    <SelectValue placeholder="Language" />
+                    <SelectValue placeholder={t("mobileNav.language")} />
                   </SelectTrigger>
                   <SelectContent>
                     {LANGUAGES.map((language) => (
@@ -211,21 +216,21 @@ export function MobileNav() {
                     className="flex-1"
                     aria-label="Light mode"
                   >
-                    Light
+                    {t("theme.light")}
                   </ToggleGroupItem>
                   <ToggleGroupItem
                     value="dark"
                     className="flex-1"
                     aria-label="Dark mode"
                   >
-                    Dark
+                    {t("theme.dark")}
                   </ToggleGroupItem>
                   <ToggleGroupItem
                     value="system"
                     className="flex-1"
                     aria-label="System theme"
                   >
-                    System
+                    {t("theme.system")}
                   </ToggleGroupItem>
                 </ToggleGroup>
               </div>
@@ -236,7 +241,7 @@ export function MobileNav() {
                 onClick={handleApplyPreferences}
                 className="mx-4 mt-1 w-[calc(100%-2rem)]"
               >
-                Apply
+                {t("mobileNav.apply")}
               </Button>
             </motion.div>
           </motion.div>
@@ -248,7 +253,7 @@ export function MobileNav() {
               href="/#admissions"
               className={cn(buttonVariants({ size: "lg" }), "w-full")}
             >
-              Apply Now
+              {t("header.applyNow")}
             </Link>
           </SheetClose>
           <SheetClose asChild>
@@ -259,7 +264,7 @@ export function MobileNav() {
                 "mt-2 w-full"
               )}
             >
-              Teacher Login
+              {t("header.teacherLogin")}
             </Link>
           </SheetClose>
         </div>

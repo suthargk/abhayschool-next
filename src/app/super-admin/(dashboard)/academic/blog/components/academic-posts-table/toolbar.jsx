@@ -1,6 +1,7 @@
 "use client";
 
 import { SlidersHorizontal } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 import { DataTableSearch } from "@/components/data-table-search";
 import { Button } from "@/components/ui/button";
@@ -13,7 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import { COLUMNS } from "./columns";
+import { getColumns } from "./columns";
 
 export function AcademicPostsTableToolbar({
   search,
@@ -26,6 +27,10 @@ export function AcademicPostsTableToolbar({
   onBulkDelete,
   onPendingChange,
 }) {
+  const t = useTranslations("superAdminBlog.table");
+  const tTable = useTranslations("common.table");
+  const columns = getColumns(t);
+
   return (
     <div className="flex flex-wrap items-center justify-between gap-2">
       <DataTableSearch
@@ -33,7 +38,7 @@ export function AcademicPostsTableToolbar({
         defaultValue={search}
         pageSize={pageSize}
         defaultPageSize={defaultPageSize}
-        placeholder="Search by title or author..."
+        placeholder={t("searchPlaceholder")}
         className="relative w-full min-w-[200px] flex-1 sm:max-w-sm"
         onPendingChange={onPendingChange}
       />
@@ -42,10 +47,10 @@ export function AcademicPostsTableToolbar({
         {canPublish && selectedCount > 0 ? (
           <>
             <span className="text-sm text-muted-foreground">
-              {selectedCount} selected
+              {tTable("rowsSelected", { count: selectedCount })}
             </span>
             <Button variant="destructive" size="sm" onClick={onBulkDelete}>
-              Delete selected
+              {t("deleteSelected")}
             </Button>
           </>
         ) : null}
@@ -54,13 +59,13 @@ export function AcademicPostsTableToolbar({
           <DropdownMenuTrigger asChild>
             <Button variant="outline" size="sm">
               <SlidersHorizontal className="size-4" />
-              Columns
+              {t("columnsButton")}
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-40">
-            <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
+            <DropdownMenuLabel>{t("toggleColumns")}</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            {COLUMNS.map((column) => (
+            {columns.map((column) => (
               <DropdownMenuCheckboxItem
                 key={column.key}
                 checked={visibleColumns[column.key]}

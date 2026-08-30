@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
+import { getTranslations } from "next-intl/server";
 import {
   Building2,
   ClipboardList,
@@ -25,6 +26,7 @@ const PER_MODEL_LIMIT = 10;
 const SOURCES = [
   {
     kind: "News & Notices",
+    kindKey: "newsNotices",
     icon: Megaphone,
     hrefFor: (id) => `/super-admin/news-notices/${id}/edit`,
     fetch: () =>
@@ -43,6 +45,7 @@ const SOURCES = [
   },
   {
     kind: "Gallery",
+    kindKey: "gallery",
     icon: ImageIcon,
     hrefFor: (id) => `/super-admin/gallery/${id}/edit`,
     fetch: () =>
@@ -61,6 +64,7 @@ const SOURCES = [
   },
   {
     kind: "Homework",
+    kindKey: "homework",
     icon: GraduationCap,
     hrefFor: (id) => `/super-admin/homework/${id}/edit`,
     fetch: () =>
@@ -79,6 +83,7 @@ const SOURCES = [
   },
   {
     kind: "Faculty",
+    kindKey: "faculty",
     icon: Users,
     hrefFor: (id) => `/super-admin/about-us/faculty/${id}/edit`,
     fetch: () =>
@@ -97,6 +102,7 @@ const SOURCES = [
   },
   {
     kind: "Facilities",
+    kindKey: "facilities",
     icon: Building2,
     hrefFor: (id) => `/super-admin/about-us/facilities/${id}/edit`,
     fetch: () =>
@@ -115,6 +121,7 @@ const SOURCES = [
   },
   {
     kind: "Library",
+    kindKey: "library",
     icon: Library,
     hrefFor: (id) => `/super-admin/academic/library/${id}/edit`,
     fetch: () =>
@@ -133,6 +140,7 @@ const SOURCES = [
   },
   {
     kind: "Blog",
+    kindKey: "blog",
     icon: Newspaper,
     hrefFor: (id) => `/super-admin/academic/blog/${id}/edit`,
     fetch: () =>
@@ -151,6 +159,7 @@ const SOURCES = [
   },
   {
     kind: "Toppers",
+    kindKey: "toppers",
     icon: Trophy,
     hrefFor: (id) => `/super-admin/achievements/toppers/${id}/edit`,
     fetch: () =>
@@ -169,6 +178,7 @@ const SOURCES = [
   },
   {
     kind: "FAQ",
+    kindKey: "faq",
     icon: HelpCircle,
     hrefFor: (id) => `/super-admin/homepage/faq/${id}/edit`,
     fetch: () =>
@@ -187,6 +197,7 @@ const SOURCES = [
   },
   {
     kind: "Testimonials",
+    kindKey: "testimonials",
     icon: Quote,
     hrefFor: (id) => `/super-admin/homepage/testimonials/${id}/edit`,
     fetch: () =>
@@ -205,6 +216,7 @@ const SOURCES = [
   },
   {
     kind: "Principal's Message",
+    kindKey: "principalMessage",
     icon: MessageSquareQuote,
     hrefFor: () => `/super-admin/principal-message`,
     fetch: () =>
@@ -219,10 +231,11 @@ const SOURCES = [
           author: { select: { email: true } },
         },
       }),
-    titleOf: (item) => item.principalName || "Principal's Message",
+    titleOf: (item, t) => item.principalName || t("principalMessageFallback"),
   },
   {
     kind: "Admissions",
+    kindKey: "admissions",
     icon: ClipboardList,
     hrefFor: (id) => `/super-admin/admissions/${id}`,
     fetch: () =>
@@ -242,16 +255,17 @@ const SOURCES = [
   },
 ];
 
-async function getRecentChanges() {
+async function getRecentChanges(t) {
   const results = await Promise.all(
     SOURCES.map(async (source) => {
       const items = await source.fetch();
       return items.map((item) => ({
         id: item.id,
         kind: source.kind,
+        kindKey: source.kindKey,
         icon: source.icon,
         href: source.hrefFor(item.id),
-        title: source.titleOf(item),
+        title: source.titleOf(item, t),
         authorEmail: source.subtitleOf ? source.subtitleOf(item) : item.author?.email,
         updatedAt: item.updatedAt,
         isNew:
@@ -270,12 +284,13 @@ async function getRecentChanges() {
 }
 
 export async function RecentChanges() {
-  const changes = await getRecentChanges();
+  const t = await getTranslations("superAdminDashboard.recentChanges");
+  const changes = await getRecentChanges(t);
 
   if (changes.length === 0) {
     return (
       <div className="rounded-md border p-6 text-sm text-muted-foreground">
-        No changes yet.
+        {t("empty")}
       </div>
     );
   }
@@ -296,7 +311,7 @@ export async function RecentChanges() {
               <div className="min-w-0 flex-1 space-y-0.5">
                 <p className="truncate text-sm font-medium">{change.title}</p>
                 <p className="truncate text-xs text-muted-foreground">
-                  {change.authorEmail ?? "Unknown"} ·{" "}
+                  {change.authorEmail ?? t("unknownAuthor")} ·{" "}
                   {formatDistanceToNow(new Date(change.updatedAt), {
                     addSuffix: true,
                   })}
@@ -305,11 +320,11 @@ export async function RecentChanges() {
               <div className="flex shrink-0 items-center gap-2">
                 {change.isNew ? (
                   <Badge variant="outline" className="text-xs">
-                    Created
+                    {t("createdBadge")}
                   </Badge>
                 ) : null}
                 <Badge variant="secondary" className="text-xs">
-                  {change.kind}
+                  {t(`kinds.${change.kindKey}`)}
                 </Badge>
               </div>
             </Link>

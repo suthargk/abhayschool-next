@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { Loader2, MoreHorizontal, Plus, X } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -42,33 +43,46 @@ import { getInitials, teacherFullName } from "@/lib/teacher";
 import { TEACHER_FEATURE_GROUPS, TEACHER_FEATURES } from "@/lib/teacher-features";
 import { cn } from "@/lib/utils";
 
-const STATUS_META = {
-  ACTIVE: { label: "Active", variant: "success" },
-  PENDING: { label: "Pending", variant: "warning" },
-  REJECTED: { label: "Rejected", variant: "destructive" },
+const STATUS_VARIANTS = {
+  ACTIVE: "success",
+  PENDING: "warning",
+  REJECTED: "destructive",
+};
+
+// Maps the group labels defined in @/lib/teacher-features (English text) to
+// the matching key in common.teacherFeatureGroups, since that file can't be
+// edited to carry translation keys directly.
+const GROUP_LABEL_KEYS = {
+  Homepage: "homepage",
+  "About the school": "aboutSchool",
+  Academics: "academics",
+  "Media & updates": "mediaUpdates",
+  Achievements: "achievements",
 };
 
 function TeacherActionsMenu({ teacher, pending, onAssign, onPermissions, onSetStatus }) {
+  const t = useTranslations("superAdminDashboard.teachers.table");
+  const tCommon = useTranslations("common.actions");
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="size-8" disabled={pending}>
           <MoreHorizontal className="size-4" />
-          <span className="sr-only">Open menu</span>
+          <span className="sr-only">{tCommon("openMenu")}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem onSelect={onAssign}>Assign</DropdownMenuItem>
-        <DropdownMenuItem onSelect={onPermissions}>Permissions</DropdownMenuItem>
+        <DropdownMenuItem onSelect={onAssign}>{t("assign")}</DropdownMenuItem>
+        <DropdownMenuItem onSelect={onPermissions}>{t("permissions")}</DropdownMenuItem>
         <DropdownMenuSeparator />
         {teacher.status === "PENDING" ? (
           <>
-            <DropdownMenuItem onSelect={() => onSetStatus("ACTIVE")}>Approve</DropdownMenuItem>
+            <DropdownMenuItem onSelect={() => onSetStatus("ACTIVE")}>{t("approve")}</DropdownMenuItem>
             <DropdownMenuItem
               className="text-destructive focus:text-destructive"
               onSelect={() => onSetStatus("REJECTED")}
             >
-              Reject
+              {t("reject")}
             </DropdownMenuItem>
           </>
         ) : teacher.status === "ACTIVE" ? (
@@ -76,17 +90,24 @@ function TeacherActionsMenu({ teacher, pending, onAssign, onPermissions, onSetSt
             className="text-destructive focus:text-destructive"
             onSelect={() => onSetStatus("REJECTED")}
           >
-            Revoke
+            {t("revoke")}
           </DropdownMenuItem>
         ) : (
-          <DropdownMenuItem onSelect={() => onSetStatus("ACTIVE")}>Re-approve</DropdownMenuItem>
+          <DropdownMenuItem onSelect={() => onSetStatus("ACTIVE")}>{t("reApprove")}</DropdownMenuItem>
         )}
       </DropdownMenuContent>
     </DropdownMenu>
   );
 }
 
+const STATUS_LABEL_KEYS = {
+  ACTIVE: "statusActive",
+  PENDING: "statusPending",
+  REJECTED: "statusRejected",
+};
+
 export function TeachersTable({ initialTeachers, classes }) {
+  const t = useTranslations("superAdminDashboard.teachers.table");
   const [teachers, setTeachers] = useState(initialTeachers);
   const [assigningTeacher, setAssigningTeacher] = useState(null);
   const [permissioningTeacher, setPermissioningTeacher] = useState(null);
@@ -101,14 +122,14 @@ export function TeachersTable({ initialTeachers, classes }) {
         body: JSON.stringify({ status }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Update failed");
-      setTeachers((prev) => prev.map((t) => (t.id === teacher.id ? data.item : t)));
+      if (!res.ok) throw new Error(data.error || t("statusUpdateFailed"));
+      setTeachers((prev) => prev.map((item) => (item.id === teacher.id ? data.item : item)));
       toast.success(
         status === "ACTIVE"
-          ? "Teacher approved"
+          ? t("toastApproved")
           : status === "REJECTED"
-            ? "Access revoked"
-            : "Status updated",
+            ? t("toastRevoked")
+            : t("toastStatusUpdated"),
       );
     } catch (err) {
       toast.error(err.message);
@@ -138,7 +159,7 @@ export function TeachersTable({ initialTeachers, classes }) {
   }
 
   if (teachers.length === 0) {
-    return <p className="text-sm text-muted-foreground">No teacher accounts yet.</p>;
+    return <p className="text-sm text-muted-foreground">{t("empty")}</p>;
   }
 
   return (
@@ -173,13 +194,13 @@ export function TeachersTable({ initialTeachers, classes }) {
             <div className="flex flex-wrap items-center gap-1.5 pl-11 text-sm text-muted-foreground">
               <span>{teacher.phone ?? "—"}</span>
               <span>·</span>
-              <Badge variant={STATUS_META[teacher.status].variant}>
-                {STATUS_META[teacher.status].label}
+              <Badge variant={STATUS_VARIANTS[teacher.status]}>
+                {t(STATUS_LABEL_KEYS[teacher.status])}
               </Badge>
             </div>
             <div className="flex flex-wrap gap-1 pl-11">
               {teacher.teacherAssignments.length === 0 ? (
-                <span className="text-xs text-muted-foreground">No assignments</span>
+                <span className="text-xs text-muted-foreground">{t("noAssignments")}</span>
               ) : (
                 teacher.teacherAssignments.map((a) => (
                   <Badge key={a.id} variant="outline">
@@ -197,11 +218,11 @@ export function TeachersTable({ initialTeachers, classes }) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Teacher</TableHead>
-              <TableHead>Phone</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Assigned</TableHead>
-              <TableHead className="w-0">Actions</TableHead>
+              <TableHead>{t("columnTeacher")}</TableHead>
+              <TableHead>{t("columnPhone")}</TableHead>
+              <TableHead>{t("columnStatus")}</TableHead>
+              <TableHead>{t("columnAssigned")}</TableHead>
+              <TableHead className="w-0">{t("columnActions")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -225,13 +246,13 @@ export function TeachersTable({ initialTeachers, classes }) {
                 </TableCell>
                 <TableCell>{teacher.phone ?? "—"}</TableCell>
                 <TableCell>
-                  <Badge variant={STATUS_META[teacher.status].variant}>
-                    {STATUS_META[teacher.status].label}
+                  <Badge variant={STATUS_VARIANTS[teacher.status]}>
+                    {t(STATUS_LABEL_KEYS[teacher.status])}
                   </Badge>
                 </TableCell>
                 <TableCell>
                   {teacher.teacherAssignments.length === 0 ? (
-                    <span className="text-xs text-muted-foreground">None</span>
+                    <span className="text-xs text-muted-foreground">{t("noneAssigned")}</span>
                   ) : (
                     <div className="flex flex-wrap gap-1">
                       {teacher.teacherAssignments.map((a) => (
@@ -274,6 +295,7 @@ export function TeachersTable({ initialTeachers, classes }) {
 }
 
 function AssignmentsDialog({ teacher, classes, onClose, onChange }) {
+  const t = useTranslations("superAdminDashboard.teachers.table");
   const [classValue, setClassValue] = useState(classes[0]?.value ?? "");
   const [subject, setSubject] = useState(SUBJECTS[0]?.value ?? "");
   const [saving, setSaving] = useState(false);
@@ -288,7 +310,7 @@ function AssignmentsDialog({ teacher, classes, onClose, onChange }) {
         body: JSON.stringify({ class: classValue, subject }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Couldn't add assignment");
+      if (!res.ok) throw new Error(data.error || t("assignmentAddFailed"));
       const exists = teacher.teacherAssignments.some((a) => a.id === data.item.id);
       onChange(
         teacher.id,
@@ -311,7 +333,7 @@ function AssignmentsDialog({ teacher, classes, onClose, onChange }) {
         { method: "DELETE" },
       );
       const data = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(data.error || "Couldn't remove assignment");
+      if (!res.ok) throw new Error(data.error || t("assignmentRemoveFailed"));
       onChange(
         teacher.id,
         teacher.teacherAssignments.filter((a) => a.id !== assignmentId),
@@ -325,7 +347,7 @@ function AssignmentsDialog({ teacher, classes, onClose, onChange }) {
     <Dialog open={Boolean(teacher)} onOpenChange={(open) => !open && onClose()}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Assign classes/subjects</DialogTitle>
+          <DialogTitle>{t("assignDialogTitle")}</DialogTitle>
         </DialogHeader>
         {teacher ? (
           <div className="space-y-4">
@@ -356,14 +378,14 @@ function AssignmentsDialog({ teacher, classes, onClose, onChange }) {
                 ))}
               </ul>
             ) : (
-              <p className="text-sm text-muted-foreground">No assignments yet.</p>
+              <p className="text-sm text-muted-foreground">{t("noAssignmentsYet")}</p>
             )}
 
             <div className="flex items-end gap-2">
               <div className="flex-1 space-y-1">
                 <Select value={classValue} onValueChange={setClassValue}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Class" />
+                    <SelectValue placeholder={t("classPlaceholder")} />
                   </SelectTrigger>
                   <SelectContent>
                     {classes.map((c) => (
@@ -377,7 +399,7 @@ function AssignmentsDialog({ teacher, classes, onClose, onChange }) {
               <div className="flex-1 space-y-1">
                 <Select value={subject} onValueChange={setSubject}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Subject" />
+                    <SelectValue placeholder={t("subjectPlaceholder")} />
                   </SelectTrigger>
                   <SelectContent>
                     {SUBJECTS.map((s) => (
@@ -400,6 +422,9 @@ function AssignmentsDialog({ teacher, classes, onClose, onChange }) {
 }
 
 function PermissionsDialog({ teacher, onClose, onChange }) {
+  const t = useTranslations("superAdminDashboard.teachers.table");
+  const tFeatures = useTranslations("common.teacherFeatures");
+  const tGroups = useTranslations("common.teacherFeatureGroups");
   const [pendingFeature, setPendingFeature] = useState(null);
   const [bulkPending, setBulkPending] = useState(false);
 
@@ -421,7 +446,7 @@ function PermissionsDialog({ teacher, onClose, onChange }) {
           body: JSON.stringify({ feature }),
         });
         const data = await res.json();
-        if (!res.ok) throw new Error(data.error || "Couldn't grant permission");
+        if (!res.ok) throw new Error(data.error || t("grantFailed"));
         const exists = teacher.teacherFeaturePermissions.some((p) => p.id === data.item.id);
         onChange(
           teacher.id,
@@ -435,7 +460,7 @@ function PermissionsDialog({ teacher, onClose, onChange }) {
           { method: "DELETE" },
         );
         const data = await res.json().catch(() => ({}));
-        if (!res.ok) throw new Error(data.error || "Couldn't revoke permission");
+        if (!res.ok) throw new Error(data.error || t("revokeFailed"));
         onChange(
           teacher.id,
           teacher.teacherFeaturePermissions.filter((p) => p.feature !== feature),
@@ -470,7 +495,7 @@ function PermissionsDialog({ teacher, onClose, onChange }) {
         const granted = results.filter((r) => r.ok && r.item).map((r) => r.item);
         onChange(teacher.id, [...teacher.teacherFeaturePermissions, ...granted]);
         const failed = targets.length - granted.length;
-        if (failed) toast.error(`Couldn't grant ${failed} permission${failed === 1 ? "" : "s"}`);
+        if (failed) toast.error(t("grantFailedCount", { count: failed }));
       } else {
         const results = await Promise.all(
           targets.map((feature) =>
@@ -485,7 +510,7 @@ function PermissionsDialog({ teacher, onClose, onChange }) {
           teacher.teacherFeaturePermissions.filter((p) => !removedKeys.has(p.feature)),
         );
         const failed = targets.length - removedKeys.size;
-        if (failed) toast.error(`Couldn't revoke ${failed} permission${failed === 1 ? "" : "s"}`);
+        if (failed) toast.error(t("revokeFailedCount", { count: failed }));
       }
     } finally {
       setBulkPending(false);
@@ -496,14 +521,15 @@ function PermissionsDialog({ teacher, onClose, onChange }) {
     <Dialog open={Boolean(teacher)} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-xl">
         <DialogHeader>
-          <DialogTitle>Feature permissions</DialogTitle>
+          <DialogTitle>{t("permissionsDialogTitle")}</DialogTitle>
         </DialogHeader>
         {teacher ? (
           <div className="space-y-4">
             <div className="flex items-center justify-between gap-2">
               <p className="text-sm text-muted-foreground">
-                {teacherFullName(teacher) || teacher.email} can manage the areas checked below
-                directly — published immediately, no review needed.
+                {t("permissionsDescription", {
+                  name: teacherFullName(teacher) || teacher.email,
+                })}
               </p>
               <Badge variant="outline" className="shrink-0">
                 {grantedCount}/{totalCount}
@@ -519,7 +545,7 @@ function PermissionsDialog({ teacher, onClose, onChange }) {
                 onClick={() => setAllFeatures(true)}
               >
                 {bulkPending ? <Loader2 className="size-3.5 animate-spin" /> : null}
-                Select all
+                {t("selectAll")}
               </Button>
               <Button
                 type="button"
@@ -528,7 +554,7 @@ function PermissionsDialog({ teacher, onClose, onChange }) {
                 disabled={anyPending || grantedCount === 0}
                 onClick={() => setAllFeatures(false)}
               >
-                Clear all
+                {t("clearAll")}
               </Button>
             </div>
 
@@ -536,7 +562,7 @@ function PermissionsDialog({ teacher, onClose, onChange }) {
               {TEACHER_FEATURE_GROUPS.map((group) => (
                 <div key={group.label} className="space-y-1.5">
                   <p className="px-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                    {group.label}
+                    {tGroups(GROUP_LABEL_KEYS[group.label] ?? group.label)}
                   </p>
                   <div className="grid gap-1 sm:grid-cols-2">
                     {group.keys.map((key) => {
@@ -554,7 +580,7 @@ function PermissionsDialog({ teacher, onClose, onChange }) {
                           )}
                         >
                           <Icon className="size-4 shrink-0 text-muted-foreground" />
-                          <span className="flex-1">{feature.label}</span>
+                          <span className="flex-1">{tFeatures(key)}</span>
                           {isPending ? (
                             <Loader2 className="size-4 shrink-0 animate-spin text-muted-foreground" />
                           ) : (

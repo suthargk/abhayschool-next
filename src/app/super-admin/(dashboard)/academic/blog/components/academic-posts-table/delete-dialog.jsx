@@ -1,5 +1,7 @@
 "use client";
 
+import { useTranslations } from "next-intl";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,18 +20,21 @@ export function AcademicPostsDeleteDialog({
   onOpenChange,
   onConfirm,
 }) {
+  const tCommon = useTranslations("common.actions");
+  const tTable = useTranslations("common.table");
+
   return (
     <AlertDialog open={target !== null} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Delete {target?.label}?</AlertDialogTitle>
+          <AlertDialogTitle>{tTable("deleteConfirmTitle", { label: target?.label })}</AlertDialogTitle>
           <AlertDialogDescription>
-            This can&apos;t be undone. This will permanently delete{" "}
-            {target?.ids.length === 1 ? "this item" : "these items"}.
+            {tTable("deleteConfirmDescription")}{" "}
+            {target?.ids.length === 1 ? tTable("confirmDeleteOne") : tTable("confirmDeleteMany")}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
+          <AlertDialogCancel disabled={deleting}>{tCommon("cancel")}</AlertDialogCancel>
           <AlertDialogAction
             disabled={deleting}
             onClick={(event) => {
@@ -38,7 +43,7 @@ export function AcademicPostsDeleteDialog({
             }}
             className={buttonVariants({ variant: "destructive" })}
           >
-            {deleting ? "Deleting..." : "Delete"}
+            {deleting ? tCommon("deleting") : tCommon("delete")}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

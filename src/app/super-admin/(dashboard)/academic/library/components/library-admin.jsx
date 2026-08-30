@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { Plus } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -14,6 +15,7 @@ import { LibraryTable } from "./library-table";
 
 export function LibraryAdmin({ initialItems, classes, canPublish }) {
   const router = useRouter();
+  const t = useTranslations("superAdminLibrary.admin");
   const [items, setItems] = useState(initialItems);
   const [pendingId, setPendingId] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
@@ -54,7 +56,7 @@ export function LibraryAdmin({ initialItems, classes, canPublish }) {
     if (selectedItems.length === 0) return;
     setDeleteTarget({
       ids: selectedItems.map((item) => item.id),
-      label: `${selectedItems.length} book${selectedItems.length === 1 ? "" : "s"}`,
+      label: t("bulkDeleteLabel", { count: selectedItems.length }),
     });
   }
 
@@ -94,11 +96,11 @@ export function LibraryAdmin({ initialItems, classes, canPublish }) {
   if (classes.length === 0) {
     return (
       <p className="rounded-md border border-dashed p-8 text-center text-sm text-muted-foreground">
-        No classes configured yet.{" "}
+        {t("noClassesBefore")}{" "}
         <Link href="/super-admin/classes" className="underline">
-          Add a class
+          {t("addClassLink")}
         </Link>{" "}
-        to start building the library catalogue.
+        {t("noClassesAfter")}
       </p>
     );
   }
@@ -107,7 +109,7 @@ export function LibraryAdmin({ initialItems, classes, canPublish }) {
     <div className="space-y-4">
       <Tabs defaultValue={classes[0].value} className="w-full">
         <TabsList
-          aria-label="Library catalogue by class"
+          aria-label={t("tabsAriaLabel")}
           className="h-auto w-full flex-wrap justify-start gap-1"
         >
           {classes.map((klass) => (
@@ -126,7 +128,7 @@ export function LibraryAdmin({ initialItems, classes, canPublish }) {
               <Button asChild size="sm">
                 <Link href={`/super-admin/academic/library/new?class=${klass.value}`}>
                   <Plus className="size-4" />
-                  Add book to {klass.label}
+                  {t("addBookTo", { className: klass.label })}
                 </Link>
               </Button>
             </div>

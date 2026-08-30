@@ -1,3 +1,5 @@
+import { getTranslations } from "next-intl/server";
+
 import { prisma } from "@/lib/prisma";
 
 import { AcademicsExplorer } from "./components/explorer";
@@ -7,6 +9,7 @@ export const revalidate = 60;
 const PAGE_SIZE = 10;
 
 export default async function AcademicsPage({ searchParams }) {
+  const t = await getTranslations("academics.page");
   const params = await searchParams;
   const q = typeof params.q === "string" ? params.q.trim() : "";
   const page = Math.max(1, Number(params.page) || 1);
@@ -40,10 +43,10 @@ export default async function AcademicsPage({ searchParams }) {
       <div className="mx-auto max-w-3xl space-y-10">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight md:text-3xl">
-            Academics
+            {t("heading")}
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Programs, updates, and stories from our academic team.
+            {t("description")}
           </p>
         </div>
 

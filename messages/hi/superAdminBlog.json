@@ -1,0 +1,42 @@
+{
+  "page": {
+    "heading": "शैक्षणिक ब्लॉग",
+    "description": "एकेडेमिक्स पेज पर दिखाए जाने वाले पोस्ट प्रबंधित करें।",
+    "create": "बनाएं"
+  },
+  "newPage": {
+    "heading": "शैक्षणिक पोस्ट बनाएं"
+  },
+  "editPage": {
+    "heading": "संपादित करें"
+  },
+  "form": {
+    "titleLabel": "शीर्षक",
+    "titlePlaceholder": "बोर्ड परीक्षाओं की तैयारी",
+    "summaryLabel": "संक्षिप्त विवरण",
+    "summaryPlaceholder": "सूचियों में दिखाया जाने वाला एक या दो वाक्यों का सारांश।",
+    "coverImageLabel": "कवर छवि",
+    "uploading": "अपलोड हो रहा है…",
+    "contentLabel": "सामग्री",
+    "contentPlaceholder": "यहाँ पोस्ट लिखें…",
+    "uploadFailed": "अपलोड विफल",
+    "saveFailed": "सहेजना विफल",
+    "saveChanges": "परिवर्तन सहेजें",
+    "saveDraft": "मसौदा सहेजें"
+  },
+  "table": {
+    "titleHeader": "शीर्षक",
+    "columns": {
+      "status": "स्थिति",
+      "author": "लेखक",
+      "created": "बनाया गया"
+    },
+    "columnsButton": "कॉलम",
+    "toggleColumns": "कॉलम टॉगल करें",
+    "searchPlaceholder": "शीर्षक या लेखक द्वारा खोजें...",
+    "deleteSelected": "चयनित हटाएँ",
+    "emptyNoPosts": "अभी तक कोई शैक्षणिक पोस्ट नहीं है।",
+    "actionsSr": "कार्य",
+    "bulkDeleteLabel": "{count, plural, one {# आइटम} other {# आइटम}}"
+  }
+}

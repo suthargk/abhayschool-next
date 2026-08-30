@@ -1,0 +1,43 @@
+{
+  "page": {
+    "heading": "पुस्तकालय",
+    "description": "आपके द्वारा पोस्ट की गई पुस्तकालय की पुस्तकें।",
+    "addBook": "पुस्तक जोड़ें"
+  },
+  "newPage": {
+    "heading": "पुस्तक जोड़ें"
+  },
+  "editPage": {
+    "heading": "संपादित करें"
+  },
+  "form": {
+    "classLabel": "कक्षा",
+    "classPlaceholder": "एक कक्षा चुनें",
+    "bookNameLabel": "पुस्तक का नाम",
+    "bookNamePlaceholder": "जैसे न्यू लर्निंग कम्पोज़िट मैथमेटिक्स",
+    "subjectLabel": "विषय",
+    "subjectPlaceholder": "जैसे गणित",
+    "publicationLabel": "प्रकाशन",
+    "publicationPlaceholder": "जैसे एस. चंद पब्लिशिंग",
+    "saveFailed": "सहेजना विफल रहा",
+    "noClasses": "अभी तक कोई कक्षा सेट नहीं की गई है। पुस्तकालय में पुस्तकें जोड़ने से पहले किसी व्यवस्थापक से संपर्क करें।",
+    "saving": "सहेजा जा रहा है…",
+    "saveChanges": "परिवर्तन सहेजें",
+    "publish": "प्रकाशित करें",
+    "publishNote": "यह पुस्तक तुरंत प्रकाशित हो जाती है और स्कूल की वेबसाइट पर तुरंत दिखाई देने लगती है।"
+  },
+  "list": {
+    "searchPlaceholder": "पुस्तक, विषय या प्रकाशन से खोजें…",
+    "allClasses": "सभी कक्षाएँ",
+    "clearFilters": "फ़िल्टर साफ़ करें",
+    "noResultsFiltered": "आपकी खोज/फ़िल्टर से मेल खाती कोई पुस्तक नहीं मिली।",
+    "noResultsEmpty": "आपने अभी तक कोई पुस्तक नहीं जोड़ी है।",
+    "bookColumn": "पुस्तक",
+    "classColumn": "कक्षा",
+    "subjectColumn": "विषय",
+    "publicationColumn": "प्रकाशन",
+    "deletingToast": "{label} हटाया जा रहा है…",
+    "deletedToast": "{label} हटा दिया गया",
+    "deleteFailedToast": "{label} हटाने में विफल"
+  }
+}

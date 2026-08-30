@@ -1,0 +1,64 @@
+{
+  "page": {
+    "heading": "Facilities",
+    "description": "Manage the campus facilities shown on the public Facilities page.",
+    "addFacility": "Add facility"
+  },
+  "sections": {
+    "OVERVIEW": "Overview",
+    "SPORTS": "Sports & Activities",
+    "SAFETY": "Safety & Wellbeing",
+    "FAQ": "FAQ"
+  },
+  "editPage": {
+    "heading": "Edit facility"
+  },
+  "newPage": {
+    "heading": "Add facility"
+  },
+  "form": {
+    "sectionLabel": "Section",
+    "sectionHelp": "Which part of the public Facilities page this entry appears in.",
+    "photoLabel": "Photo",
+    "uploading": "Uploading…",
+    "photoHelp": "Optional. The icon below is shown on the public site if left blank.",
+    "iconLabel": "Icon",
+    "iconPlaceholder": "e.g. 🏫",
+    "iconHelp": "A single emoji shown when no photo is set.",
+    "titleLabel": "Title",
+    "questionLabel": "Question",
+    "titlePlaceholder": "e.g. Smart Classrooms",
+    "questionPlaceholder": "e.g. Does the school have a science laboratory?",
+    "summaryLabel": "Short description",
+    "answerLabel": "Answer",
+    "summaryPlaceholder": "A one or two line blurb shown on the overview card.",
+    "answerPlaceholder": "e.g. Yes, we have fully equipped Physics, Chemistry, and Biology labs.",
+    "featuredLabel": "Feature this facility in its own larger section",
+    "highlightsLabel": "Highlights",
+    "highlightsPlaceholder": "One highlight per line, e.g.\nInteractive smart boards\nDigital learning resources\nComfortable seating",
+    "highlightsHelp": "Shown as a bullet list next to the photo in the Featured Facilities section.",
+    "saveDraft": "Save draft",
+    "saveChanges": "Save changes",
+    "updating": "Updating…",
+    "uploadFailed": "Upload failed",
+    "saveFailed": "Save failed",
+    "statusUpdateFailed": "Failed to update status"
+  },
+  "table": {
+    "searchPlaceholder": "Search by title or description...",
+    "deleteSelected": "Delete selected",
+    "columns": {
+      "reorder": "Reorder",
+      "title": "Title",
+      "description": "Description",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "emptySection": "Nothing in this section yet.",
+    "dragHintDisabled": "Clear the search to drag and reorder.",
+    "dragHint": "Drag rows to change display order.",
+    "deleteDescriptionOne": "This will permanently remove this entry from the site.",
+    "deleteDescriptionMany": "This will permanently remove these entries from the site.",
+    "bulkDeleteLabel": "{count, plural, one {# entry} other {# entries}}"
+  }
+}

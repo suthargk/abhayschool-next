@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
 import { format } from "date-fns";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Loader2, MoreHorizontal } from "lucide-react";
 
@@ -36,25 +37,26 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { DataTablePagination } from "@/components/data-table-pagination";
-import { galleryCategoryLabel } from "@/data/gallery-categories";
+import { GALLERY_CATEGORY_LABEL_KEYS } from "@/data/gallery-categories";
 import { cn } from "@/lib/utils";
 
 function RowActionsMenu({ item, onDelete }) {
+  const tCommon = useTranslations("common.actions");
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="size-8">
           <MoreHorizontal className="size-4" />
-          <span className="sr-only">Open menu</span>
+          <span className="sr-only">{tCommon("openMenu")}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem asChild>
-          <Link href={`/teacher/gallery/${item.id}/edit`}>Edit</Link>
+          <Link href={`/teacher/gallery/${item.id}/edit`}>{tCommon("edit")}</Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem className="text-destructive focus:text-destructive" onSelect={onDelete}>
-          Delete
+          {tCommon("delete")}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -62,6 +64,8 @@ function RowActionsMenu({ item, onDelete }) {
 }
 
 function TeacherGalleryFilters({ filters, pageSize, defaultPageSize, onPendingChange }) {
+  const t = useTranslations("teacherGallery.list");
+  const tCommon = useTranslations("common.actions");
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [search, setSearch] = useState(filters.q);
@@ -103,14 +107,14 @@ function TeacherGalleryFilters({ filters, pageSize, defaultPageSize, onPendingCh
         type="search"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        placeholder="Search by title or description…"
+        placeholder={t("searchPlaceholder")}
         className="sm:max-w-xs"
         disabled={isPending}
       />
 
       <Button type="submit" size="sm" disabled={isPending}>
         {isPending ? <Loader2 className="size-4 animate-spin" /> : null}
-        Search
+        {tCommon("search")}
       </Button>
       {hasActiveFilters ? (
         <Button
@@ -123,7 +127,7 @@ function TeacherGalleryFilters({ filters, pageSize, defaultPageSize, onPendingCh
             navigate({ q: "" });
           }}
         >
-          Clear filters
+          {t("clearFilters")}
         </Button>
       ) : null}
     </form>
@@ -140,6 +144,8 @@ export function TeacherGalleryList({
   total,
   totalPages,
 }) {
+  const t = useTranslations("teacherGallery.list");
+  const tCategories = useTranslations("gallery.categories");
   const router = useRouter();
   const [items, setItems] = useState(initialItems);
   const [deleteTarget, setDeleteTarget] = useState(null);
@@ -167,9 +173,9 @@ export function TeacherGalleryList({
             if (!res.ok) throw new Error("Delete failed");
           }),
           {
-            loading: `Deleting ${label}…`,
-            success: `Deleted ${label}`,
-            error: `Failed to delete ${label}`,
+            loading: t("deletingToast", { label }),
+            success: t("deletedToast", { label }),
+            error: t("deleteFailedToast", { label }),
           },
         )
         .unwrap();
@@ -201,7 +207,7 @@ export function TeacherGalleryList({
 
         {items.length === 0 ? (
           <p className="rounded-md border border-dashed p-8 text-center text-sm text-muted-foreground">
-            {hasAnyAlbums ? "No albums match your search." : "You haven't published any albums yet."}
+            {hasAnyAlbums ? t("noResultsFiltered") : t("noResultsEmpty")}
           </p>
         ) : (
           <>
@@ -216,13 +222,11 @@ export function TeacherGalleryList({
                     <RowActionsMenu item={item} onDelete={() => requestDelete(item)} />
                   </div>
                   <div className="flex flex-wrap items-center gap-1.5 text-sm text-muted-foreground">
-                    <Badge variant="outline">{galleryCategoryLabel(item.category)}</Badge>
+                    <Badge variant="outline">{tCategories(GALLERY_CATEGORY_LABEL_KEYS[item.category])}</Badge>
                     <span>·</span>
                     <span>{format(new Date(item.eventDate), "d MMM yyyy")}</span>
                     <span>·</span>
-                    <span>
-                      {item._count.images} photo{item._count.images === 1 ? "" : "s"}
-                    </span>
+                    <span>{t("photoCount", { count: item._count.images })}</span>
                   </div>
                 </div>
               ))}
@@ -233,10 +237,10 @@ export function TeacherGalleryList({
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Title</TableHead>
-                    <TableHead>Category</TableHead>
-                    <TableHead>Event date</TableHead>
-                    <TableHead>Photos</TableHead>
+                    <TableHead>{t("titleColumn")}</TableHead>
+                    <TableHead>{t("categoryColumn")}</TableHead>
+                    <TableHead>{t("eventDateColumn")}</TableHead>
+                    <TableHead>{t("photosColumn")}</TableHead>
                     <TableHead className="w-0" />
                   </TableRow>
                 </TableHeader>
@@ -245,7 +249,7 @@ export function TeacherGalleryList({
                     <TableRow key={item.id}>
                       <TableCell className="font-medium">{item.title}</TableCell>
                       <TableCell>
-                        <Badge variant="outline">{galleryCategoryLabel(item.category)}</Badge>
+                        <Badge variant="outline">{tCategories(GALLERY_CATEGORY_LABEL_KEYS[item.category])}</Badge>
                       </TableCell>
                       <TableCell>{format(new Date(item.eventDate), "d MMM yyyy")}</TableCell>
                       <TableCell>{item._count.images}</TableCell>
@@ -278,13 +282,11 @@ export function TeacherGalleryList({
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete {deleteTarget?.label}?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This can&apos;t be undone. This will permanently delete this album and its photos.
-            </AlertDialogDescription>
+            <AlertDialogTitle>{t("deleteTitle", { label: deleteTarget?.label })}</AlertDialogTitle>
+            <AlertDialogDescription>{t("deleteDescription")}</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={deleting}>{t("deleteCancel")}</AlertDialogCancel>
             <AlertDialogAction
               disabled={deleting}
               onClick={(event) => {
@@ -293,7 +295,7 @@ export function TeacherGalleryList({
               }}
               className={buttonVariants({ variant: "destructive" })}
             >
-              {deleting ? "Deleting…" : "Delete"}
+              {deleting ? t("deleting") : t("deleteConfirm")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

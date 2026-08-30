@@ -1,0 +1,51 @@
+{
+  "page": {
+    "heading": "पुस्तकालय",
+    "description": "कक्षा के अनुसार सार्वजनिक पुस्तकालय पेज पर दिखाई जाने वाली पुस्तक सूची प्रबंधित करें।"
+  },
+  "newPage": {
+    "heading": "पुस्तक जोड़ें"
+  },
+  "editPage": {
+    "heading": "पुस्तक संपादित करें"
+  },
+  "admin": {
+    "noClassesBefore": "अभी तक कोई कक्षा कॉन्फ़िगर नहीं की गई है।",
+    "addClassLink": "एक कक्षा जोड़ें",
+    "noClassesAfter": "पुस्तकालय सूची बनाना शुरू करने के लिए।",
+    "tabsAriaLabel": "कक्षा के अनुसार पुस्तकालय सूची",
+    "addBookTo": "{className} में पुस्तक जोड़ें",
+    "bulkDeleteLabel": "{count, plural, one {# पुस्तक} other {# पुस्तकें}}"
+  },
+  "form": {
+    "updating": "अपडेट हो रहा है…",
+    "classLabel": "कक्षा",
+    "bookNameLabel": "पुस्तक का नाम",
+    "bookNamePlaceholder": "जैसे Flamingo",
+    "subjectLabel": "विषय",
+    "subjectPlaceholder": "जैसे अंग्रेज़ी",
+    "publicationLabel": "प्रकाशन",
+    "publicationPlaceholder": "जैसे N.C.E.R.T",
+    "saveFailed": "सहेजना विफल",
+    "updateStatusFailed": "स्थिति अपडेट करने में विफल",
+    "saveChanges": "परिवर्तन सहेजें",
+    "saveDraft": "मसौदा सहेजें"
+  },
+  "table": {
+    "searchPlaceholder": "पुस्तक के नाम, विषय, या प्रकाशन द्वारा खोजें...",
+    "deleteSelected": "चयनित हटाएँ",
+    "emptyNoBooks": "इस कक्षा में अभी तक कोई पुस्तक नहीं है।",
+    "reorderSr": "पुनः क्रमबद्ध करें",
+    "actionsSr": "कार्य",
+    "clearToReorder": "खींचकर पुनः क्रमबद्ध करने के लिए खोज साफ़ करें।",
+    "dragToReorder": "प्रदर्शन क्रम बदलने के लिए पंक्तियों को खींचें।",
+    "columns": {
+      "bookName": "पुस्तक का नाम",
+      "subject": "विषय",
+      "publication": "प्रकाशन",
+      "status": "स्थिति"
+    },
+    "confirmDeleteOneBook": "यह इस पुस्तक को पुस्तकालय सूची से स्थायी रूप से हटा देगा।",
+    "confirmDeleteManyBooks": "यह इन पुस्तकों को पुस्तकालय सूची से स्थायी रूप से हटा देगा।"
+  }
+}

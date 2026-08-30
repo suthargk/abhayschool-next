@@ -1,0 +1,43 @@
+{
+  "page": {
+    "heading": "Library",
+    "description": "Library books you've posted.",
+    "addBook": "Add book"
+  },
+  "newPage": {
+    "heading": "Add book"
+  },
+  "editPage": {
+    "heading": "Edit"
+  },
+  "form": {
+    "classLabel": "Class",
+    "classPlaceholder": "Select a class",
+    "bookNameLabel": "Book name",
+    "bookNamePlaceholder": "e.g. New Learning Composite Mathematics",
+    "subjectLabel": "Subject",
+    "subjectPlaceholder": "e.g. Mathematics",
+    "publicationLabel": "Publication",
+    "publicationPlaceholder": "e.g. S. Chand Publishing",
+    "saveFailed": "Save failed",
+    "noClasses": "No classes have been set up yet. Contact an admin before adding library books.",
+    "saving": "Saving…",
+    "saveChanges": "Save changes",
+    "publish": "Publish",
+    "publishNote": "This book is published immediately and appears on the school website right away."
+  },
+  "list": {
+    "searchPlaceholder": "Search by book, subject, or publication…",
+    "allClasses": "All classes",
+    "clearFilters": "Clear filters",
+    "noResultsFiltered": "No books match your search/filters.",
+    "noResultsEmpty": "You haven't added any books yet.",
+    "bookColumn": "Book",
+    "classColumn": "Class",
+    "subjectColumn": "Subject",
+    "publicationColumn": "Publication",
+    "deletingToast": "Deleting {label}…",
+    "deletedToast": "Deleted {label}",
+    "deleteFailedToast": "Failed to delete {label}"
+  }
+}

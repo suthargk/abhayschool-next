@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { Award, Crown, Medal, Trophy, UserRound } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 import { Badge } from "@/components/ui/badge";
 
@@ -9,7 +10,7 @@ const RANK_BADGES = {
   3: { Icon: Medal, className: "bg-orange-300 text-orange-950" },
 };
 
-function RankBadge({ rank }) {
+function RankBadge({ rank, t }) {
   const badge = RANK_BADGES[rank];
 
   if (badge) {
@@ -19,7 +20,7 @@ function RankBadge({ rank }) {
         className={`absolute left-3 top-3 flex size-9 items-center justify-center rounded-full shadow ${className}`}
       >
         <Icon className="size-5" />
-        <span className="sr-only">Rank {rank}</span>
+        <span className="sr-only">{t("rankSr", { rank })}</span>
       </span>
     );
   }
@@ -31,7 +32,7 @@ function RankBadge({ rank }) {
   );
 }
 
-function TopperCard({ topper }) {
+function TopperCard({ topper, t }) {
   const isChampion = topper.rank === 1;
 
   return (
@@ -57,7 +58,7 @@ function TopperCard({ topper }) {
           </div>
         )}
 
-        <RankBadge rank={topper.rank} />
+        <RankBadge rank={topper.rank} t={t} />
 
         <Badge
           variant="secondary"
@@ -72,7 +73,7 @@ function TopperCard({ topper }) {
         <h3 className="text-lg font-semibold leading-snug">{topper.name}</h3>
         {topper.marksObtained != null && topper.marksTotal != null ? (
           <p className="text-sm text-muted-foreground">
-            {topper.marksObtained} / {topper.marksTotal} marks
+            {topper.marksObtained} / {topper.marksTotal} {t("marksLabel")}
           </p>
         ) : null}
       </div>
@@ -81,10 +82,12 @@ function TopperCard({ topper }) {
 }
 
 export function TopperGrid({ toppers }) {
+  const t = useTranslations("achievements.topperGrid");
+
   return (
     <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
       {toppers.map((topper) => (
-        <TopperCard key={topper.id} topper={topper} />
+        <TopperCard key={topper.id} topper={topper} t={t} />
       ))}
     </div>
   );

@@ -1,11 +1,15 @@
-const STATS = [
-  { key: "assigned", label: "Assigned" },
-  { key: "dueSoon", label: "Due Soon" },
-  { key: "overdue", label: "Overdue" },
-  { key: "thisWeek", label: "This Week" },
-];
+import { useTranslations } from "next-intl";
 
 export function SummaryStats({ counts }) {
+  const t = useTranslations("homework.summaryStats");
+
+  const STATS = [
+    { key: "assigned", label: t("assigned") },
+    { key: "dueSoon", label: t("dueSoon") },
+    { key: "overdue", label: t("overdue") },
+    { key: "thisWeek", label: t("thisWeek") },
+  ];
+
   return (
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
       {STATS.map((stat) => (

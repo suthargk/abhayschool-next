@@ -1,0 +1,71 @@
+{
+  "home": {
+    "heading": "Overview",
+    "description": "Choose a section from the left to manage content. This area is separate from the public site header and footer.",
+    "recentChangesHeading": "Recent changes"
+  },
+  "recentChanges": {
+    "empty": "No changes yet.",
+    "unknownAuthor": "Unknown",
+    "createdBadge": "Created",
+    "principalMessageFallback": "Principal's Message",
+    "kinds": {
+      "newsNotices": "News & Notices",
+      "gallery": "Gallery",
+      "homework": "Homework",
+      "faculty": "Faculty",
+      "facilities": "Facilities",
+      "library": "Library",
+      "blog": "Blog",
+      "toppers": "Toppers",
+      "faq": "FAQ",
+      "testimonials": "Testimonials",
+      "principalMessage": "Principal's Message",
+      "admissions": "Admissions"
+    }
+  },
+  "teachers": {
+    "page": {
+      "heading": "Teachers",
+      "description": "Approve teacher signups and assign the classes/subjects each teacher can post homework for."
+    },
+    "table": {
+      "empty": "No teacher accounts yet.",
+      "openMenu": "Open menu",
+      "assign": "Assign",
+      "permissions": "Permissions",
+      "approve": "Approve",
+      "reject": "Reject",
+      "revoke": "Revoke",
+      "reApprove": "Re-approve",
+      "statusActive": "Active",
+      "statusPending": "Pending",
+      "statusRejected": "Rejected",
+      "columnTeacher": "Teacher",
+      "columnPhone": "Phone",
+      "columnStatus": "Status",
+      "columnAssigned": "Assigned",
+      "columnActions": "Actions",
+      "noAssignments": "No assignments",
+      "noneAssigned": "None",
+      "toastApproved": "Teacher approved",
+      "toastRevoked": "Access revoked",
+      "toastStatusUpdated": "Status updated",
+      "statusUpdateFailed": "Update failed",
+      "assignDialogTitle": "Assign classes/subjects",
+      "noAssignmentsYet": "No assignments yet.",
+      "classPlaceholder": "Class",
+      "subjectPlaceholder": "Subject",
+      "assignmentAddFailed": "Couldn't add assignment",
+      "assignmentRemoveFailed": "Couldn't remove assignment",
+      "permissionsDialogTitle": "Feature permissions",
+      "permissionsDescription": "{name} can manage the areas checked below directly — published immediately, no review needed.",
+      "selectAll": "Select all",
+      "clearAll": "Clear all",
+      "grantFailed": "Couldn't grant permission",
+      "revokeFailed": "Couldn't revoke permission",
+      "grantFailedCount": "{count, plural, one {Couldn't grant # permission} other {Couldn't grant # permissions}}",
+      "revokeFailedCount": "{count, plural, one {Couldn't revoke # permission} other {Couldn't revoke # permissions}}"
+    }
+  }
+}

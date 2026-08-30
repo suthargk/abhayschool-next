@@ -1,0 +1,86 @@
+{
+  "facultyHero": {
+    "headingLine1": "Meet Our",
+    "headingLine2": "Faculty",
+    "description": "Dedicated educators who inspire curiosity, nurture potential, and help every student grow with confidence."
+  },
+  "facultyStats": {
+    "facultyMembers": "Faculty Members",
+    "averageExperience": "Average Experience",
+    "departments": "Departments",
+    "countSuffix": "{count}+",
+    "avgExperienceValue": "{count}+ years"
+  },
+  "facultyLeadership": {
+    "heading": "Principal & Leadership",
+    "description": "The people guiding our school's vision and academic direction.",
+    "defaultPrincipalName": "Our Principal",
+    "defaultDesignation": "Principal",
+    "viewProfile": "View Profile →"
+  },
+  "facultyDepartments": {
+    "heading": "Departments",
+    "description": "Browse faculty by department, or use search and filters below to find someone specific.",
+    "teacherCount": "{count} {count, plural, one {Teacher} other {Teachers}}"
+  },
+  "facultyDirectoryGrid": {
+    "heading": "Faculty Directory",
+    "description": "Search by name, or filter by department, grade, and subject.",
+    "noResults": "No faculty members match your search or filters.",
+    "comingSoon": "Faculty profiles will be published here soon."
+  },
+  "facultyFilters": {
+    "searchPlaceholder": "Search faculty...",
+    "allDepartments": "All Departments",
+    "allGrades": "All Grades",
+    "allSubjects": "All Subjects"
+  },
+  "facultyCard": {
+    "viewProfile": "View Profile →",
+    "experienceYears": "{count} {count, plural, one {year} other {years}} of experience"
+  },
+  "teachingPhilosophy": {
+    "heading": "More Than Teachers. Mentors.",
+    "studentCentered": {
+      "title": "Student-Centered",
+      "description": "Every learner receives attention and support suited to how they learn best."
+    },
+    "curiosityDriven": {
+      "title": "Curiosity-Driven",
+      "description": "Teachers encourage students to ask questions and explore ideas beyond the syllabus."
+    },
+    "continuousLearning": {
+      "title": "Continuous Learning",
+      "description": "Our faculty keep developing their own teaching practices year after year."
+    },
+    "mentorship": {
+      "title": "Mentorship",
+      "description": "Teachers help students grow academically and personally, not just for the exam."
+    }
+  },
+  "excellenceInTeaching": {
+    "heading": "Excellence in Teaching",
+    "description": "Recognition our faculty have earned for their work in and beyond the classroom."
+  },
+  "studentSupportTeam": {
+    "heading": "Supporting Every Student",
+    "description": "Beyond the classroom, this team looks after our students' wellbeing and personal growth."
+  },
+  "facultyCta": {
+    "heading": "Have Questions About Admissions?",
+    "description": "Our team is happy to help you learn more about our faculty and academic programs.",
+    "exploreAcademics": "Explore Academics",
+    "visitCampus": "Visit Our Campus"
+  },
+  "facultyProfilePage": {
+    "backToFaculty": "Back to Faculty",
+    "about": "About",
+    "education": "Education",
+    "experience": "Experience",
+    "experienceYears": "{count}+ {count, plural, one {year} other {years}}",
+    "subjects": "Subjects",
+    "classes": "Classes",
+    "areasOfInterest": "Areas of Interest",
+    "achievements": "Achievements & Certifications"
+  }
+}

@@ -1,3 +1,5 @@
+import { getTranslations } from "next-intl/server";
+
 import { prisma } from "@/lib/prisma";
 
 import { TimeTableView } from "./components/time-table-view";
@@ -5,6 +7,7 @@ import { TimeTableView } from "./components/time-table-view";
 export const revalidate = 60;
 
 export default async function TimeTablePage() {
+  const t = await getTranslations("academics.timeTable");
   const [slots, classes] = await Promise.all([
     prisma.timeTableSlot.findMany({
       where: { status: "PUBLISHED" },
@@ -18,10 +21,10 @@ export default async function TimeTablePage() {
       <div className="mx-auto max-w-5xl space-y-8">
         <div className="space-y-1">
           <h1 className="text-2xl font-semibold tracking-tight md:text-3xl">
-            Time Table
+            {t("heading")}
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Weekly class schedule, organized by class, day, and period.
+            {t("description")}
           </p>
         </div>
 

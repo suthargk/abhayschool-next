@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { Loader2, UserRound, X } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
@@ -17,7 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { FACULTY_CATEGORIES } from "@/data/faculty-categories";
+import { FACULTY_CATEGORIES, FACULTY_CATEGORY_LABEL_KEYS } from "@/data/faculty-categories";
 
 function TagInput({ id, label, values, onChange, placeholder }) {
   const [draft, setDraft] = useState("");
@@ -75,6 +76,9 @@ function TagInput({ id, label, values, onChange, placeholder }) {
 }
 
 export function TeacherFacultyForm({ initialItem }) {
+  const t = useTranslations("teacherFaculty.form");
+  const tCategories = useTranslations("teacherFaculty.categories");
+  const tCommon = useTranslations("common.actions");
   const router = useRouter();
   const isEdit = Boolean(initialItem);
 
@@ -111,7 +115,7 @@ export function TeacherFacultyForm({ initialItem }) {
         body: formData,
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Upload failed");
+      if (!res.ok) throw new Error(data.error || t("uploadFailed"));
       setPhotoUrl(data.url);
     } catch (err) {
       setError(err.message);
@@ -152,7 +156,7 @@ export function TeacherFacultyForm({ initialItem }) {
         },
       );
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Save failed");
+      if (!res.ok) throw new Error(data.error || t("saveFailed"));
       router.push("/teacher/faculty");
       router.refresh();
     } catch (err) {
@@ -165,7 +169,7 @@ export function TeacherFacultyForm({ initialItem }) {
   return (
     <form onSubmit={handleSubmit} className="max-w-3xl space-y-6">
       <div className="space-y-2">
-        <Label htmlFor="faculty-photo">Photo</Label>
+        <Label htmlFor="faculty-photo">{t("photoLabel")}</Label>
         {photoUrl ? (
           <div className="relative size-32 overflow-hidden rounded-full border">
             <Image src={photoUrl} alt="" fill className="object-cover" unoptimized />
@@ -196,41 +200,39 @@ export function TeacherFacultyForm({ initialItem }) {
         )}
         {uploadingPhoto ? (
           <p className="flex items-center gap-2 text-xs text-muted-foreground">
-            <Loader2 className="size-3 animate-spin" /> Uploading…
+            <Loader2 className="size-3 animate-spin" /> {t("uploading")}
           </p>
         ) : (
-          <p className="text-xs text-muted-foreground">
-            Optional. A generic placeholder is shown on the public site if left blank.
-          </p>
+          <p className="text-xs text-muted-foreground">{t("photoHelp")}</p>
         )}
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-2">
-          <Label htmlFor="faculty-name">Name</Label>
+          <Label htmlFor="faculty-name">{t("nameLabel")}</Label>
           <Input
             id="faculty-name"
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
-            placeholder="e.g. Jane Doe"
+            placeholder={t("namePlaceholder")}
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="faculty-designation">Designation</Label>
+          <Label htmlFor="faculty-designation">{t("designationLabel")}</Label>
           <Input
             id="faculty-designation"
             value={designation}
             onChange={(e) => setDesignation(e.target.value)}
             required
-            placeholder="e.g. Senior Teacher"
+            placeholder={t("designationPlaceholder")}
           />
         </div>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-2">
-          <Label htmlFor="faculty-category">Category</Label>
+          <Label htmlFor="faculty-category">{t("categoryLabel")}</Label>
           <Select value={category} onValueChange={setCategory}>
             <SelectTrigger id="faculty-category">
               <SelectValue />
@@ -238,102 +240,98 @@ export function TeacherFacultyForm({ initialItem }) {
             <SelectContent>
               {FACULTY_CATEGORIES.map((c) => (
                 <SelectItem key={c.value} value={c.value}>
-                  {c.label}
+                  {tCategories(FACULTY_CATEGORY_LABEL_KEYS[c.value])}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
-          <p className="text-xs text-muted-foreground">
-            Controls which section of the public Faculty page this person appears in.
-          </p>
+          <p className="text-xs text-muted-foreground">{t("categoryHelp")}</p>
         </div>
         <div className="space-y-2">
-          <Label htmlFor="faculty-department">Department</Label>
+          <Label htmlFor="faculty-department">{t("departmentLabel")}</Label>
           <Input
             id="faculty-department"
             value={department}
             onChange={(e) => setDepartment(e.target.value)}
-            placeholder="e.g. Science"
+            placeholder={t("departmentPlaceholder")}
           />
         </div>
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="faculty-experience">Years of experience</Label>
+        <Label htmlFor="faculty-experience">{t("experienceLabel")}</Label>
         <Input
           id="faculty-experience"
           type="number"
           min="0"
           value={experienceYears}
           onChange={(e) => setExperienceYears(e.target.value)}
-          placeholder="e.g. 8"
+          placeholder={t("experiencePlaceholder")}
           className="max-w-xs"
         />
       </div>
 
       <TagInput
         id="faculty-subjects"
-        label="Subjects taught"
+        label={t("subjectsLabel")}
         values={subjects}
         onChange={setSubjects}
-        placeholder="Type a subject and press Enter"
+        placeholder={t("subjectsPlaceholder")}
       />
 
       <TagInput
         id="faculty-grades"
-        label="Classes / grades taught"
+        label={t("gradesLabel")}
         values={grades}
         onChange={setGrades}
-        placeholder="e.g. VIII, IX, X"
+        placeholder={t("gradesPlaceholder")}
       />
 
       <div className="space-y-2">
-        <Label htmlFor="faculty-qualification">Qualification</Label>
+        <Label htmlFor="faculty-qualification">{t("qualificationLabel")}</Label>
         <Input
           id="faculty-qualification"
           value={qualification}
           onChange={(e) => setQualification(e.target.value)}
-          placeholder="e.g. M.Sc, B.Ed"
+          placeholder={t("qualificationPlaceholder")}
         />
       </div>
 
       <TagInput
         id="faculty-areas-of-interest"
-        label="Areas of interest"
+        label={t("areasOfInterestLabel")}
         values={areasOfInterest}
         onChange={setAreasOfInterest}
-        placeholder="e.g. STEM education, Mathematics competitions"
+        placeholder={t("areasOfInterestPlaceholder")}
       />
 
       <TagInput
         id="faculty-achievements"
-        label="Achievements & certifications"
+        label={t("achievementsLabel")}
         values={achievements}
         onChange={setAchievements}
-        placeholder="e.g. Best Teacher Award 2023"
+        placeholder={t("achievementsPlaceholder")}
       />
 
       <div className="space-y-2">
-        <Label htmlFor="faculty-email">Email</Label>
+        <Label htmlFor="faculty-email">{t("emailLabel")}</Label>
         <Input
           id="faculty-email"
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          placeholder="e.g. jane.doe@abhayschool.edu"
+          placeholder={t("emailPlaceholder")}
         />
-        <p className="text-xs text-muted-foreground">
-          Internal reference only — not shown on the public site.
-        </p>
+        <p className="text-xs text-muted-foreground">{t("emailHelp")}</p>
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="faculty-bio">Bio</Label>
+        <Label htmlFor="faculty-bio">{t("bioLabel")}</Label>
         <Textarea
           id="faculty-bio"
           value={bio}
           onChange={(e) => setBio(e.target.value)}
-          placeholder="A short blurb about this faculty member."
+          placeholder={t("bioPlaceholder")}
           rows={4}
         />
       </div>
@@ -346,16 +344,13 @@ export function TeacherFacultyForm({ initialItem }) {
 
       <div className="flex gap-2">
         <Button type="submit" disabled={saving || uploadingPhoto}>
-          {saving ? "Saving…" : isEdit ? "Save changes" : "Publish"}
+          {saving ? t("saving") : isEdit ? t("saveChanges") : t("publish")}
         </Button>
         <Button type="button" variant="outline" onClick={() => router.push("/teacher/faculty")}>
-          Cancel
+          {tCommon("cancel")}
         </Button>
       </div>
-      <p className="text-xs text-muted-foreground">
-        This faculty profile is published immediately and appears on the school website right
-        away.
-      </p>
+      <p className="text-xs text-muted-foreground">{t("publishNote")}</p>
     </form>
   );
 }

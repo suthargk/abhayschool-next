@@ -3,6 +3,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { format } from "date-fns";
 import { ArrowLeft } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 
 import { prisma } from "@/lib/prisma";
 import { ContentRenderer } from "@/components/news-notices/content-renderer";
@@ -11,6 +12,7 @@ export const revalidate = 60;
 
 export default async function AcademicPostDetailPage({ params }) {
   const { slug } = await params;
+  const t = await getTranslations("academics.postDetail");
 
   const item = await prisma.academicPost.findFirst({
     where: { slug, status: "PUBLISHED" },
@@ -27,7 +29,7 @@ export default async function AcademicPostDetailPage({ params }) {
           className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
         >
           <ArrowLeft className="size-4" />
-          Back to Academics
+          {t("backToAcademics")}
         </Link>
 
         <div className="space-y-4">

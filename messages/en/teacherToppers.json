@@ -1,0 +1,63 @@
+{
+  "page": {
+    "heading": "Toppers",
+    "description": "Toppers you've added.",
+    "addTopper": "Add topper"
+  },
+  "new": {
+    "heading": "Add topper"
+  },
+  "edit": {
+    "heading": "Edit topper"
+  },
+  "form": {
+    "photoLabel": "Photo",
+    "uploading": "Uploading…",
+    "photoHelp": "Optional. The card just skips the image if left blank.",
+    "nameLabel": "Name",
+    "namePlaceholder": "e.g. Aarav Sharma",
+    "yearLabel": "Year",
+    "yearPlaceholder": "e.g. 2026",
+    "classLabel": "Class",
+    "streamLabel": "Stream",
+    "streamPlaceholder": "Select stream",
+    "rankLabel": "Rank",
+    "rankPlaceholder": "e.g. 1",
+    "percentageLabel": "Percentage",
+    "percentagePlaceholder": "e.g. 97.8",
+    "marksObtainedLabel": "Marks obtained",
+    "marksObtainedPlaceholder": "e.g. 489",
+    "marksTotalLabel": "Marks out of",
+    "marksTotalPlaceholder": "e.g. 500",
+    "saving": "Saving…",
+    "saveChanges": "Save changes",
+    "publish": "Publish",
+    "publishNote": "This topper is published immediately and appears on the school website right away.",
+    "uploadFailed": "Upload failed",
+    "saveFailed": "Save failed"
+  },
+  "list": {
+    "searchPlaceholder": "Search by name or year…",
+    "clearFilters": "Clear filters",
+    "noResultsFiltered": "No toppers match your search.",
+    "noResultsEmpty": "You haven't added any toppers yet.",
+    "selectAllRows": "Select all rows",
+    "selectAllLabel": "Select all",
+    "selectRow": "Select {name}",
+    "selectedCount": "{count} selected",
+    "deleteSelected": "Delete selected",
+    "nameColumn": "Name",
+    "classColumn": "Class",
+    "streamColumn": "Stream",
+    "yearColumn": "Year",
+    "rankColumn": "Rank",
+    "percentageColumn": "Percentage",
+    "rankValue": "Rank {rank}",
+    "itemsLabel": "{count, plural, one {# item} other {# items}}",
+    "deleteTitle": "Delete {label}?",
+    "deleteDescription": "This can't be undone. This will permanently delete {count, plural, one {this item} other {these items}}.",
+    "deletingToast": "Deleting {label}…",
+    "deletedToast": "Deleted {label}",
+    "deleteFailedToast": "Failed to delete {label}"
+  }
+}

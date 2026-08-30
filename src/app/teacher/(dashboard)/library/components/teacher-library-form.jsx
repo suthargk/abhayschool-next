@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,6 +16,8 @@ import {
 } from "@/components/ui/select";
 
 export function TeacherLibraryForm({ initialItem, classes }) {
+  const t = useTranslations("teacherLibrary.form");
+  const tCommon = useTranslations("common.actions");
   const router = useRouter();
   const isEdit = Boolean(initialItem);
 
@@ -42,7 +45,7 @@ export function TeacherLibraryForm({ initialItem, classes }) {
         },
       );
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Save failed");
+      if (!res.ok) throw new Error(data.error || t("saveFailed"));
       router.push("/teacher/library");
       router.refresh();
     } catch (err) {
@@ -55,7 +58,7 @@ export function TeacherLibraryForm({ initialItem, classes }) {
   if (classes.length === 0) {
     return (
       <p className="max-w-3xl text-sm text-muted-foreground">
-        No classes have been set up yet. Contact an admin before adding library books.
+        {t("noClasses")}
       </p>
     );
   }
@@ -63,10 +66,10 @@ export function TeacherLibraryForm({ initialItem, classes }) {
   return (
     <form onSubmit={handleSubmit} className="max-w-xl space-y-6">
       <div className="space-y-2">
-        <Label htmlFor="library-class">Class</Label>
+        <Label htmlFor="library-class">{t("classLabel")}</Label>
         <Select value={bookClass} onValueChange={setBookClass}>
           <SelectTrigger id="library-class">
-            <SelectValue placeholder="Select a class" />
+            <SelectValue placeholder={t("classPlaceholder")} />
           </SelectTrigger>
           <SelectContent>
             {classes.map((c) => (
@@ -79,35 +82,35 @@ export function TeacherLibraryForm({ initialItem, classes }) {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="library-book-name">Book name</Label>
+        <Label htmlFor="library-book-name">{t("bookNameLabel")}</Label>
         <Input
           id="library-book-name"
           value={bookName}
           onChange={(e) => setBookName(e.target.value)}
           required
-          placeholder="e.g. New Learning Composite Mathematics"
+          placeholder={t("bookNamePlaceholder")}
         />
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="library-subject">Subject</Label>
+        <Label htmlFor="library-subject">{t("subjectLabel")}</Label>
         <Input
           id="library-subject"
           value={subject}
           onChange={(e) => setSubject(e.target.value)}
           required
-          placeholder="e.g. Mathematics"
+          placeholder={t("subjectPlaceholder")}
         />
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="library-publication">Publication</Label>
+        <Label htmlFor="library-publication">{t("publicationLabel")}</Label>
         <Input
           id="library-publication"
           value={publication}
           onChange={(e) => setPublication(e.target.value)}
           required
-          placeholder="e.g. S. Chand Publishing"
+          placeholder={t("publicationPlaceholder")}
         />
       </div>
 
@@ -119,14 +122,14 @@ export function TeacherLibraryForm({ initialItem, classes }) {
 
       <div className="flex gap-2">
         <Button type="submit" disabled={saving}>
-          {saving ? "Saving…" : isEdit ? "Save changes" : "Publish"}
+          {saving ? t("saving") : isEdit ? t("saveChanges") : t("publish")}
         </Button>
         <Button type="button" variant="outline" onClick={() => router.push("/teacher/library")}>
-          Cancel
+          {tCommon("cancel")}
         </Button>
       </div>
       <p className="text-xs text-muted-foreground">
-        This book is published immediately and appears on the school website right away.
+        {t("publishNote")}
       </p>
     </form>
   );

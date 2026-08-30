@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
 import { format } from "date-fns";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { ImageOff, Loader2, MoreHorizontal, Pin } from "lucide-react";
 
@@ -51,21 +52,22 @@ function ItemThumb({ item }) {
 }
 
 function RowActionsMenu({ item, onDelete }) {
+  const tCommon = useTranslations("common.actions");
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="size-8">
           <MoreHorizontal className="size-4" />
-          <span className="sr-only">Open menu</span>
+          <span className="sr-only">{tCommon("openMenu")}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem asChild>
-          <Link href={`/teacher/news-notices/${item.id}/edit`}>Edit</Link>
+          <Link href={`/teacher/news-notices/${item.id}/edit`}>{tCommon("edit")}</Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem className="text-destructive focus:text-destructive" onSelect={onDelete}>
-          Delete
+          {tCommon("delete")}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -73,6 +75,8 @@ function RowActionsMenu({ item, onDelete }) {
 }
 
 function TeacherNewsNoticesFilters({ filters, onPendingChange }) {
+  const t = useTranslations("teacherNewsNotices.list");
+  const tCommon = useTranslations("common.actions");
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [search, setSearch] = useState(filters.q);
@@ -103,13 +107,13 @@ function TeacherNewsNoticesFilters({ filters, onPendingChange }) {
         type="search"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        placeholder="Search by title…"
+        placeholder={t("searchPlaceholder")}
         className="sm:max-w-xs"
         disabled={isPending}
       />
       <Button type="submit" size="sm" disabled={isPending}>
         {isPending ? <Loader2 className="size-4 animate-spin" /> : null}
-        Search
+        {tCommon("search")}
       </Button>
       {filters.q ? (
         <Button
@@ -124,7 +128,7 @@ function TeacherNewsNoticesFilters({ filters, onPendingChange }) {
             });
           }}
         >
-          Clear
+          {tCommon("clear")}
         </Button>
       ) : null}
     </form>
@@ -132,6 +136,9 @@ function TeacherNewsNoticesFilters({ filters, onPendingChange }) {
 }
 
 export function TeacherNewsNoticesList({ initialItems, filters, hasAnyItems }) {
+  const t = useTranslations("teacherNewsNotices.list");
+  const tCommon = useTranslations("common.actions");
+  const tTable = useTranslations("common.table");
   const router = useRouter();
   const [items, setItems] = useState(initialItems);
   const [deleteTarget, setDeleteTarget] = useState(null);
@@ -156,7 +163,11 @@ export function TeacherNewsNoticesList({ initialItems, filters, hasAnyItems }) {
           fetch(`/api/teacher/news-notices/${id}`, { method: "DELETE" }).then((res) => {
             if (!res.ok) throw new Error("Delete failed");
           }),
-          { loading: `Deleting ${label}…`, success: `Deleted ${label}`, error: `Failed to delete ${label}` },
+          {
+            loading: t("deletingToast", { label }),
+            success: t("deletedToast", { label }),
+            error: t("deleteFailedToast", { label }),
+          },
         )
         .unwrap();
       setItems((prev) => prev.filter((i) => i.id !== id));
@@ -185,7 +196,7 @@ export function TeacherNewsNoticesList({ initialItems, filters, hasAnyItems }) {
 
         {items.length === 0 ? (
           <p className="rounded-md border border-dashed p-8 text-center text-sm text-muted-foreground">
-            {hasAnyItems ? "No items match your search." : "You haven't posted anything yet."}
+            {hasAnyItems ? t("noResultsFiltered") : t("noResultsEmpty")}
           </p>
         ) : (
           <>
@@ -203,7 +214,9 @@ export function TeacherNewsNoticesList({ initialItems, filters, hasAnyItems }) {
                     <RowActionsMenu item={item} onDelete={() => requestDelete(item)} />
                   </div>
                   <div className="flex flex-wrap items-center gap-1.5 pl-[52px] text-sm text-muted-foreground">
-                    <Badge variant="secondary">{item.type === "NEWS" ? "News" : "Notice"}</Badge>
+                    <Badge variant="secondary">
+                      {item.type === "NEWS" ? t("typeNews") : t("typeNotice")}
+                    </Badge>
                     {item.pinned ? <Pin className="size-3.5" /> : null}
                     <span>{format(new Date(item.createdAt), "d MMM yyyy")}</span>
                   </div>
@@ -216,9 +229,9 @@ export function TeacherNewsNoticesList({ initialItems, filters, hasAnyItems }) {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Title</TableHead>
-                    <TableHead>Type</TableHead>
-                    <TableHead>Posted</TableHead>
+                    <TableHead>{t("titleColumn")}</TableHead>
+                    <TableHead>{t("typeColumn")}</TableHead>
+                    <TableHead>{t("postedColumn")}</TableHead>
                     <TableHead className="w-0" />
                   </TableRow>
                 </TableHeader>
@@ -238,7 +251,9 @@ export function TeacherNewsNoticesList({ initialItems, filters, hasAnyItems }) {
                         </Link>
                       </TableCell>
                       <TableCell>
-                        <Badge variant="secondary">{item.type === "NEWS" ? "News" : "Notice"}</Badge>
+                        <Badge variant="secondary">
+                          {item.type === "NEWS" ? t("typeNews") : t("typeNotice")}
+                        </Badge>
                       </TableCell>
                       <TableCell className="text-muted-foreground">
                         {format(new Date(item.createdAt), "d MMM yyyy")}
@@ -261,13 +276,15 @@ export function TeacherNewsNoticesList({ initialItems, filters, hasAnyItems }) {
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete {deleteTarget?.label}?</AlertDialogTitle>
+            <AlertDialogTitle>
+              {tTable("deleteConfirmTitle", { label: deleteTarget?.label })}
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              This can&apos;t be undone. This will permanently delete this item.
+              {tTable("deleteConfirmDescription")} {tTable("confirmDeleteOne")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={deleting}>{tCommon("cancel")}</AlertDialogCancel>
             <AlertDialogAction
               disabled={deleting}
               onClick={(event) => {
@@ -276,7 +293,7 @@ export function TeacherNewsNoticesList({ initialItems, filters, hasAnyItems }) {
               }}
               className={buttonVariants({ variant: "destructive" })}
             >
-              {deleting ? "Deleting…" : "Delete"}
+              {deleting ? tCommon("deleting") : tCommon("delete")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

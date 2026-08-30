@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import { FileText, Loader2, Paperclip, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -25,6 +26,8 @@ function formatFileSize(bytes) {
 }
 
 export function TeacherHomeworkForm({ initialItem, assignments, classes }) {
+  const t = useTranslations("teacherHomework.form");
+  const tCommon = useTranslations("common.actions");
   const router = useRouter();
   const isEdit = Boolean(initialItem);
 
@@ -75,7 +78,7 @@ export function TeacherHomeworkForm({ initialItem, assignments, classes }) {
         body: formData,
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Upload failed");
+      if (!res.ok) throw new Error(data.error || t("uploadFailed"));
       setAttachments((prev) => [
         ...prev,
         {
@@ -101,7 +104,7 @@ export function TeacherHomeworkForm({ initialItem, assignments, classes }) {
     e.preventDefault();
 
     if (!dueDate) {
-      setError("Due date is required");
+      setError(t("dueDateRequired"));
       return;
     }
 
@@ -128,7 +131,7 @@ export function TeacherHomeworkForm({ initialItem, assignments, classes }) {
         },
       );
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Save failed");
+      if (!res.ok) throw new Error(data.error || t("saveFailed"));
       router.push("/teacher/homework");
       router.refresh();
     } catch (err) {
@@ -141,8 +144,7 @@ export function TeacherHomeworkForm({ initialItem, assignments, classes }) {
   if (assignedClasses.length === 0) {
     return (
       <p className="max-w-3xl text-sm text-muted-foreground">
-        You don&apos;t have any classes/subjects assigned yet. Contact an admin to get set up
-        before posting homework.
+        {t("noAssignments")}
       </p>
     );
   }
@@ -151,10 +153,10 @@ export function TeacherHomeworkForm({ initialItem, assignments, classes }) {
     <form onSubmit={handleSubmit} className="max-w-3xl space-y-6">
       <div className="grid gap-6 sm:grid-cols-2">
         <div className="space-y-2">
-          <Label htmlFor="class">Class</Label>
+          <Label htmlFor="class">{t("classLabel")}</Label>
           <Select value={homeworkClass} onValueChange={onClassChange}>
             <SelectTrigger id="class">
-              <SelectValue placeholder="Select a class" />
+              <SelectValue placeholder={t("classPlaceholder")} />
             </SelectTrigger>
             <SelectContent>
               {assignedClasses.map((value) => (
@@ -167,10 +169,10 @@ export function TeacherHomeworkForm({ initialItem, assignments, classes }) {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="subject">Subject</Label>
+          <Label htmlFor="subject">{t("subjectLabel")}</Label>
           <Select value={subject} onValueChange={setSubject}>
             <SelectTrigger id="subject">
-              <SelectValue placeholder="Select a subject" />
+              <SelectValue placeholder={t("subjectPlaceholder")} />
             </SelectTrigger>
             <SelectContent>
               {subjectsForClass.map((value) => (
@@ -184,38 +186,38 @@ export function TeacherHomeworkForm({ initialItem, assignments, classes }) {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="title">Title</Label>
+        <Label htmlFor="title">{t("titleLabel")}</Label>
         <Input
           id="title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           required
-          placeholder="Chapter 5 — Linear Equations"
+          placeholder={t("titlePlaceholder")}
         />
       </div>
 
       <div className="grid gap-6 sm:grid-cols-2">
         <div className="space-y-2">
-          <Label>Assigned date</Label>
+          <Label>{t("assignedDateLabel")}</Label>
           <DatePicker value={assignedDate} onChange={setAssignedDate} />
         </div>
         <div className="space-y-2">
-          <Label>Due date</Label>
+          <Label>{t("dueDateLabel")}</Label>
           <DatePicker value={dueDate} onChange={setDueDate} />
         </div>
       </div>
 
       <div className="space-y-2">
-        <Label>Instructions</Label>
+        <Label>{t("instructionsLabel")}</Label>
         <RichTextEditor
           content={content}
           onChange={setContent}
-          placeholder="Describe the assignment, pages, and expectations…"
+          placeholder={t("instructionsPlaceholder")}
         />
       </div>
 
       <div className="space-y-2">
-        <Label>Attachments</Label>
+        <Label>{t("attachmentsLabel")}</Label>
         {attachments.length > 0 ? (
           <ul className="space-y-2">
             {attachments.map((a, i) => (
@@ -269,14 +271,14 @@ export function TeacherHomeworkForm({ initialItem, assignments, classes }) {
 
       <div className="flex gap-2">
         <Button type="submit" disabled={saving || uploadingAttachment}>
-          {saving ? "Saving…" : isEdit ? "Save changes" : "Publish"}
+          {saving ? t("saving") : isEdit ? t("saveChanges") : t("publish")}
         </Button>
         <Button type="button" variant="outline" onClick={() => router.push("/teacher/homework")}>
-          Cancel
+          {tCommon("cancel")}
         </Button>
       </div>
       <p className="text-xs text-muted-foreground">
-        This homework is published immediately and appears on the school website right away.
+        {t("publishNote")}
       </p>
     </form>
   );

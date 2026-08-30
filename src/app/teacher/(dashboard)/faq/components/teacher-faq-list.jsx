@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Loader2, MoreHorizontal } from "lucide-react";
 
@@ -36,21 +37,22 @@ import {
 import { cn } from "@/lib/utils";
 
 function RowActionsMenu({ item, onDelete }) {
+  const tCommon = useTranslations("common.actions");
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="size-8">
           <MoreHorizontal className="size-4" />
-          <span className="sr-only">Open menu</span>
+          <span className="sr-only">{tCommon("openMenu")}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem asChild>
-          <Link href={`/teacher/faq/${item.id}/edit`}>Edit</Link>
+          <Link href={`/teacher/faq/${item.id}/edit`}>{tCommon("edit")}</Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem className="text-destructive focus:text-destructive" onSelect={onDelete}>
-          Delete
+          {tCommon("delete")}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -58,6 +60,8 @@ function RowActionsMenu({ item, onDelete }) {
 }
 
 function TeacherFaqFilters({ filters, onPendingChange }) {
+  const t = useTranslations("teacherFaq.list");
+  const tCommon = useTranslations("common.actions");
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [search, setSearch] = useState(filters.q);
@@ -86,13 +90,13 @@ function TeacherFaqFilters({ filters, onPendingChange }) {
         type="search"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        placeholder="Search by question or answer…"
+        placeholder={t("searchPlaceholder")}
         className="sm:max-w-xs"
         disabled={isPending}
       />
       <Button type="submit" size="sm" disabled={isPending}>
         {isPending ? <Loader2 className="size-4 animate-spin" /> : null}
-        Search
+        {tCommon("search")}
       </Button>
       {filters.q ? (
         <Button
@@ -107,7 +111,7 @@ function TeacherFaqFilters({ filters, onPendingChange }) {
             });
           }}
         >
-          Clear
+          {tCommon("clear")}
         </Button>
       ) : null}
     </form>
@@ -115,6 +119,7 @@ function TeacherFaqFilters({ filters, onPendingChange }) {
 }
 
 export function TeacherFaqList({ initialItems, filters, hasAnyFaqs }) {
+  const t = useTranslations("teacherFaq.list");
   const router = useRouter();
   const [items, setItems] = useState(initialItems);
   const [deleteTarget, setDeleteTarget] = useState(null);
@@ -139,7 +144,11 @@ export function TeacherFaqList({ initialItems, filters, hasAnyFaqs }) {
           fetch(`/api/teacher/faq/${id}`, { method: "DELETE" }).then((res) => {
             if (!res.ok) throw new Error("Delete failed");
           }),
-          { loading: `Deleting ${label}…`, success: `Deleted ${label}`, error: `Failed to delete ${label}` },
+          {
+            loading: t("deletingToast", { label }),
+            success: t("deletedToast", { label }),
+            error: t("deleteFailedToast", { label }),
+          },
         )
         .unwrap();
       setItems((prev) => prev.filter((i) => i.id !== id));
@@ -165,7 +174,7 @@ export function TeacherFaqList({ initialItems, filters, hasAnyFaqs }) {
 
         {items.length === 0 ? (
           <p className="rounded-md border border-dashed p-8 text-center text-sm text-muted-foreground">
-            {hasAnyFaqs ? "No FAQs match your search." : "You haven't posted any FAQs yet."}
+            {hasAnyFaqs ? t("noResultsFiltered") : t("noResultsEmpty")}
           </p>
         ) : (
           <>
@@ -189,8 +198,8 @@ export function TeacherFaqList({ initialItems, filters, hasAnyFaqs }) {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Question</TableHead>
-                    <TableHead>Answer</TableHead>
+                    <TableHead>{t("questionColumn")}</TableHead>
+                    <TableHead>{t("answerColumn")}</TableHead>
                     <TableHead className="w-0" />
                   </TableRow>
                 </TableHeader>
@@ -219,13 +228,11 @@ export function TeacherFaqList({ initialItems, filters, hasAnyFaqs }) {
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete {deleteTarget?.label}?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This can&apos;t be undone. This will permanently delete this FAQ.
-            </AlertDialogDescription>
+            <AlertDialogTitle>{t("deleteTitle", { label: deleteTarget?.label })}</AlertDialogTitle>
+            <AlertDialogDescription>{t("deleteDescription")}</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={deleting}>{t("deleteCancel")}</AlertDialogCancel>
             <AlertDialogAction
               disabled={deleting}
               onClick={(event) => {
@@ -234,7 +241,7 @@ export function TeacherFaqList({ initialItems, filters, hasAnyFaqs }) {
               }}
               className={buttonVariants({ variant: "destructive" })}
             >
-              {deleting ? "Deleting…" : "Delete"}
+              {deleting ? t("deleting") : t("deleteConfirm")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

@@ -1,4 +1,5 @@
 import { Video } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 function toEmbedUrl(videoUrl) {
   let url;
@@ -39,6 +40,7 @@ function toEmbedUrl(videoUrl) {
 }
 
 export function PrincipalVideo({ videoUrl }) {
+  const t = useTranslations("principalMessage.principalVideo");
   const embedUrl = videoUrl ? toEmbedUrl(videoUrl) : null;
   if (!embedUrl) return null;
 
@@ -47,17 +49,17 @@ export function PrincipalVideo({ videoUrl }) {
       <div className="mx-auto max-w-2xl space-y-2 text-center">
         <span className="inline-flex items-center gap-1.5 text-sm font-medium text-violet-600 dark:text-violet-400">
           <Video className="size-4" />
-          Video Message
+          {t("badge")}
         </span>
         <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-          Watch a Message from Our Principal
+          {t("heading")}
         </h2>
       </div>
 
       <div className="aspect-video overflow-hidden rounded-2xl border bg-card">
         <iframe
           src={embedUrl}
-          title="A video message from the Principal"
+          title={t("iframeTitle")}
           className="size-full"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen

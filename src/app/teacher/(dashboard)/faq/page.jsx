@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Suspense } from "react";
 import { Plus } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 
 import { Button } from "@/components/ui/button";
 import { TableSkeleton } from "@/components/table-skeleton";
@@ -9,20 +10,22 @@ import { prisma } from "@/lib/prisma";
 
 import { TeacherFaqList } from "./components/teacher-faq-list";
 
-// Not async: the header below has no data dependency, so it streams
-// immediately on every nav click instead of waiting on the list's queries.
-export default function TeacherFaqPage({ searchParams }) {
+// Async only for the translations lookup — the header itself has no data
+// dependency, so it still streams immediately instead of waiting on the
+// list's queries below.
+export default async function TeacherFaqPage({ searchParams }) {
+  const t = await getTranslations("teacherFaq.page");
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div className="space-y-1">
-          <h1 className="text-2xl font-semibold tracking-tight">FAQ</h1>
-          <p className="text-muted-foreground">FAQs you&apos;ve posted.</p>
+          <h1 className="text-2xl font-semibold tracking-tight">{t("heading")}</h1>
+          <p className="text-muted-foreground">{t("description")}</p>
         </div>
         <Button asChild>
           <Link href="/teacher/faq/new">
             <Plus className="size-4" />
-            Add FAQ
+            {t("addButton")}
           </Link>
         </Button>
       </div>

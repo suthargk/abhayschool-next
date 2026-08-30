@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { ArrowLeft, Trophy, UserRound } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
@@ -19,6 +20,7 @@ function DetailSection({ title, children }) {
 
 export default async function FacultyProfilePage({ params }) {
   const { id } = await params;
+  const t = await getTranslations("faculty.facultyProfilePage");
 
   const item = await prisma.faculty.findUnique({ where: { id } });
   if (!item || item.status !== "PUBLISHED") notFound();
@@ -30,7 +32,7 @@ export default async function FacultyProfilePage({ params }) {
         className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
       >
         <ArrowLeft className="size-4" />
-        Back to Faculty
+        {t("backToFaculty")}
       </Link>
 
       <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:items-start sm:text-left">
@@ -50,27 +52,27 @@ export default async function FacultyProfilePage({ params }) {
 
       <div className="space-y-8 rounded-2xl border bg-card p-6 sm:p-8">
         {item.bio ? (
-          <DetailSection title="About">
+          <DetailSection title={t("about")}>
             <p className="whitespace-pre-line text-muted-foreground">{item.bio}</p>
           </DetailSection>
         ) : null}
 
         {item.qualification ? (
-          <DetailSection title="Education">
+          <DetailSection title={t("education")}>
             <p className="text-muted-foreground">{item.qualification}</p>
           </DetailSection>
         ) : null}
 
         {item.experienceYears != null ? (
-          <DetailSection title="Experience">
+          <DetailSection title={t("experience")}>
             <p className="text-muted-foreground">
-              {item.experienceYears}+ year{item.experienceYears === 1 ? "" : "s"}
+              {t("experienceYears", { count: item.experienceYears })}
             </p>
           </DetailSection>
         ) : null}
 
         {item.subjects.length > 0 ? (
-          <DetailSection title="Subjects">
+          <DetailSection title={t("subjects")}>
             <div className="flex flex-wrap gap-1.5">
               {item.subjects.map((subject) => (
                 <Badge key={subject} variant="secondary">
@@ -82,7 +84,7 @@ export default async function FacultyProfilePage({ params }) {
         ) : null}
 
         {item.grades.length > 0 ? (
-          <DetailSection title="Classes">
+          <DetailSection title={t("classes")}>
             <div className="flex flex-wrap gap-1.5">
               {item.grades.map((grade) => (
                 <Badge key={grade} variant="secondary">
@@ -94,7 +96,7 @@ export default async function FacultyProfilePage({ params }) {
         ) : null}
 
         {item.areasOfInterest.length > 0 ? (
-          <DetailSection title="Areas of Interest">
+          <DetailSection title={t("areasOfInterest")}>
             <ul className="list-inside list-disc space-y-1 text-muted-foreground">
               {item.areasOfInterest.map((interest) => (
                 <li key={interest}>{interest}</li>
@@ -104,7 +106,7 @@ export default async function FacultyProfilePage({ params }) {
         ) : null}
 
         {item.achievements.length > 0 ? (
-          <DetailSection title="Achievements & Certifications">
+          <DetailSection title={t("achievements")}>
             <ul className="space-y-1.5">
               {item.achievements.map((achievement) => (
                 <li key={achievement} className="flex items-start gap-1.5 text-muted-foreground">

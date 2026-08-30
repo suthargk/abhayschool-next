@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { Loader2, UserRound, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -15,9 +16,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { TOPPER_CLASSES, TOPPER_STREAMS } from "@/data/topper-classes";
+import {
+  TOPPER_CLASSES,
+  TOPPER_STREAMS,
+  TOPPER_CLASS_LABEL_KEYS,
+  TOPPER_STREAM_LABEL_KEYS,
+} from "@/data/topper-classes";
 
 export function TeacherToppersForm({ initialItem }) {
+  const t = useTranslations("teacherToppers.form");
+  const tActions = useTranslations("common.actions");
+  const tToppers = useTranslations("achievements.featuredToppers");
   const router = useRouter();
   const isEdit = Boolean(initialItem);
 
@@ -61,7 +70,7 @@ export function TeacherToppersForm({ initialItem }) {
         body: formData,
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Upload failed");
+      if (!res.ok) throw new Error(data.error || t("uploadFailed"));
       setPhotoUrl(data.url);
     } catch (err) {
       setError(err.message);
@@ -98,7 +107,7 @@ export function TeacherToppersForm({ initialItem }) {
         },
       );
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Save failed");
+      if (!res.ok) throw new Error(data.error || t("saveFailed"));
       router.push("/teacher/toppers");
       router.refresh();
     } catch (err) {
@@ -111,7 +120,7 @@ export function TeacherToppersForm({ initialItem }) {
   return (
     <form onSubmit={handleSubmit} className="max-w-3xl space-y-6">
       <div className="space-y-2">
-        <Label htmlFor="topper-photo">Photo</Label>
+        <Label htmlFor="topper-photo">{t("photoLabel")}</Label>
         {photoUrl ? (
           <div className="relative size-32 overflow-hidden rounded-full border">
             <Image src={photoUrl} alt="" fill className="object-cover" unoptimized />
@@ -142,42 +151,40 @@ export function TeacherToppersForm({ initialItem }) {
         )}
         {uploadingPhoto ? (
           <p className="flex items-center gap-2 text-xs text-muted-foreground">
-            <Loader2 className="size-3 animate-spin" /> Uploading…
+            <Loader2 className="size-3 animate-spin" /> {t("uploading")}
           </p>
         ) : (
-          <p className="text-xs text-muted-foreground">
-            Optional. The card just skips the image if left blank.
-          </p>
+          <p className="text-xs text-muted-foreground">{t("photoHelp")}</p>
         )}
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-2">
-          <Label htmlFor="topper-name">Name</Label>
+          <Label htmlFor="topper-name">{t("nameLabel")}</Label>
           <Input
             id="topper-name"
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
-            placeholder="e.g. Aarav Sharma"
+            placeholder={t("namePlaceholder")}
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="topper-year">Year</Label>
+          <Label htmlFor="topper-year">{t("yearLabel")}</Label>
           <Input
             id="topper-year"
             type="number"
             value={year}
             onChange={(e) => setYear(e.target.value)}
             required
-            placeholder="e.g. 2026"
+            placeholder={t("yearPlaceholder")}
           />
         </div>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-3">
         <div className="space-y-2">
-          <Label htmlFor="topper-class">Class</Label>
+          <Label htmlFor="topper-class">{t("classLabel")}</Label>
           <Select value={topperClass} onValueChange={handleClassChange}>
             <SelectTrigger id="topper-class">
               <SelectValue />
@@ -185,7 +192,7 @@ export function TeacherToppersForm({ initialItem }) {
             <SelectContent>
               {TOPPER_CLASSES.map((c) => (
                 <SelectItem key={c.value} value={c.value}>
-                  {c.label}
+                  {tToppers(TOPPER_CLASS_LABEL_KEYS[c.value])}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -193,15 +200,15 @@ export function TeacherToppersForm({ initialItem }) {
         </div>
         {topperClass === "CLASS_XII" ? (
           <div className="space-y-2">
-            <Label htmlFor="topper-stream">Stream</Label>
+            <Label htmlFor="topper-stream">{t("streamLabel")}</Label>
             <Select value={stream} onValueChange={setStream}>
               <SelectTrigger id="topper-stream">
-                <SelectValue placeholder="Select stream" />
+                <SelectValue placeholder={t("streamPlaceholder")} />
               </SelectTrigger>
               <SelectContent>
                 {TOPPER_STREAMS.map((s) => (
                   <SelectItem key={s.value} value={s.value}>
-                    {s.label}
+                    {tToppers(TOPPER_STREAM_LABEL_KEYS[s.value])}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -209,21 +216,21 @@ export function TeacherToppersForm({ initialItem }) {
           </div>
         ) : null}
         <div className="space-y-2">
-          <Label htmlFor="topper-rank">Rank</Label>
+          <Label htmlFor="topper-rank">{t("rankLabel")}</Label>
           <Input
             id="topper-rank"
             type="number"
             min="1"
             value={rank}
             onChange={(e) => setRank(e.target.value)}
-            placeholder="e.g. 1"
+            placeholder={t("rankPlaceholder")}
           />
         </div>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-3">
         <div className="space-y-2">
-          <Label htmlFor="topper-percentage">Percentage</Label>
+          <Label htmlFor="topper-percentage">{t("percentageLabel")}</Label>
           <Input
             id="topper-percentage"
             type="number"
@@ -233,29 +240,29 @@ export function TeacherToppersForm({ initialItem }) {
             value={percentage}
             onChange={(e) => setPercentage(e.target.value)}
             required
-            placeholder="e.g. 97.8"
+            placeholder={t("percentagePlaceholder")}
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="topper-marks-obtained">Marks obtained</Label>
+          <Label htmlFor="topper-marks-obtained">{t("marksObtainedLabel")}</Label>
           <Input
             id="topper-marks-obtained"
             type="number"
             min="0"
             value={marksObtained}
             onChange={(e) => setMarksObtained(e.target.value)}
-            placeholder="e.g. 489"
+            placeholder={t("marksObtainedPlaceholder")}
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="topper-marks-total">Marks out of</Label>
+          <Label htmlFor="topper-marks-total">{t("marksTotalLabel")}</Label>
           <Input
             id="topper-marks-total"
             type="number"
             min="0"
             value={marksTotal}
             onChange={(e) => setMarksTotal(e.target.value)}
-            placeholder="e.g. 500"
+            placeholder={t("marksTotalPlaceholder")}
           />
         </div>
       </div>
@@ -268,15 +275,13 @@ export function TeacherToppersForm({ initialItem }) {
 
       <div className="flex gap-2">
         <Button type="submit" disabled={saving || uploadingPhoto}>
-          {saving ? "Saving…" : isEdit ? "Save changes" : "Publish"}
+          {saving ? t("saving") : isEdit ? t("saveChanges") : t("publish")}
         </Button>
         <Button type="button" variant="outline" onClick={() => router.push("/teacher/toppers")}>
-          Cancel
+          {tActions("cancel")}
         </Button>
       </div>
-      <p className="text-xs text-muted-foreground">
-        This topper is published immediately and appears on the school website right away.
-      </p>
+      <p className="text-xs text-muted-foreground">{t("publishNote")}</p>
     </form>
   );
 }

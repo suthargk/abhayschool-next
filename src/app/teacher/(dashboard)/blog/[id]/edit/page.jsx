@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 
 import { Button } from "@/components/ui/button";
 import { FormSkeleton } from "@/components/form-skeleton";
@@ -12,17 +13,19 @@ import { TeacherBlogForm } from "../../components/teacher-blog-form";
 
 // Not async: the header has no data dependency, so it streams immediately
 // instead of waiting on the post query below.
-export default function EditTeacherBlogPage({ params }) {
+export default async function EditTeacherBlogPage({ params }) {
+  const t = await getTranslations("teacherBlog.form");
+  const tActions = await getTranslations("common.actions");
   return (
     <div className="space-y-6">
       <div className="space-y-1">
         <Button variant="ghost" size="sm" className="-ml-3" asChild>
           <Link href="/teacher/blog">
             <ArrowLeft className="size-4" />
-            Back
+            {tActions("back")}
           </Link>
         </Button>
-        <h1 className="text-2xl font-semibold tracking-tight">Edit</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">{t("editHeading")}</h1>
       </div>
       <Suspense fallback={<FormSkeleton />}>
         <EditBlogFormSection params={params} />

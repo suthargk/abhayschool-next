@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 import { Navbar } from "@/components/navbar";
 import { MobileNav } from "@/components/navbar/mobile-nav";
@@ -13,6 +14,7 @@ import Footer from "@/app/landing/footer";
 
 export function ConditionalSiteChrome({ children }) {
   const pathname = usePathname();
+  const t = useTranslations("common");
   const hideSiteChrome =
     pathname?.startsWith("/super-admin") || pathname?.startsWith("/teacher");
 
@@ -42,10 +44,10 @@ export function ConditionalSiteChrome({ children }) {
             variant="outline"
             className="hidden md:inline-flex"
           >
-            <Link href="/teacher/login">Teacher Login</Link>
+            <Link href="/teacher/login">{t("header.teacherLogin")}</Link>
           </Button>
           <Button asChild size="sm" className="hidden md:inline-flex">
-            <Link href="/#admissions">Apply Now</Link>
+            <Link href="/#admissions">{t("header.applyNow")}</Link>
           </Button>
           <MobileNav />
         </div>

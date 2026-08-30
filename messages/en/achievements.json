@@ -1,0 +1,45 @@
+{
+  "toppersHero": {
+    "badge": "Board Exam Results",
+    "headingLine1": "Celebrating",
+    "headingLine2": "Excellence",
+    "description": "Meet the students who have demonstrated exceptional academic performance and made our school proud."
+  },
+  "achievementStats": {
+    "toppersFeatured": "Toppers Featured",
+    "highScorers": "90%+ Scorers",
+    "highestScore": "Highest Score",
+    "averageScore": "Average Score"
+  },
+  "featuredToppers": {
+    "heading": "Featured Toppers",
+    "description": "This year's highest-scoring students across the school.",
+    "schoolTopper": "School Topper",
+    "runnerUp": "Runner Up",
+    "secondRunnerUp": "Second Runner Up",
+    "classX": "Class X",
+    "classXII": "Class XII",
+    "streamScience": "Science",
+    "streamCommerce": "Commerce",
+    "streamArts": "Arts"
+  },
+  "topperGrid": {
+    "rankSr": "Rank {rank}",
+    "marksLabel": "marks"
+  },
+  "achievementsCta": {
+    "heading": "Every Achievement Begins With an Opportunity",
+    "description": "Discover how our learning environment helps students achieve their potential.",
+    "exploreAcademics": "Explore Academics",
+    "visitCampus": "Visit Our Campus"
+  },
+  "page": {
+    "academicYear": "Academic Year",
+    "emptyState": "Toppers will be published here soon.",
+    "classXHeading": "Class X Toppers",
+    "classXIIHeading": "Class XII Toppers",
+    "streamScience": "Science",
+    "streamCommerce": "Commerce",
+    "streamArts": "Arts"
+  }
+}

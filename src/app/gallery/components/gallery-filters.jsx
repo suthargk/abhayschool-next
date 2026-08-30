@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { Search } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,11 +18,6 @@ import {
 import { buildGalleryHref } from "../lib/query";
 import { useScrollAlbumsOnSettle } from "../lib/use-scroll-albums-on-settle";
 
-const MONTHS = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December",
-];
-
 export function GalleryFilters({
   initialQuery,
   initialYear,
@@ -30,6 +26,8 @@ export function GalleryFilters({
   years,
 }) {
   const router = useRouter();
+  const t = useTranslations("gallery.filters");
+  const MONTHS = t.raw("months");
   const [isPending, startTransition] = useTransition();
   useScrollAlbumsOnSettle(isPending);
   const [q, setQ] = useState(initialQuery ?? "");
@@ -59,17 +57,17 @@ export function GalleryFilters({
           type="search"
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder="Search albums…"
+          placeholder={t("searchPlaceholder")}
           className="h-9 pl-8"
         />
       </div>
 
       <Select value={year} onValueChange={setYear}>
         <SelectTrigger className="h-9 w-32">
-          <SelectValue placeholder="All years" />
+          <SelectValue placeholder={t("allYears")} />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="all">All years</SelectItem>
+          <SelectItem value="all">{t("allYears")}</SelectItem>
           {years.map((y) => (
             <SelectItem key={y} value={String(y)}>
               {y}
@@ -80,10 +78,10 @@ export function GalleryFilters({
 
       <Select value={month} onValueChange={setMonth}>
         <SelectTrigger className="h-9 w-36">
-          <SelectValue placeholder="All months" />
+          <SelectValue placeholder={t("allMonths")} />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="all">All months</SelectItem>
+          <SelectItem value="all">{t("allMonths")}</SelectItem>
           {MONTHS.map((label, index) => (
             <SelectItem key={label} value={String(index + 1)}>
               {label}
@@ -93,7 +91,7 @@ export function GalleryFilters({
       </Select>
 
       <Button type="submit" size="sm" className="h-9" disabled={isPending}>
-        {isPending ? "Searching…" : "Search"}
+        {isPending ? t("searching") : t("search")}
       </Button>
       {hasActiveFilters ? (
         <Button
@@ -111,7 +109,7 @@ export function GalleryFilters({
             });
           }}
         >
-          Clear
+          {t("clear")}
         </Button>
       ) : null}
     </form>

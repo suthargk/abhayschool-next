@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { Loader2, MoreHorizontal } from "lucide-react";
 
 import {
@@ -35,25 +36,26 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { DataTablePagination } from "@/components/data-table-pagination";
-import { topperClassLabel, topperStreamLabel } from "@/data/topper-classes";
+import { TOPPER_CLASS_LABEL_KEYS, TOPPER_STREAM_LABEL_KEYS } from "@/data/topper-classes";
 import { cn } from "@/lib/utils";
 
 function RowActionsMenu({ item, pending, onDelete }) {
+  const tActions = useTranslations("common.actions");
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="size-8" disabled={pending}>
           <MoreHorizontal className="size-4" />
-          <span className="sr-only">Open menu</span>
+          <span className="sr-only">{tActions("openMenu")}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem asChild>
-          <Link href={`/teacher/toppers/${item.id}/edit`}>Edit</Link>
+          <Link href={`/teacher/toppers/${item.id}/edit`}>{tActions("edit")}</Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem className="text-destructive focus:text-destructive" onSelect={onDelete}>
-          Delete
+          {tActions("delete")}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -61,6 +63,8 @@ function RowActionsMenu({ item, pending, onDelete }) {
 }
 
 function TeacherToppersFilters({ filters, pageSize, defaultPageSize, onPendingChange }) {
+  const t = useTranslations("teacherToppers.list");
+  const tActions = useTranslations("common.actions");
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [search, setSearch] = useState(filters.q);
@@ -100,13 +104,13 @@ function TeacherToppersFilters({ filters, pageSize, defaultPageSize, onPendingCh
         type="search"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        placeholder="Search by name or year…"
+        placeholder={t("searchPlaceholder")}
         className="sm:max-w-xs"
         disabled={isPending}
       />
       <Button type="submit" size="sm" disabled={isPending}>
         {isPending ? <Loader2 className="size-4 animate-spin" /> : null}
-        Search
+        {tActions("search")}
       </Button>
       {filters.q ? (
         <Button
@@ -119,7 +123,7 @@ function TeacherToppersFilters({ filters, pageSize, defaultPageSize, onPendingCh
             navigate({ q: "" });
           }}
         >
-          Clear filters
+          {t("clearFilters")}
         </Button>
       ) : null}
     </form>
@@ -136,6 +140,9 @@ export function TeacherToppersList({
   total,
   totalPages,
 }) {
+  const t = useTranslations("teacherToppers.list");
+  const tActions = useTranslations("common.actions");
+  const tToppers = useTranslations("achievements.featuredToppers");
   const router = useRouter();
   const [items, setItems] = useState(initialItems);
   const [selectedIds, setSelectedIds] = useState(() => new Set());
@@ -176,7 +183,7 @@ export function TeacherToppersList({
   function requestBulkDelete() {
     setDeleteTarget({
       ids: Array.from(selectedIds),
-      label: `${selectedIds.size} item${selectedIds.size === 1 ? "" : "s"}`,
+      label: t("itemsLabel", { count: selectedIds.size }),
     });
   }
 
@@ -194,9 +201,9 @@ export function TeacherToppersList({
             }),
           ),
           {
-            loading: `Deleting ${label}…`,
-            success: `Deleted ${label}`,
-            error: `Failed to delete ${label}`,
+            loading: t("deletingToast", { label }),
+            success: t("deletedToast", { label }),
+            error: t("deleteFailedToast", { label }),
           },
         )
         .unwrap();
@@ -226,9 +233,11 @@ export function TeacherToppersList({
 
       {selectedIds.size > 0 ? (
         <div className="flex items-center gap-2">
-          <span className="text-sm text-muted-foreground">{selectedIds.size} selected</span>
+          <span className="text-sm text-muted-foreground">
+            {t("selectedCount", { count: selectedIds.size })}
+          </span>
           <Button variant="destructive" size="sm" onClick={requestBulkDelete}>
-            Delete selected
+            {t("deleteSelected")}
           </Button>
         </div>
       ) : null}
@@ -242,7 +251,7 @@ export function TeacherToppersList({
 
         {items.length === 0 ? (
           <p className="rounded-md border border-dashed p-8 text-center text-sm text-muted-foreground">
-            {hasAnyToppers ? "No toppers match your search." : "You haven't added any toppers yet."}
+            {hasAnyToppers ? t("noResultsFiltered") : t("noResultsEmpty")}
           </p>
         ) : (
           <>
@@ -255,9 +264,9 @@ export function TeacherToppersList({
                   <Checkbox
                     checked={allSelected ? true : someSelected ? "indeterminate" : false}
                     onCheckedChange={toggleSelectAll}
-                    aria-label="Select all rows"
+                    aria-label={t("selectAllRows")}
                   />
-                  Select all
+                  {t("selectAllLabel")}
                 </label>
               ) : null}
               {items.map((item) => (
@@ -268,7 +277,7 @@ export function TeacherToppersList({
                         className="mt-1"
                         checked={selectedIds.has(item.id)}
                         onCheckedChange={() => toggleSelected(item.id)}
-                        aria-label={`Select ${item.name}`}
+                        aria-label={t("selectRow", { name: item.name })}
                       />
                       <span className="font-medium">{item.name}</span>
                     </div>
@@ -279,17 +288,17 @@ export function TeacherToppersList({
                     />
                   </div>
                   <div className="flex flex-wrap items-center gap-1.5 pl-6 text-sm text-muted-foreground">
-                    <span>{topperClassLabel(item.class)}</span>
+                    <span>{tToppers(TOPPER_CLASS_LABEL_KEYS[item.class])}</span>
                     {item.stream ? (
                       <>
                         <span>·</span>
-                        <span>{topperStreamLabel(item.stream)}</span>
+                        <span>{tToppers(TOPPER_STREAM_LABEL_KEYS[item.stream])}</span>
                       </>
                     ) : null}
                     <span>·</span>
                     <span>{item.year}</span>
                     <span>·</span>
-                    <span>Rank {item.rank}</span>
+                    <span>{t("rankValue", { rank: item.rank })}</span>
                     <span>·</span>
                     <span>{item.percentage}%</span>
                   </div>
@@ -306,15 +315,15 @@ export function TeacherToppersList({
                       <Checkbox
                         checked={allSelected ? true : someSelected ? "indeterminate" : false}
                         onCheckedChange={toggleSelectAll}
-                        aria-label="Select all rows"
+                        aria-label={t("selectAllRows")}
                       />
                     </TableHead>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Class</TableHead>
-                    <TableHead>Stream</TableHead>
-                    <TableHead>Year</TableHead>
-                    <TableHead>Rank</TableHead>
-                    <TableHead>Percentage</TableHead>
+                    <TableHead>{t("nameColumn")}</TableHead>
+                    <TableHead>{t("classColumn")}</TableHead>
+                    <TableHead>{t("streamColumn")}</TableHead>
+                    <TableHead>{t("yearColumn")}</TableHead>
+                    <TableHead>{t("rankColumn")}</TableHead>
+                    <TableHead>{t("percentageColumn")}</TableHead>
                     <TableHead className="w-0" />
                   </TableRow>
                 </TableHeader>
@@ -325,12 +334,14 @@ export function TeacherToppersList({
                         <Checkbox
                           checked={selectedIds.has(item.id)}
                           onCheckedChange={() => toggleSelected(item.id)}
-                          aria-label={`Select ${item.name}`}
+                          aria-label={t("selectRow", { name: item.name })}
                         />
                       </TableCell>
                       <TableCell className="font-medium">{item.name}</TableCell>
-                      <TableCell>{topperClassLabel(item.class)}</TableCell>
-                      <TableCell>{item.stream ? topperStreamLabel(item.stream) : "—"}</TableCell>
+                      <TableCell>{tToppers(TOPPER_CLASS_LABEL_KEYS[item.class])}</TableCell>
+                      <TableCell>
+                        {item.stream ? tToppers(TOPPER_STREAM_LABEL_KEYS[item.stream]) : "—"}
+                      </TableCell>
                       <TableCell>{item.year}</TableCell>
                       <TableCell>{item.rank}</TableCell>
                       <TableCell>{item.percentage}%</TableCell>
@@ -367,14 +378,13 @@ export function TeacherToppersList({
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete {deleteTarget?.label}?</AlertDialogTitle>
+            <AlertDialogTitle>{t("deleteTitle", { label: deleteTarget?.label ?? "" })}</AlertDialogTitle>
             <AlertDialogDescription>
-              This can&apos;t be undone. This will permanently delete{" "}
-              {deleteTarget?.ids.length === 1 ? "this item" : "these items"}.
+              {t("deleteDescription", { count: deleteTarget?.ids.length ?? 1 })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={deleting}>{tActions("cancel")}</AlertDialogCancel>
             <AlertDialogAction
               disabled={deleting}
               onClick={(event) => {
@@ -383,7 +393,7 @@ export function TeacherToppersList({
               }}
               className={buttonVariants({ variant: "destructive" })}
             >
-              {deleting ? "Deleting…" : "Delete"}
+              {deleting ? tActions("deleting") : tActions("delete")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

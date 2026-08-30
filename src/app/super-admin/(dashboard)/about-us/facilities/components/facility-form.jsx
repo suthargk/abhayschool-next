@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { Loader2, Sparkles, X } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
@@ -19,14 +20,13 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 
-const SECTIONS = [
-  { value: "OVERVIEW", label: "Overview" },
-  { value: "SPORTS", label: "Sports & Activities" },
-  { value: "SAFETY", label: "Safety & Wellbeing" },
-  { value: "FAQ", label: "FAQ" },
-];
+const SECTIONS = ["OVERVIEW", "SPORTS", "SAFETY", "FAQ"];
 
 export function FacilityForm({ initialItem, initialSection, canPublish }) {
+  const t = useTranslations("superAdminFacilities.form");
+  const tSections = useTranslations("superAdminFacilities.sections");
+  const tCommon = useTranslations("common.actions");
+  const tStatus = useTranslations("common.status");
   const router = useRouter();
   const isEdit = Boolean(initialItem);
 
@@ -60,7 +60,7 @@ export function FacilityForm({ initialItem, initialSection, canPublish }) {
         body: formData,
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Upload failed");
+      if (!res.ok) throw new Error(data.error || t("uploadFailed"));
       setImageUrl(data.url);
     } catch (err) {
       setError(err.message);
@@ -97,7 +97,7 @@ export function FacilityForm({ initialItem, initialSection, canPublish }) {
         },
       );
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Save failed");
+      if (!res.ok) throw new Error(data.error || t("saveFailed"));
       router.push(`/super-admin/about-us/facilities?section=${section}`);
       router.refresh();
     } catch (err) {
@@ -117,7 +117,7 @@ export function FacilityForm({ initialItem, initialSection, canPublish }) {
         body: JSON.stringify({ publish: status !== "PUBLISHED" }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to update status");
+      if (!res.ok) throw new Error(data.error || t("statusUpdateFailed"));
       setStatus(data.item.status);
       router.refresh();
     } catch (err) {
@@ -131,7 +131,7 @@ export function FacilityForm({ initialItem, initialSection, canPublish }) {
     <form onSubmit={handleSubmit} className="max-w-3xl space-y-6">
       {isEdit ? (
         <div className="flex items-center gap-2">
-          <Badge variant="outline">{status === "PUBLISHED" ? "Published" : "Draft"}</Badge>
+          <Badge variant="outline">{status === "PUBLISHED" ? tStatus("published") : tStatus("draft")}</Badge>
           {canPublish ? (
             <Button
               type="button"
@@ -140,34 +140,32 @@ export function FacilityForm({ initialItem, initialSection, canPublish }) {
               disabled={publishing}
               onClick={handleTogglePublish}
             >
-              {publishing ? "Updating…" : status === "PUBLISHED" ? "Unpublish" : "Publish"}
+              {publishing ? t("updating") : status === "PUBLISHED" ? tCommon("unpublish") : tCommon("publish")}
             </Button>
           ) : null}
         </div>
       ) : null}
 
       <div className="space-y-2">
-        <Label htmlFor="facility-section">Section</Label>
+        <Label htmlFor="facility-section">{t("sectionLabel")}</Label>
         <Select value={section} onValueChange={setSection}>
           <SelectTrigger id="facility-section" className="w-64">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
             {SECTIONS.map((s) => (
-              <SelectItem key={s.value} value={s.value}>
-                {s.label}
+              <SelectItem key={s} value={s}>
+                {tSections(s)}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
-        <p className="text-xs text-muted-foreground">
-          Which part of the public Facilities page this entry appears in.
-        </p>
+        <p className="text-xs text-muted-foreground">{t("sectionHelp")}</p>
       </div>
 
       {!isFaq ? (
         <div className="space-y-2">
-          <Label htmlFor="facility-image">Photo</Label>
+          <Label htmlFor="facility-image">{t("photoLabel")}</Label>
           {imageUrl ? (
             <div className="relative aspect-video w-full max-w-sm overflow-hidden rounded-lg border">
               <Image src={imageUrl} alt="" fill className="object-cover" unoptimized />
@@ -198,54 +196,46 @@ export function FacilityForm({ initialItem, initialSection, canPublish }) {
           )}
           {uploadingImage ? (
             <p className="flex items-center gap-2 text-xs text-muted-foreground">
-              <Loader2 className="size-3 animate-spin" /> Uploading…
+              <Loader2 className="size-3 animate-spin" /> {t("uploading")}
             </p>
           ) : (
-            <p className="text-xs text-muted-foreground">
-              Optional. The icon below is shown on the public site if left blank.
-            </p>
+            <p className="text-xs text-muted-foreground">{t("photoHelp")}</p>
           )}
         </div>
       ) : null}
 
       {!isFaq ? (
         <div className="space-y-2">
-          <Label htmlFor="facility-icon">Icon</Label>
+          <Label htmlFor="facility-icon">{t("iconLabel")}</Label>
           <Input
             id="facility-icon"
             value={icon}
             onChange={(e) => setIcon(e.target.value)}
-            placeholder="e.g. 🏫"
+            placeholder={t("iconPlaceholder")}
             className="max-w-24"
           />
-          <p className="text-xs text-muted-foreground">
-            A single emoji shown when no photo is set.
-          </p>
+          <p className="text-xs text-muted-foreground">{t("iconHelp")}</p>
         </div>
       ) : null}
 
       <div className="space-y-2">
-        <Label htmlFor="facility-title">{isFaq ? "Question" : "Title"}</Label>
+        <Label htmlFor="facility-title">{isFaq ? t("questionLabel") : t("titleLabel")}</Label>
         <Input
           id="facility-title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           required
-          placeholder={isFaq ? "e.g. Does the school have a science laboratory?" : "e.g. Smart Classrooms"}
+          placeholder={isFaq ? t("questionPlaceholder") : t("titlePlaceholder")}
         />
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="facility-summary">{isFaq ? "Answer" : "Short description"}</Label>
+        <Label htmlFor="facility-summary">{isFaq ? t("answerLabel") : t("summaryLabel")}</Label>
         <Textarea
           id="facility-summary"
           value={summary}
           onChange={(e) => setSummary(e.target.value)}
-          placeholder={
-            isFaq
-              ? "e.g. Yes, we have fully equipped Physics, Chemistry, and Biology labs."
-              : "A one or two line blurb shown on the overview card."
-          }
+          placeholder={isFaq ? t("answerPlaceholder") : t("summaryPlaceholder")}
           rows={isFaq ? 4 : 2}
         />
       </div>
@@ -259,23 +249,21 @@ export function FacilityForm({ initialItem, initialSection, canPublish }) {
               onCheckedChange={(checked) => setFeatured(Boolean(checked))}
             />
             <Label htmlFor="facility-featured" className="font-normal">
-              Feature this facility in its own larger section
+              {t("featuredLabel")}
             </Label>
           </div>
 
           {featured ? (
             <div className="space-y-2">
-              <Label htmlFor="facility-description">Highlights</Label>
+              <Label htmlFor="facility-description">{t("highlightsLabel")}</Label>
               <Textarea
                 id="facility-description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder={"One highlight per line, e.g.\nInteractive smart boards\nDigital learning resources\nComfortable seating"}
+                placeholder={t("highlightsPlaceholder")}
                 rows={5}
               />
-              <p className="text-xs text-muted-foreground">
-                Shown as a bullet list next to the photo in the Featured Facilities section.
-              </p>
+              <p className="text-xs text-muted-foreground">{t("highlightsHelp")}</p>
             </div>
           ) : null}
         </div>
@@ -289,14 +277,14 @@ export function FacilityForm({ initialItem, initialSection, canPublish }) {
 
       <div className="flex gap-2">
         <Button type="submit" disabled={saving || uploadingImage}>
-          {saving ? "Saving…" : isEdit ? "Save changes" : "Save draft"}
+          {saving ? tCommon("saving") : isEdit ? t("saveChanges") : t("saveDraft")}
         </Button>
         <Button
           type="button"
           variant="outline"
           onClick={() => router.push(`/super-admin/about-us/facilities?section=${section}`)}
         >
-          Cancel
+          {tCommon("cancel")}
         </Button>
       </div>
     </form>

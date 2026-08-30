@@ -1,12 +1,12 @@
 export const LANGUAGES = [
   {
     id: 1,
-    label: "English (UK)",
-    value: "english",
+    label: "English",
+    value: "en",
   },
   {
     id: 2,
-    value: "hindi",
+    value: "hi",
     label: "हिन्दी",
   },
 ];

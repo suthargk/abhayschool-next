@@ -1,0 +1,45 @@
+{
+  "toppersHero": {
+    "badge": "बोर्ड परीक्षा परिणाम",
+    "headingLine1": "मनाते हुए",
+    "headingLine2": "उत्कृष्टता",
+    "description": "उन विद्यार्थियों से मिलें जिन्होंने असाधारण शैक्षणिक प्रदर्शन कर हमारे विद्यालय का नाम रोशन किया है।"
+  },
+  "achievementStats": {
+    "toppersFeatured": "प्रदर्शित टॉपर्स",
+    "highScorers": "90%+ अंक प्राप्त",
+    "highestScore": "उच्चतम अंक",
+    "averageScore": "औसत अंक"
+  },
+  "featuredToppers": {
+    "heading": "प्रमुख टॉपर्स",
+    "description": "इस वर्ष के विद्यालय के सर्वोच्च अंक प्राप्त विद्यार्थी।",
+    "schoolTopper": "विद्यालय टॉपर",
+    "runnerUp": "उपविजेता",
+    "secondRunnerUp": "द्वितीय उपविजेता",
+    "classX": "कक्षा X",
+    "classXII": "कक्षा XII",
+    "streamScience": "विज्ञान",
+    "streamCommerce": "वाणिज्य",
+    "streamArts": "कला"
+  },
+  "topperGrid": {
+    "rankSr": "रैंक {rank}",
+    "marksLabel": "अंक"
+  },
+  "achievementsCta": {
+    "heading": "हर उपलब्धि की शुरुआत एक अवसर से होती है",
+    "description": "जानें कि कैसे हमारा शिक्षण वातावरण विद्यार्थियों को उनकी क्षमता प्राप्त करने में मदद करता है।",
+    "exploreAcademics": "शैक्षणिक कार्यक्रम देखें",
+    "visitCampus": "हमारा परिसर देखें"
+  },
+  "page": {
+    "academicYear": "शैक्षणिक वर्ष",
+    "emptyState": "टॉपर्स की सूची शीघ्र प्रकाशित की जाएगी।",
+    "classXHeading": "कक्षा X के टॉपर्स",
+    "classXIIHeading": "कक्षा XII के टॉपर्स",
+    "streamScience": "विज्ञान",
+    "streamCommerce": "वाणिज्य",
+    "streamArts": "कला"
+  }
+}

@@ -1,14 +1,15 @@
+import { useTranslations } from "next-intl";
+
 export function FacilitiesOverview({ items }) {
+  const t = useTranslations("facilities.facilitiesOverview");
+
   return (
     <section className="space-y-8">
       <div className="mx-auto max-w-2xl space-y-2 text-center">
         <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-          Everything Your Child Needs, All on One Campus
+          {t("heading")}
         </h2>
-        <p className="text-muted-foreground">
-          A quick look at the spaces and amenities that support learning and
-          student life every day.
-        </p>
+        <p className="text-muted-foreground">{t("description")}</p>
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">

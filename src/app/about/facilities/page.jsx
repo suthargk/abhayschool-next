@@ -1,3 +1,5 @@
+import { getTranslations } from "next-intl/server";
+
 import { prisma } from "@/lib/prisma";
 
 import { FacilityHero } from "./components/facility-hero";
@@ -9,6 +11,7 @@ import { FacilitiesFaq } from "./components/facilities-faq";
 export const revalidate = 60;
 
 export default async function FacilitiesPage() {
+  const t = await getTranslations("facilities.page");
   const items = await prisma.facility.findMany({
     where: { status: "PUBLISHED" },
     orderBy: [{ section: "asc" }, { position: "asc" }],
@@ -29,9 +32,7 @@ export default async function FacilitiesPage() {
       <div className="mx-auto max-w-6xl space-y-20 px-4 py-16 sm:px-6 lg:px-8">
         {!hasContent ? (
           <div className="flex flex-col items-center gap-3 rounded-lg border border-dashed p-10 text-center">
-            <p className="text-sm text-muted-foreground">
-              Facilities will be published here soon.
-            </p>
+            <p className="text-sm text-muted-foreground">{t("emptyState")}</p>
           </div>
         ) : (
           <>
@@ -39,17 +40,17 @@ export default async function FacilitiesPage() {
             {featured.length > 0 ? <FeaturedFacilities items={featured} /> : null}
             {sports.length > 0 ? (
               <FacilityHighlightList
-                eyebrow="Sports & Activities"
-                title="A Campus Built for More Than Academics"
-                description="From the playing field to the stage, students have space to compete, create, and grow beyond the classroom."
+                eyebrow={t("sportsSection.eyebrow")}
+                title={t("sportsSection.title")}
+                description={t("sportsSection.description")}
                 items={sports}
               />
             ) : null}
             {safety.length > 0 ? (
               <FacilityHighlightList
-                eyebrow="Student Wellbeing"
-                title="A Safe & Caring Campus"
-                description="Every facility on campus is backed by the same commitment: keeping students safe, healthy, and looked after."
+                eyebrow={t("safetySection.eyebrow")}
+                title={t("safetySection.title")}
+                description={t("safetySection.description")}
                 items={safety}
               />
             ) : null}

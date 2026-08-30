@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Search } from "lucide-react";
 
 import { Input } from "@/components/ui/input";
@@ -16,6 +17,7 @@ import {
 const ALL = "all";
 
 export function FacultyFilters({ initialQuery, initialDepartment, initialGrade, initialSubject, departments, grades, subjects }) {
+  const t = useTranslations("faculty.facultyFilters");
   const router = useRouter();
   const searchParams = useSearchParams();
   const [query, setQuery] = useState(initialQuery || "");
@@ -47,7 +49,7 @@ export function FacultyFilters({ initialQuery, initialDepartment, initialGrade, 
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={handleSearchKeyDown}
           onBlur={() => pushParams({ q: query })}
-          placeholder="Search faculty..."
+          placeholder={t("searchPlaceholder")}
           className="pl-9"
         />
       </div>
@@ -55,10 +57,10 @@ export function FacultyFilters({ initialQuery, initialDepartment, initialGrade, 
       {departments.length > 0 ? (
         <Select value={initialDepartment || ALL} onValueChange={(value) => pushParams({ department: value })}>
           <SelectTrigger className="h-9 w-full sm:w-48">
-            <SelectValue placeholder="All Departments" />
+            <SelectValue placeholder={t("allDepartments")} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value={ALL}>All Departments</SelectItem>
+            <SelectItem value={ALL}>{t("allDepartments")}</SelectItem>
             {departments.map((department) => (
               <SelectItem key={department} value={department}>
                 {department}
@@ -71,10 +73,10 @@ export function FacultyFilters({ initialQuery, initialDepartment, initialGrade, 
       {grades.length > 0 ? (
         <Select value={initialGrade || ALL} onValueChange={(value) => pushParams({ grade: value })}>
           <SelectTrigger className="h-9 w-full sm:w-40">
-            <SelectValue placeholder="All Grades" />
+            <SelectValue placeholder={t("allGrades")} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value={ALL}>All Grades</SelectItem>
+            <SelectItem value={ALL}>{t("allGrades")}</SelectItem>
             {grades.map((grade) => (
               <SelectItem key={grade} value={grade}>
                 {grade}
@@ -87,10 +89,10 @@ export function FacultyFilters({ initialQuery, initialDepartment, initialGrade, 
       {subjects.length > 0 ? (
         <Select value={initialSubject || ALL} onValueChange={(value) => pushParams({ subject: value })}>
           <SelectTrigger className="h-9 w-full sm:w-48">
-            <SelectValue placeholder="All Subjects" />
+            <SelectValue placeholder={t("allSubjects")} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value={ALL}>All Subjects</SelectItem>
+            <SelectItem value={ALL}>{t("allSubjects")}</SelectItem>
             {subjects.map((subject) => (
               <SelectItem key={subject} value={subject}>
                 {subject}

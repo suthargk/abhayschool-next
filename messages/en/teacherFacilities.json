@@ -1,0 +1,59 @@
+{
+  "sections": {
+    "OVERVIEW": "Overview",
+    "SPORTS": "Sports & Activities",
+    "SAFETY": "Safety & Wellbeing",
+    "FAQ": "FAQ"
+  },
+  "list": {
+    "heading": "Facilities",
+    "description": "Facilities you've added.",
+    "addFacility": "Add facility",
+    "empty": "You haven't added any facilities in this section yet.",
+    "columnTitle": "Title",
+    "columnQuestion": "Question",
+    "columnSummary": "Summary",
+    "columnAnswer": "Answer",
+    "columnFeatured": "Featured",
+    "featuredBadge": "Featured",
+    "deleteDialog": {
+      "title": "Delete {label}?",
+      "description": "This can't be undone. This will permanently delete this facility entry."
+    },
+    "toast": {
+      "deleting": "Deleting {label}…",
+      "deleted": "Deleted {label}",
+      "deleteFailed": "Failed to delete {label}"
+    }
+  },
+  "form": {
+    "editHeading": "Edit facility",
+    "newHeading": "Add facility",
+    "sectionLabel": "Section",
+    "sectionHelp": "Which part of the public Facilities page this entry appears in.",
+    "photoLabel": "Photo",
+    "uploading": "Uploading…",
+    "photoHelp": "Optional. The icon below is shown on the public site if left blank.",
+    "iconLabel": "Icon",
+    "iconPlaceholder": "e.g. 🏫",
+    "iconHelp": "A single emoji shown when no photo is set.",
+    "titleLabel": "Title",
+    "questionLabel": "Question",
+    "titlePlaceholder": "e.g. Smart Classrooms",
+    "questionPlaceholder": "e.g. Does the school have a science laboratory?",
+    "summaryLabel": "Short description",
+    "answerLabel": "Answer",
+    "summaryPlaceholder": "A one or two line blurb shown on the overview card.",
+    "answerPlaceholder": "e.g. Yes, we have fully equipped Physics, Chemistry, and Biology labs.",
+    "featuredCheckboxLabel": "Feature this facility in its own larger section",
+    "highlightsLabel": "Highlights",
+    "highlightsPlaceholder": "One highlight per line, e.g.\nInteractive smart boards\nDigital learning resources\nComfortable seating",
+    "highlightsHelp": "Shown as a bullet list next to the photo in the Featured Facilities section.",
+    "saveChanges": "Save changes",
+    "publish": "Publish",
+    "saving": "Saving…",
+    "publishNote": "This facility is published immediately and appears on the school website right away.",
+    "uploadFailed": "Upload failed",
+    "saveFailed": "Save failed"
+  }
+}

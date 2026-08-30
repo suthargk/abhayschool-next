@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -11,6 +12,8 @@ import { TestimonialDeleteDialog } from "./testimonial-table/delete-dialog";
 import { TestimonialTable } from "./testimonial-table";
 
 export function TestimonialAdmin({ initialItems, canPublish }) {
+  const t = useTranslations("superAdminTestimonials.admin");
+  const tDeleteDialog = useTranslations("superAdminTestimonials.deleteDialog");
   const router = useRouter();
   const [items, setItems] = useState(initialItems);
   const [pendingId, setPendingId] = useState(null);
@@ -46,7 +49,7 @@ export function TestimonialAdmin({ initialItems, canPublish }) {
     if (selectedItems.length === 0) return;
     setDeleteTarget({
       ids: selectedItems.map((item) => item.id),
-      label: `${selectedItems.length} testimonial${selectedItems.length === 1 ? "" : "s"}`,
+      label: tDeleteDialog("bulkDeleteLabel", { count: selectedItems.length }),
     });
   }
 
@@ -89,7 +92,7 @@ export function TestimonialAdmin({ initialItems, canPublish }) {
         <Button asChild size="sm">
           <Link href="/super-admin/homepage/testimonials/new">
             <Plus className="size-4" />
-            Add testimonial
+            {t("addTestimonial")}
           </Link>
         </Button>
       </div>

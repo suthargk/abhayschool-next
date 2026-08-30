@@ -1,0 +1,53 @@
+{
+  "hero": {
+    "badge": "For Students & Parents",
+    "titleLine1": "Homework &",
+    "titleLine2": "Assignments",
+    "description": "Stay up to date with class assignments, upcoming deadlines, and learning activities from our teachers.",
+    "browseHomework": "Browse homework"
+  },
+  "summaryStats": {
+    "assigned": "Assigned",
+    "dueSoon": "Due Soon",
+    "overdue": "Overdue",
+    "thisWeek": "This Week"
+  },
+  "list": {
+    "empty": "No homework found. Try a different search or filter.",
+    "overdue": "Overdue",
+    "today": "Today",
+    "tomorrow": "Tomorrow"
+  },
+  "card": {
+    "due": "Due"
+  },
+  "dueStatus": {
+    "overdue": "Overdue",
+    "dueToday": "Due Today",
+    "dueTomorrow": "Due Tomorrow",
+    "dueSoon": "Due Soon",
+    "upcoming": "Upcoming"
+  },
+  "explorer": {
+    "rangeThisWeek": "This Week",
+    "rangeNextWeek": "Next Week",
+    "rangeAll": "All",
+    "updating": "Updating…",
+    "searchPlaceholder": "Search homework…",
+    "allClasses": "All classes",
+    "allSubjects": "All subjects",
+    "apply": "Apply",
+    "showingResults": "Showing {from}–{to} of {total}",
+    "previous": "← Previous",
+    "next": "Next →",
+    "pageOf": "Page {page} of {totalPages}"
+  },
+  "detail": {
+    "backToHomework": "Back to Homework",
+    "teacher": "Teacher",
+    "assigned": "Assigned",
+    "due": "Due",
+    "instructions": "Instructions",
+    "resources": "Resources"
+  }
+}

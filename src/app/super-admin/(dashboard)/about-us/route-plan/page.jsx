@@ -1,11 +1,15 @@
-export default function SuperAdminRoutePlanPage() {
+import { getTranslations } from "next-intl/server";
+
+export default async function SuperAdminRoutePlanPage() {
+  const t = await getTranslations("superAdminRoutePlan");
+
   return (
     <div className="space-y-2">
       <h1 className="text-2xl font-semibold tracking-tight">
-        Route plan of school buses
+        {t("heading")}
       </h1>
       <p className="text-muted-foreground">
-        Super admin placeholder for bus route planning.
+        {t("description")}
       </p>
     </div>
   );

@@ -1,0 +1,35 @@
+{
+  "page": {
+    "heading": "अक्सर पूछे जाने वाले प्रश्न",
+    "description": "आपके द्वारा जोड़े गए प्रश्न-उत्तर।",
+    "addButton": "प्रश्न जोड़ें"
+  },
+  "form": {
+    "newHeading": "प्रश्न जोड़ें",
+    "editHeading": "संपादित करें",
+    "questionLabel": "प्रश्न",
+    "questionPlaceholder": "जैसे प्रवेश प्रक्रिया क्या है?",
+    "answerLabel": "उत्तर",
+    "answerPlaceholder": "एकॉर्डियन में दिखाया जाने वाला एक स्पष्ट, संक्षिप्त उत्तर लिखें।",
+    "saving": "सहेजा जा रहा है…",
+    "saveChanges": "परिवर्तन सहेजें",
+    "publish": "प्रकाशित करें",
+    "publishNote": "यह प्रश्न तुरंत प्रकाशित हो जाता है और तत्काल स्कूल की वेबसाइट पर दिखाई देता है।",
+    "saveFailed": "सहेजना विफल"
+  },
+  "list": {
+    "searchPlaceholder": "प्रश्न या उत्तर से खोजें…",
+    "noResultsFiltered": "आपकी खोज से मेल खाता कोई प्रश्न नहीं मिला।",
+    "noResultsEmpty": "आपने अभी तक कोई प्रश्न नहीं जोड़ा है।",
+    "questionColumn": "प्रश्न",
+    "answerColumn": "उत्तर",
+    "deleteTitle": "{label} हटाएँ?",
+    "deleteDescription": "इसे पूर्ववत नहीं किया जा सकता। इससे यह प्रश्न स्थायी रूप से हट जाएगा।",
+    "deleteCancel": "रद्द करें",
+    "deleteConfirm": "हटाएँ",
+    "deleting": "हटाया जा रहा है…",
+    "deletingToast": "{label} हटाया जा रहा है…",
+    "deletedToast": "{label} हटा दिया गया",
+    "deleteFailedToast": "{label} हटाने में विफल"
+  }
+}

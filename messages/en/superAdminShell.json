@@ -1,0 +1,19 @@
+{
+  "dashboard": "Dashboard",
+  "admissions": "Admissions",
+  "sectionHomepage": "Homepage",
+  "sectionAboutUs": "About us",
+  "sectionAcademic": "Academic",
+  "sectionAchievements": "Achievements",
+  "busRoutePlan": "Route plan of school buses",
+  "homework": "Homework",
+  "teachers": "Teachers",
+  "superAdmin": "Super admin",
+  "admin": "Admin",
+  "editor": "Editor",
+  "signedIn": "Signed in",
+  "viewPublicSite": "View public site",
+  "logOut": "Log out",
+  "notifications": "Notifications",
+  "noNewNotifications": "No new notifications."
+}

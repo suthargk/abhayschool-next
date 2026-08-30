@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 
 import { prisma } from "@/lib/prisma";
 import { Button } from "@/components/ui/button";
@@ -21,6 +22,7 @@ const CATEGORY_VALUES = GALLERY_CATEGORIES.map((c) => c.value);
 const CARD_ASPECTS = ["aspect-[4/3]", "aspect-square", "aspect-[3/4]"];
 
 export default async function GalleryPage({ searchParams }) {
+  const t = await getTranslations("gallery.page");
   const params = await searchParams;
   const q = typeof params.q === "string" ? params.q.trim() : "";
   const year = Number(params.year) || null;
@@ -43,11 +45,9 @@ export default async function GalleryPage({ searchParams }) {
         <section id="gallery-albums" className="scroll-mt-24 space-y-6">
           <div className="space-y-2 text-center">
             <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-              Photo Albums
+              {t("albumsHeading")}
             </h2>
-            <p className="text-muted-foreground">
-              Browse every album from our campus and events.
-            </p>
+            <p className="text-muted-foreground">{t("albumsDescription")}</p>
           </div>
 
           <GalleryCategoryFilters q={q} year={year} month={month} category={category} />
@@ -100,6 +100,7 @@ async function GalleryIntro() {
 }
 
 async function GalleryAlbums({ q, year, month, category, page }) {
+  const t = await getTranslations("gallery.page");
   const where = {
     status: "PUBLISHED",
     ...(q
@@ -179,8 +180,8 @@ async function GalleryAlbums({ q, year, month, category, page }) {
         albums={albums}
         emptyMessage={
           total === 0 && !isFiltered
-            ? "No albums published yet. Check back soon!"
-            : "No albums match your search."
+            ? t("emptyNoAlbums")
+            : t("emptyNoResults")
         }
       />
 
@@ -194,11 +195,11 @@ async function GalleryAlbums({ q, year, month, category, page }) {
             className={page <= 1 ? "pointer-events-none opacity-50" : ""}
           >
             <Link href={buildGalleryHref({ q, year, month, category, page: page - 1 })}>
-              ← Previous
+              {t("previous")}
             </Link>
           </Button>
           <span className="text-muted-foreground">
-            Page {page} of {totalPages}
+            {t("pageOf", { page, total: totalPages })}
           </span>
           <Button
             asChild
@@ -208,7 +209,7 @@ async function GalleryAlbums({ q, year, month, category, page }) {
             className={page >= totalPages ? "pointer-events-none opacity-50" : ""}
           >
             <Link href={buildGalleryHref({ q, year, month, category, page: page + 1 })}>
-              Next →
+              {t("next")}
             </Link>
           </Button>
         </div>

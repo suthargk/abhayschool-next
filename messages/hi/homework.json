@@ -1,0 +1,53 @@
+{
+  "hero": {
+    "badge": "विद्यार्थियों और अभिभावकों के लिए",
+    "titleLine1": "गृहकार्य एवं",
+    "titleLine2": "असाइनमेंट",
+    "description": "हमारे शिक्षकों द्वारा दी गई कक्षा असाइनमेंट, आगामी नियत तिथियों और शिक्षण गतिविधियों से अपडेट रहें।",
+    "browseHomework": "गृहकार्य देखें"
+  },
+  "summaryStats": {
+    "assigned": "सौंपा गया",
+    "dueSoon": "शीघ्र देय",
+    "overdue": "अतिदेय",
+    "thisWeek": "इस सप्ताह"
+  },
+  "list": {
+    "empty": "कोई गृहकार्य नहीं मिला। कृपया भिन्न खोज या फ़िल्टर आज़माएँ।",
+    "overdue": "अतिदेय",
+    "today": "आज",
+    "tomorrow": "कल"
+  },
+  "card": {
+    "due": "देय"
+  },
+  "dueStatus": {
+    "overdue": "अतिदेय",
+    "dueToday": "आज देय",
+    "dueTomorrow": "कल देय",
+    "dueSoon": "शीघ्र देय",
+    "upcoming": "आगामी"
+  },
+  "explorer": {
+    "rangeThisWeek": "इस सप्ताह",
+    "rangeNextWeek": "अगले सप्ताह",
+    "rangeAll": "सभी",
+    "updating": "अपडेट हो रहा है…",
+    "searchPlaceholder": "गृहकार्य खोजें…",
+    "allClasses": "सभी कक्षाएँ",
+    "allSubjects": "सभी विषय",
+    "apply": "लागू करें",
+    "showingResults": "{total} में से {from}–{to} दिखाया जा रहा है",
+    "previous": "← पिछला",
+    "next": "अगला →",
+    "pageOf": "{totalPages} में से पृष्ठ {page}"
+  },
+  "detail": {
+    "backToHomework": "गृहकार्य पर वापस जाएँ",
+    "teacher": "शिक्षक",
+    "assigned": "सौंपा गया",
+    "due": "नियत तिथि",
+    "instructions": "निर्देश",
+    "resources": "संसाधन"
+  }
+}

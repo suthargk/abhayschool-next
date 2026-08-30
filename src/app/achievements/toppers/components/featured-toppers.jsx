@@ -1,7 +1,18 @@
 import Image from "next/image";
 import { Crown, Medal, UserRound } from "lucide-react";
+import { useTranslations } from "next-intl";
 
-import { topperClassLabel, topperStreamLabel } from "@/data/topper-classes";
+// TOPPER_CLASSES/TOPPER_STREAMS values from @/data/topper-classes -> "achievements.featuredToppers" message keys
+const CLASS_LABEL_KEYS = {
+  CLASS_X: "classX",
+  CLASS_XII: "classXII",
+};
+
+const STREAM_LABEL_KEYS = {
+  SCIENCE: "streamScience",
+  COMMERCE: "streamCommerce",
+  ARTS: "streamArts",
+};
 
 const PODIUM_STYLE = {
   0: {
@@ -9,24 +20,24 @@ const PODIUM_STYLE = {
     badgeClassName: "bg-amber-400 text-amber-950",
     cardClassName:
       "sm:order-2 ring-2 ring-amber-400 shadow-[0_0_32px_-8px_rgba(251,191,36,0.7)] sm:-translate-y-4",
-    label: "School Topper",
+    labelKey: "schoolTopper",
   },
   1: {
     Icon: Medal,
     badgeClassName: "bg-slate-300 text-slate-900",
     cardClassName: "sm:order-1",
-    label: "Runner Up",
+    labelKey: "runnerUp",
   },
   2: {
     Icon: Medal,
     badgeClassName: "bg-orange-300 text-orange-950",
     cardClassName: "sm:order-3",
-    label: "Second Runner Up",
+    labelKey: "secondRunnerUp",
   },
 };
 
-function FeaturedCard({ topper, index }) {
-  const { Icon, badgeClassName, cardClassName, label } = PODIUM_STYLE[index];
+function FeaturedCard({ topper, index, t }) {
+  const { Icon, badgeClassName, cardClassName, labelKey } = PODIUM_STYLE[index];
 
   return (
     <div
@@ -55,12 +66,12 @@ function FeaturedCard({ topper, index }) {
 
       <div className="space-y-1 p-5 text-center">
         <span className="text-xs font-medium uppercase tracking-wide text-violet-600 dark:text-violet-400">
-          {label}
+          {t(labelKey)}
         </span>
         <h3 className="text-lg font-semibold leading-snug">{topper.name}</h3>
         <p className="text-sm text-muted-foreground">
-          {topperClassLabel(topper.class)}
-          {topper.stream ? ` — ${topperStreamLabel(topper.stream)}` : ""}
+          {t(CLASS_LABEL_KEYS[topper.class])}
+          {topper.stream ? ` — ${t(STREAM_LABEL_KEYS[topper.stream])}` : ""}
         </p>
         <p className="text-2xl font-semibold tracking-tight">
           {topper.percentage}%
@@ -71,22 +82,22 @@ function FeaturedCard({ topper, index }) {
 }
 
 export function FeaturedToppers({ toppers }) {
+  const t = useTranslations("achievements.featuredToppers");
+
   if (toppers.length === 0) return null;
 
   return (
     <section className="space-y-6">
       <div className="mx-auto max-w-2xl space-y-2 text-center">
         <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-          Featured Toppers
+          {t("heading")}
         </h2>
-        <p className="text-muted-foreground">
-          This year&apos;s highest-scoring students across the school.
-        </p>
+        <p className="text-muted-foreground">{t("description")}</p>
       </div>
 
       <div className="grid grid-cols-1 items-end gap-6 sm:grid-cols-3">
         {toppers.map((topper, index) => (
-          <FeaturedCard key={topper.id} topper={topper} index={index} />
+          <FeaturedCard key={topper.id} topper={topper} index={index} t={t} />
         ))}
       </div>
     </section>

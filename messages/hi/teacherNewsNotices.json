@@ -1,0 +1,60 @@
+{
+  "page": {
+    "heading": "समाचार एवं सूचनाएँ",
+    "description": "आपके द्वारा पोस्ट किए गए समाचार एवं सूचनाएँ।",
+    "addItem": "आइटम जोड़ें"
+  },
+  "newPage": {
+    "heading": "समाचार या सूचना जोड़ें"
+  },
+  "editPage": {
+    "heading": "समाचार या सूचना संपादित करें"
+  },
+  "form": {
+    "contentTypeLabel": "सामग्री प्रकार",
+    "typeNews": "समाचार",
+    "typeNotice": "सूचना",
+    "categoryLabel": "श्रेणी",
+    "categoryPlaceholder": "एक श्रेणी चुनें",
+    "academicYearLabel": "शैक्षणिक वर्ष",
+    "academicYearPlaceholder": "2026-27",
+    "titleLabel": "शीर्षक",
+    "titlePlaceholder": "नया उत्पाद अपडेट",
+    "summaryLabel": "संक्षिप्त विवरण",
+    "summaryPlaceholder": "सूचियों में दिखाया जाने वाला एक या दो वाक्यों का सारांश।",
+    "pinnedLabel": "पिन किया गया — सूची के शीर्ष पर रखें",
+    "featuredLabel": "फ़ीचर्ड — होमपेज पर हाइलाइट करें",
+    "coverImageLabel": "कवर छवि",
+    "uploading": "अपलोड हो रहा है…",
+    "uploadFailed": "अपलोड विफल रहा",
+    "contentLabel": "सामग्री",
+    "contentPlaceholder": "यहाँ लेख या सूचना लिखें…",
+    "eventDetailsLabel": "कार्यक्रम विवरण (वैकल्पिक)",
+    "eventDateLabel": "कार्यक्रम की तिथि",
+    "eventTimeLabel": "समय",
+    "eventTimePlaceholder": "सुबह 9:00 – दोपहर 1:00",
+    "venueLabel": "स्थान",
+    "venuePlaceholder": "स्कूल सभागार",
+    "expiryDateLabel": "समाप्ति तिथि (वैकल्पिक)",
+    "expiryDateHelp": "इस तिथि के बाद सूचना सक्रिय सूची से हट जाती है, लेकिन संग्रह में उपलब्ध रहती है।",
+    "attachmentsLabel": "संलग्नक",
+    "saveFailed": "सहेजना विफल रहा",
+    "saving": "सहेजा जा रहा है…",
+    "saveChanges": "परिवर्तन सहेजें",
+    "publish": "प्रकाशित करें",
+    "publishNote": "यह तुरंत प्रकाशित हो जाता है और स्कूल की वेबसाइट पर तुरंत दिखाई देने लगता है।"
+  },
+  "list": {
+    "searchPlaceholder": "शीर्षक से खोजें…",
+    "noResultsFiltered": "आपकी खोज से मेल खाता कोई आइटम नहीं मिला।",
+    "noResultsEmpty": "आपने अभी तक कुछ भी पोस्ट नहीं किया है।",
+    "typeNews": "समाचार",
+    "typeNotice": "सूचना",
+    "titleColumn": "शीर्षक",
+    "typeColumn": "प्रकार",
+    "postedColumn": "पोस्ट किया गया",
+    "deletingToast": "{label} हटाया जा रहा है…",
+    "deletedToast": "{label} हटा दिया गया",
+    "deleteFailedToast": "{label} हटाने में विफल"
+  }
+}

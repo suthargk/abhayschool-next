@@ -1,4 +1,5 @@
 import { CalendarDays, GraduationCap, Users, BookOpen } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 function StatTile({ icon: Icon, label, value }) {
   return (
@@ -13,30 +14,26 @@ function StatTile({ icon: Icon, label, value }) {
 }
 
 export function WhoWeAre({ facultyCount }) {
+  const t = useTranslations("about.whoWeAre");
+
   const stats = [
-    { icon: CalendarDays, label: "Established", value: 1998 },
-    { icon: Users, label: "Students", value: "700+" },
+    { icon: CalendarDays, label: t("stats.established"), value: 1998 },
+    { icon: Users, label: t("stats.students"), value: "700+" },
     {
       icon: GraduationCap,
-      label: "Faculty",
+      label: t("stats.faculty"),
       value: facultyCount > 0 ? `${facultyCount}+` : "—",
     },
-    { icon: BookOpen, label: "Classes", value: "Nursery–XII" },
+    { icon: BookOpen, label: t("stats.classes"), value: t("stats.classesValue") },
   ];
 
   return (
     <section className="space-y-10">
       <div className="mx-auto max-w-2xl space-y-4 text-center">
         <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-          A Place to Learn, Grow & Belong
+          {t("heading")}
         </h2>
-        <p className="text-muted-foreground">
-          Shri Abhay Nobles Senior Secondary School is committed to providing
-          a supportive and engaging learning environment where students
-          develop academically, socially, and personally. Affiliated with the
-          Rajasthan Board of Secondary Education (RBSE), we welcome students
-          from Nursery through Class XII.
-        </p>
+        <p className="text-muted-foreground">{t("description")}</p>
       </div>
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">

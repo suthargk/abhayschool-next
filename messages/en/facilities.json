@@ -1,0 +1,32 @@
+{
+  "facilityHero": {
+    "titleLine1": "Facilities That Inspire",
+    "titleLine2": "Learning & Growth",
+    "description": "Explore the modern spaces, technology, sports facilities, and student amenities available across our campus.",
+    "exploreCampus": "Explore Our Campus"
+  },
+  "facilitiesOverview": {
+    "heading": "Everything Your Child Needs, All on One Campus",
+    "description": "A quick look at the spaces and amenities that support learning and student life every day."
+  },
+  "featuredFacilities": {
+    "heading": "Featured Facilities",
+    "description": "A closer look at some of the spaces students use every day."
+  },
+  "facilitiesFaq": {
+    "heading": "Frequently Asked Questions"
+  },
+  "page": {
+    "emptyState": "Facilities will be published here soon.",
+    "sportsSection": {
+      "eyebrow": "Sports & Activities",
+      "title": "A Campus Built for More Than Academics",
+      "description": "From the playing field to the stage, students have space to compete, create, and grow beyond the classroom."
+    },
+    "safetySection": {
+      "eyebrow": "Student Wellbeing",
+      "title": "A Safe & Caring Campus",
+      "description": "Every facility on campus is backed by the same commitment: keeping students safe, healthy, and looked after."
+    }
+  }
+}

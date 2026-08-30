@@ -1,0 +1,80 @@
+{
+  "galleryHero": {
+    "badge": "Gallery",
+    "headingLine1": "Our School",
+    "headingLine2": "In Pictures",
+    "description": "Explore moments from our campus, classrooms, celebrations, activities, and student life.",
+    "exploreGallery": "Explore Gallery",
+    "photoCount": "{count}+ photos across our albums",
+    "fallbackAlt": "Gallery photo",
+    "fallbackTitle": "Our school campus"
+  },
+  "categoryFilters": {
+    "all": "All"
+  },
+  "categories": {
+    "campus": "Campus",
+    "events": "Events",
+    "sports": "Sports",
+    "academics": "Academics",
+    "activities": "Activities",
+    "celebrations": "Celebrations",
+    "trips": "Trips"
+  },
+  "filters": {
+    "searchPlaceholder": "Search albums…",
+    "allYears": "All years",
+    "allMonths": "All months",
+    "search": "Search",
+    "searching": "Searching…",
+    "clear": "Clear",
+    "months": [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December"
+    ]
+  },
+  "featuredAlbum": {
+    "heading": "Featured Album",
+    "photoCount": "{count, plural, one {# Photo} other {# Photos}} →"
+  },
+  "latestMoments": {
+    "heading": "Latest From Our Campus",
+    "description": "Recent moments from across the school.",
+    "viewAll": "View All Photos →"
+  },
+  "albumGrid": {
+    "photoCount": "{count, plural, one {# photo} other {# photos}}"
+  },
+  "yearArchive": {
+    "heading": "Year Archive",
+    "albumCount": "{count, plural, one {# album} other {# albums}}"
+  },
+  "cta": {
+    "heading": "Come See It For Yourself",
+    "description": "Pictures only tell part of the story. Visit our campus and experience our facilities and school life in person.",
+    "exploreCampus": "Explore Campus",
+    "meetFaculty": "Meet Our Faculty"
+  },
+  "page": {
+    "albumsHeading": "Photo Albums",
+    "albumsDescription": "Browse every album from our campus and events.",
+    "emptyNoAlbums": "No albums published yet. Check back soon!",
+    "emptyNoResults": "No albums match your search.",
+    "previous": "← Previous",
+    "next": "Next →",
+    "pageOf": "Page {page} of {total}"
+  },
+  "albumDetail": {
+    "backToGallery": "Back to Gallery"
+  }
+}

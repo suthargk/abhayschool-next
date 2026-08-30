@@ -1,15 +1,19 @@
+import { useTranslations } from "next-intl";
+
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function AcademicsLoading() {
+  const t = useTranslations("academics.page");
+
   return (
     <div className="min-h-screen px-4 pb-16 pt-[100px] md:px-10 md:pt-[102px] lg:px-20">
       <div className="mx-auto max-w-3xl space-y-10">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight md:text-3xl">
-            Academics
+            {t("heading")}
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Programs, updates, and stories from our academic team.
+            {t("description")}
           </p>
         </div>
 

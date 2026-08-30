@@ -1,0 +1,51 @@
+{
+  "page": {
+    "heading": "Gallery",
+    "description": "Photo albums you've published.",
+    "addButton": "Add album"
+  },
+  "form": {
+    "newHeading": "Add album",
+    "editHeading": "Edit album",
+    "titleLabel": "Title",
+    "titlePlaceholder": "Annual Sports Day 2026",
+    "eventDateLabel": "Event date",
+    "pickDate": "Pick a date",
+    "categoryLabel": "Category",
+    "featuredLabel": "Featured album",
+    "descriptionLabel": "Description",
+    "descriptionPlaceholder": "A short description of the event.",
+    "photosLabel": "Photos",
+    "noPhotos": "No photos yet. Add some below.",
+    "reorderHelp": "Drag photos to reorder. Click the star to set the cover photo.",
+    "uploading": "Uploading…",
+    "cover": "Cover",
+    "setCover": "Set cover",
+    "eventDateRequired": "Event date is required",
+    "uploadFailed": "Failed to upload {fileName}",
+    "saving": "Saving…",
+    "saveChanges": "Save changes",
+    "publish": "Publish",
+    "publishNote": "This album is published immediately and appears on the school website right away.",
+    "saveFailed": "Save failed"
+  },
+  "list": {
+    "searchPlaceholder": "Search by title or description…",
+    "clearFilters": "Clear filters",
+    "noResultsFiltered": "No albums match your search.",
+    "noResultsEmpty": "You haven't published any albums yet.",
+    "titleColumn": "Title",
+    "categoryColumn": "Category",
+    "eventDateColumn": "Event date",
+    "photosColumn": "Photos",
+    "photoCount": "{count, plural, one {# photo} other {# photos}}",
+    "deleteTitle": "Delete {label}?",
+    "deleteDescription": "This can't be undone. This will permanently delete this album and its photos.",
+    "deleteCancel": "Cancel",
+    "deleteConfirm": "Delete",
+    "deleting": "Deleting…",
+    "deletingToast": "Deleting {label}…",
+    "deletedToast": "Deleted {label}",
+    "deleteFailedToast": "Failed to delete {label}"
+  }
+}

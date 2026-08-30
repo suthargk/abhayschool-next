@@ -1,3 +1,5 @@
+import { getTranslations } from "next-intl/server";
+
 import {
   Accordion,
   AccordionContent,
@@ -28,6 +30,7 @@ function FaqColumn({ items }) {
 }
 
 const FrequentlyAskQuestions = async () => {
+  const t = await getTranslations("landing.faq");
   const faqs = await prisma.faq.findMany({
     where: { status: "PUBLISHED" },
     orderBy: { position: "asc" },
@@ -42,11 +45,10 @@ const FrequentlyAskQuestions = async () => {
     <section className="flex flex-col gap-10 items-center px-4">
       <div>
         <h4 className="text-2xl sm:text-3xl font-semibold mb-2 text-center">
-          <span>Frequently Asked Questions</span>
+          <span>{t("heading")}</span>
         </h4>
         <div className="text-zinc-700 text-center dark:text-zinc-500 max-w-md mx-auto">
-          Find answers to common queries about our school, including admissions,
-          academics, facilities, and more.
+          {t("description")}
         </div>
       </div>
       <div className="flex flex-col lg:flex-row gap-4 sm:px-10 md:px-20 lg:px-36 w-full">

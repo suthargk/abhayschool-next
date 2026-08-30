@@ -1,0 +1,42 @@
+{
+  "page": {
+    "heading": "Academic Blog",
+    "description": "Manage posts shown on the Academics page.",
+    "create": "Create"
+  },
+  "newPage": {
+    "heading": "Create academic post"
+  },
+  "editPage": {
+    "heading": "Edit"
+  },
+  "form": {
+    "titleLabel": "Title",
+    "titlePlaceholder": "Preparing for board exams",
+    "summaryLabel": "Short description",
+    "summaryPlaceholder": "A one or two sentence summary shown in lists.",
+    "coverImageLabel": "Cover image",
+    "uploading": "Uploading…",
+    "contentLabel": "Content",
+    "contentPlaceholder": "Write the post here…",
+    "uploadFailed": "Upload failed",
+    "saveFailed": "Save failed",
+    "saveChanges": "Save changes",
+    "saveDraft": "Save draft"
+  },
+  "table": {
+    "titleHeader": "Title",
+    "columns": {
+      "status": "Status",
+      "author": "Author",
+      "created": "Created"
+    },
+    "columnsButton": "Columns",
+    "toggleColumns": "Toggle columns",
+    "searchPlaceholder": "Search by title or author...",
+    "deleteSelected": "Delete selected",
+    "emptyNoPosts": "No academic posts yet.",
+    "actionsSr": "Actions",
+    "bulkDeleteLabel": "{count, plural, one {# item} other {# items}}"
+  }
+}

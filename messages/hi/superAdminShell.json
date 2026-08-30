@@ -1,0 +1,19 @@
+{
+  "dashboard": "डैशबोर्ड",
+  "admissions": "प्रवेश",
+  "sectionHomepage": "होमपेज",
+  "sectionAboutUs": "हमारे बारे में",
+  "sectionAcademic": "शैक्षणिक",
+  "sectionAchievements": "उपलब्धियाँ",
+  "busRoutePlan": "स्कूल बस मार्ग योजना",
+  "homework": "गृहकार्य",
+  "teachers": "शिक्षक",
+  "superAdmin": "सुपर एडमिन",
+  "admin": "एडमिन",
+  "editor": "संपादक",
+  "signedIn": "साइन इन है",
+  "viewPublicSite": "सार्वजनिक साइट देखें",
+  "logOut": "लॉग आउट",
+  "notifications": "सूचनाएँ",
+  "noNewNotifications": "कोई नई सूचना नहीं है।"
+}

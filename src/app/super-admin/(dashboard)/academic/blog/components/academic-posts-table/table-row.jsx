@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { format } from "date-fns";
 import { Check, Circle, CircleDashed, MoreHorizontal } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -26,6 +27,9 @@ export function AcademicPostRow({
   onTogglePublish,
   onDelete,
 }) {
+  const tCommon = useTranslations("common.actions");
+  const tStatus = useTranslations("common.status");
+
   return (
     <TableRow>
       {canPublish ? (
@@ -33,7 +37,7 @@ export function AcademicPostRow({
           <Checkbox
             checked={selected}
             onCheckedChange={onToggleSelected}
-            aria-label={`Select ${item.title}`}
+            aria-label={tCommon("select", { name: item.title })}
           />
         </TableCell>
       ) : null}
@@ -62,7 +66,7 @@ export function AcademicPostRow({
             ) : (
               <CircleDashed className="size-3.5" />
             )}
-            {item.status === "PUBLISHED" ? "Published" : "Draft"}
+            {item.status === "PUBLISHED" ? tStatus("published") : tStatus("draft")}
           </Badge>
         </TableCell>
       ) : null}
@@ -86,26 +90,26 @@ export function AcademicPostRow({
               disabled={pending}
             >
               <MoreHorizontal className="size-4" />
-              <span className="sr-only">Open menu</span>
+              <span className="sr-only">{tCommon("openMenu")}</span>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem asChild>
               <Link href={`/super-admin/academic/blog/${item.id}/edit`}>
-                Edit
+                {tCommon("edit")}
               </Link>
             </DropdownMenuItem>
             {canPublish ? (
               <>
                 <DropdownMenuItem onSelect={onTogglePublish}>
-                  {item.status === "PUBLISHED" ? "Unpublish" : "Publish"}
+                  {item.status === "PUBLISHED" ? tCommon("unpublish") : tCommon("publish")}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   className="text-destructive focus:text-destructive"
                   onSelect={onDelete}
                 >
-                  Delete
+                  {tCommon("delete")}
                 </DropdownMenuItem>
               </>
             ) : null}

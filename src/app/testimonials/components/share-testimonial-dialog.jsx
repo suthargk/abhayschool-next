@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { CheckCircle2, MessageSquarePlus } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -33,6 +34,7 @@ const initialState = {
 };
 
 export function ShareTestimonialDialog() {
+  const t = useTranslations("testimonials.shareDialog");
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState(STEPS.FORM);
   const [form, setForm] = useState(initialState);
@@ -71,7 +73,7 @@ export function ShareTestimonialDialog() {
     setError("");
 
     if (!form.name.trim() || !form.quote.trim() || !form.phone.trim()) {
-      setError("Please fill in your name, phone number, and testimonial.");
+      setError(t("form.missingFieldsError"));
       return;
     }
 
@@ -83,7 +85,7 @@ export function ShareTestimonialDialog() {
         body: JSON.stringify({ phone: form.phone }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Couldn't send the verification code");
+      if (!res.ok) throw new Error(data.error || t("form.otpRequestError"));
       setStep(STEPS.OTP);
       startCooldown();
     } catch (err) {
@@ -104,7 +106,7 @@ export function ShareTestimonialDialog() {
         body: JSON.stringify({ phone: form.phone }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Couldn't send the verification code");
+      if (!res.ok) throw new Error(data.error || t("form.otpRequestError"));
       startCooldown();
     } catch (err) {
       setError(err.message);
@@ -118,7 +120,7 @@ export function ShareTestimonialDialog() {
     setError("");
 
     if (!otp.trim()) {
-      setError("Enter the code we texted you.");
+      setError(t("otp.emptyCodeError"));
       return;
     }
 
@@ -130,7 +132,7 @@ export function ShareTestimonialDialog() {
         body: JSON.stringify({ ...form, otp }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Couldn't submit your testimonial");
+      if (!res.ok) throw new Error(data.error || t("otp.submitError"));
       setStep(STEPS.SUCCESS);
     } catch (err) {
       setError(err.message);
@@ -144,43 +146,40 @@ export function ShareTestimonialDialog() {
       <DialogTrigger asChild>
         <Button>
           <MessageSquarePlus className="size-4" />
-          Share Your Story
+          {t("trigger")}
         </Button>
       </DialogTrigger>
       <DialogContent>
         {step === STEPS.FORM ? (
           <form onSubmit={requestOtp} className="space-y-4">
             <DialogHeader>
-              <DialogTitle>Share your experience</DialogTitle>
-              <DialogDescription>
-                Tell other families what it&apos;s been like. We&apos;ll text a one-time code to
-                verify your number before your story is reviewed and published.
-              </DialogDescription>
+              <DialogTitle>{t("form.title")}</DialogTitle>
+              <DialogDescription>{t("form.description")}</DialogDescription>
             </DialogHeader>
 
             <div className="space-y-2">
-              <Label htmlFor="share-name">Your name</Label>
+              <Label htmlFor="share-name">{t("form.nameLabel")}</Label>
               <Input
                 id="share-name"
                 value={form.name}
                 onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
                 required
-                placeholder="e.g. Priya Sharma"
+                placeholder={t("form.namePlaceholder")}
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="share-designation">You are a...</Label>
+              <Label htmlFor="share-designation">{t("form.designationLabel")}</Label>
               <Input
                 id="share-designation"
                 value={form.designation}
                 onChange={(e) => setForm((f) => ({ ...f, designation: e.target.value }))}
-                placeholder="e.g. Parent of Class VI student"
+                placeholder={t("form.designationPlaceholder")}
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="share-quote">Your testimonial</Label>
+              <Label htmlFor="share-quote">{t("form.quoteLabel")}</Label>
               <Textarea
                 id="share-quote"
                 value={form.quote}
@@ -188,12 +187,12 @@ export function ShareTestimonialDialog() {
                 required
                 rows={4}
                 maxLength={1000}
-                placeholder="What has your experience with the school been like?"
+                placeholder={t("form.quotePlaceholder")}
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="share-phone">Mobile number</Label>
+              <Label htmlFor="share-phone">{t("form.phoneLabel")}</Label>
               <Input
                 id="share-phone"
                 type="tel"
@@ -201,11 +200,9 @@ export function ShareTestimonialDialog() {
                 value={form.phone}
                 onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
                 required
-                placeholder="10-digit mobile number"
+                placeholder={t("form.phonePlaceholder")}
               />
-              <p className="text-xs text-muted-foreground">
-                Used only to verify you and never shown publicly.
-              </p>
+              <p className="text-xs text-muted-foreground">{t("form.phoneHint")}</p>
             </div>
 
             {error ? (
@@ -216,7 +213,7 @@ export function ShareTestimonialDialog() {
 
             <DialogFooter>
               <Button type="submit" disabled={sendingOtp}>
-                {sendingOtp ? "Sending code…" : "Send verification code"}
+                {sendingOtp ? t("form.sendingCode") : t("form.sendCode")}
               </Button>
             </DialogFooter>
           </form>
@@ -225,14 +222,14 @@ export function ShareTestimonialDialog() {
         {step === STEPS.OTP ? (
           <form onSubmit={verifyAndSubmit} className="space-y-4">
             <DialogHeader>
-              <DialogTitle>Verify your number</DialogTitle>
+              <DialogTitle>{t("otp.title")}</DialogTitle>
               <DialogDescription>
-                Enter the code we texted to {form.phone}.
+                {t("otp.description", { phone: form.phone })}
               </DialogDescription>
             </DialogHeader>
 
             <div className="space-y-2">
-              <Label htmlFor="share-otp">Verification code</Label>
+              <Label htmlFor="share-otp">{t("otp.codeLabel")}</Label>
               <Input
                 id="share-otp"
                 inputMode="numeric"
@@ -241,7 +238,7 @@ export function ShareTestimonialDialog() {
                 onChange={(e) => setOtp(e.target.value)}
                 required
                 maxLength={6}
-                placeholder="6-digit code"
+                placeholder={t("otp.codePlaceholder")}
               />
             </div>
 
@@ -259,10 +256,12 @@ export function ShareTestimonialDialog() {
                 disabled={cooldown > 0 || sendingOtp}
                 onClick={resendOtp}
               >
-                {cooldown > 0 ? `Resend code (${cooldown}s)` : "Resend code"}
+                {cooldown > 0
+                  ? t("otp.resendCooldown", { seconds: cooldown })
+                  : t("otp.resend")}
               </Button>
               <Button type="submit" disabled={submitting}>
-                {submitting ? "Submitting…" : "Verify & submit"}
+                {submitting ? t("otp.submitting") : t("otp.submit")}
               </Button>
             </DialogFooter>
           </form>
@@ -272,14 +271,11 @@ export function ShareTestimonialDialog() {
           <div className="flex flex-col items-center gap-3 py-4 text-center">
             <CheckCircle2 className="size-10 text-emerald-500" />
             <DialogHeader>
-              <DialogTitle>Thank you!</DialogTitle>
-              <DialogDescription>
-                Your testimonial has been submitted and will appear here once our team reviews
-                and approves it.
-              </DialogDescription>
+              <DialogTitle>{t("success.title")}</DialogTitle>
+              <DialogDescription>{t("success.description")}</DialogDescription>
             </DialogHeader>
             <Button variant="outline" onClick={() => resetAndClose(false)}>
-              Close
+              {t("success.close")}
             </Button>
           </div>
         ) : null}

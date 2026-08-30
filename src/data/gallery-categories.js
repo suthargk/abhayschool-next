@@ -11,3 +11,14 @@ export const GALLERY_CATEGORIES = [
 export function galleryCategoryLabel(value) {
   return GALLERY_CATEGORIES.find((c) => c.value === value)?.label ?? value;
 }
+
+// value -> message key, for locale-aware display via the "gallery.categories" namespace.
+export const GALLERY_CATEGORY_LABEL_KEYS = {
+  CAMPUS: "campus",
+  EVENTS: "events",
+  SPORTS: "sports",
+  ACADEMICS: "academics",
+  ACTIVITIES: "activities",
+  CELEBRATIONS: "celebrations",
+  TRIPS: "trips",
+};

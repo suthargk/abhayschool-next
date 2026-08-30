@@ -1,0 +1,67 @@
+{
+  "hero": {
+    "eyebrow": "School Updates",
+    "headingLine1": "Stay Updated with",
+    "headingLine2": "News & Notices",
+    "description": "Announcements, events, achievements, and important information from our school — all in one place.",
+    "browseUpdates": "Browse updates"
+  },
+  "pinnedBanner": {
+    "importantNews": "Important news",
+    "importantNotice": "Important notice",
+    "publishedOn": "Published {date}",
+    "readFullStory": "Read full story",
+    "readFullNotice": "Read full notice"
+  },
+  "publicNewsCard": {
+    "readMore": "Read more"
+  },
+  "categories": {
+    "academic": "Academic",
+    "admissions": "Admissions",
+    "examination": "Examination",
+    "events": "Events",
+    "sports": "Sports",
+    "holidays": "Holidays",
+    "transport": "Transport",
+    "parentInformation": "Parent Information",
+    "achievements": "Achievements",
+    "general": "General"
+  },
+  "explorer": {
+    "updating": "Updating…",
+    "searchPlaceholder": "Search news and notices…",
+    "allCategories": "All categories",
+    "allYears": "All academic years",
+    "tabAll": "All",
+    "tabNews": "News",
+    "tabNotices": "Notices",
+    "tabEvents": "Events",
+    "rangeAny": "Any time",
+    "rangeLast7Days": "Last 7 days",
+    "rangeLast30Days": "Last 30 days",
+    "rangeThisYear": "This year",
+    "apply": "Apply",
+    "archiveYear": "Archive — {year}",
+    "clearYear": "Clear year",
+    "noResults": "No results found. Try a different search or filter.",
+    "typeNews": "News",
+    "showingResults": "Showing {from}–{to} of {total}",
+    "previousPage": "← Previous",
+    "nextPage": "Next →",
+    "pageOf": "Page {page} of {totalPages}",
+    "browseArchive": "Browse archive"
+  },
+  "detail": {
+    "backToList": "Back to News & Notices",
+    "pinned": "Pinned",
+    "typeNews": "News",
+    "typeNotice": "Notice",
+    "publishedOn": "Published {date}",
+    "lastUpdatedOn": "Last updated {date}",
+    "eventDate": "Event date",
+    "eventTime": "Time",
+    "venue": "Venue",
+    "attachments": "Attachments"
+  }
+}

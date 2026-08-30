@@ -1,0 +1,38 @@
+{
+  "page": {
+    "heading": "Principal's Message",
+    "description": "Manage the content and photo shown on the public Principal's Message page."
+  },
+  "form": {
+    "updating": "Updating…",
+    "unpublish": "Unpublish",
+    "publish": "Publish",
+    "nameLabel": "Principal's name",
+    "namePlaceholder": "e.g. Dr. Jane Doe",
+    "designationLabel": "Designation",
+    "designationPlaceholder": "e.g. Principal, Shri Abhay Nobles Senior Secondary School",
+    "heroQuoteLabel": "Hero quote",
+    "heroQuotePlaceholder": "A short line shown alongside the photo, e.g. “Education is not simply about achieving academic success…”",
+    "photoLabel": "Photo",
+    "signatureLabel": "Signature",
+    "uploading": "Uploading…",
+    "messageLabel": "Message",
+    "messagePlaceholder": "Dear Students, Parents, and Members of Our School Community, … Try covering: a welcome, your educational philosophy, character & values, academics, and your vision for the future — using subheadings to break it up.",
+    "aboutSectionTitle": "About the Principal (short profile)",
+    "principalSinceLabel": "Principal since",
+    "principalSincePlaceholder": "2021",
+    "experienceLabel": "Experience (years)",
+    "experiencePlaceholder": "20",
+    "qualificationLabel": "Qualification",
+    "qualificationPlaceholder": "M.Ed., Ph.D. in Education",
+    "interestsLabel": "Areas of interest",
+    "interestsPlaceholder": "Student development, educational leadership, STEM education",
+    "videoLabel": "Video message URL (YouTube or Vimeo, optional)",
+    "videoPlaceholder": "https://www.youtube.com/watch?v=…",
+    "save": "Save",
+    "saving": "Saving…",
+    "uploadFailedError": "Upload failed",
+    "saveFailedError": "Save failed",
+    "statusUpdateFailedError": "Failed to update status"
+  }
+}

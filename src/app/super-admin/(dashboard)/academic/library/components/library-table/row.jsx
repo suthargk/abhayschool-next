@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Check, Circle, CircleDashed, GripVertical, MoreHorizontal } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -28,6 +29,8 @@ export function LibraryRow({
   onTogglePublish,
   onDelete,
 }) {
+  const tCommon = useTranslations("common.actions");
+  const tStatus = useTranslations("common.status");
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: item.id,
     disabled: dragDisabled,
@@ -59,7 +62,7 @@ export function LibraryRow({
           <Checkbox
             checked={selected}
             onCheckedChange={(checked) => onToggleSelect(Boolean(checked))}
-            aria-label={`Select ${item.bookName}`}
+            aria-label={tCommon("select", { name: item.bookName })}
           />
         </TableCell>
       ) : null}
@@ -89,7 +92,7 @@ export function LibraryRow({
           ) : (
             <CircleDashed className="size-3.5" />
           )}
-          {item.status === "PUBLISHED" ? "Published" : "Draft"}
+          {item.status === "PUBLISHED" ? tStatus("published") : tStatus("draft")}
         </Badge>
       </TableCell>
       <TableCell>
@@ -97,21 +100,21 @@ export function LibraryRow({
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon" className="size-8" disabled={pending}>
               <MoreHorizontal className="size-4" />
-              <span className="sr-only">Open menu</span>
+              <span className="sr-only">{tCommon("openMenu")}</span>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem asChild>
-              <Link href={`/super-admin/academic/library/${item.id}/edit`}>Edit</Link>
+              <Link href={`/super-admin/academic/library/${item.id}/edit`}>{tCommon("edit")}</Link>
             </DropdownMenuItem>
             {canPublish ? (
               <>
                 <DropdownMenuItem onSelect={onTogglePublish}>
-                  {item.status === "PUBLISHED" ? "Unpublish" : "Publish"}
+                  {item.status === "PUBLISHED" ? tCommon("unpublish") : tCommon("publish")}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem className="text-destructive focus:text-destructive" onSelect={onDelete}>
-                  Delete
+                  {tCommon("delete")}
                 </DropdownMenuItem>
               </>
             ) : null}

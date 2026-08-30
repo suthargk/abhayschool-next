@@ -1,0 +1,60 @@
+{
+  "page": {
+    "heading": "News & Notices",
+    "description": "News and notices you've posted.",
+    "addItem": "Add item"
+  },
+  "newPage": {
+    "heading": "Add news or notice"
+  },
+  "editPage": {
+    "heading": "Edit news or notice"
+  },
+  "form": {
+    "contentTypeLabel": "Content type",
+    "typeNews": "News",
+    "typeNotice": "Notice",
+    "categoryLabel": "Category",
+    "categoryPlaceholder": "Select a category",
+    "academicYearLabel": "Academic year",
+    "academicYearPlaceholder": "2026-27",
+    "titleLabel": "Title",
+    "titlePlaceholder": "New product update",
+    "summaryLabel": "Short description",
+    "summaryPlaceholder": "A one or two sentence summary shown in lists.",
+    "pinnedLabel": "Pinned — keep at the top of the list",
+    "featuredLabel": "Featured — highlight on the homepage",
+    "coverImageLabel": "Cover image",
+    "uploading": "Uploading…",
+    "uploadFailed": "Upload failed",
+    "contentLabel": "Content",
+    "contentPlaceholder": "Write the article or notice here…",
+    "eventDetailsLabel": "Event details (optional)",
+    "eventDateLabel": "Event date",
+    "eventTimeLabel": "Time",
+    "eventTimePlaceholder": "9:00 AM – 1:00 PM",
+    "venueLabel": "Venue",
+    "venuePlaceholder": "School Auditorium",
+    "expiryDateLabel": "Expiry date (optional)",
+    "expiryDateHelp": "After this date the notice moves out of the active list but stays available in the archive.",
+    "attachmentsLabel": "Attachments",
+    "saveFailed": "Save failed",
+    "saving": "Saving…",
+    "saveChanges": "Save changes",
+    "publish": "Publish",
+    "publishNote": "This is published immediately and appears on the school website right away."
+  },
+  "list": {
+    "searchPlaceholder": "Search by title…",
+    "noResultsFiltered": "No items match your search.",
+    "noResultsEmpty": "You haven't posted anything yet.",
+    "typeNews": "News",
+    "typeNotice": "Notice",
+    "titleColumn": "Title",
+    "typeColumn": "Type",
+    "postedColumn": "Posted",
+    "deletingToast": "Deleting {label}…",
+    "deletedToast": "Deleted {label}",
+    "deleteFailedToast": "Failed to delete {label}"
+  }
+}

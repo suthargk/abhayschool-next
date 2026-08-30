@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { Loader2, UserRound, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -11,6 +12,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
 export function TeacherTestimonialsForm({ initialItem }) {
+  const t = useTranslations("teacherTestimonials.form");
+  const tActions = useTranslations("common.actions");
   const router = useRouter();
   const isEdit = Boolean(initialItem);
 
@@ -36,7 +39,7 @@ export function TeacherTestimonialsForm({ initialItem }) {
         body: formData,
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Upload failed");
+      if (!res.ok) throw new Error(data.error || t("uploadFailed"));
       setPhotoUrl(data.url);
     } catch (err) {
       setError(err.message);
@@ -63,7 +66,7 @@ export function TeacherTestimonialsForm({ initialItem }) {
         },
       );
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Save failed");
+      if (!res.ok) throw new Error(data.error || t("saveFailed"));
       router.push("/teacher/testimonials");
       router.refresh();
     } catch (err) {
@@ -76,7 +79,7 @@ export function TeacherTestimonialsForm({ initialItem }) {
   return (
     <form onSubmit={handleSubmit} className="max-w-xl space-y-6">
       <div className="space-y-2">
-        <Label htmlFor="testimonial-photo">Photo</Label>
+        <Label htmlFor="testimonial-photo">{t("photoLabel")}</Label>
         {photoUrl ? (
           <div className="relative size-24 overflow-hidden rounded-full border">
             <Image src={photoUrl} alt="" fill className="object-cover" unoptimized />
@@ -107,46 +110,44 @@ export function TeacherTestimonialsForm({ initialItem }) {
         )}
         {uploadingPhoto ? (
           <p className="flex items-center gap-2 text-xs text-muted-foreground">
-            <Loader2 className="size-3 animate-spin" /> Uploading…
+            <Loader2 className="size-3 animate-spin" /> {t("uploading")}
           </p>
         ) : (
-          <p className="text-xs text-muted-foreground">
-            Optional. A placeholder avatar is shown if left blank.
-          </p>
+          <p className="text-xs text-muted-foreground">{t("photoHelp")}</p>
         )}
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-2">
-          <Label htmlFor="testimonial-name">Name</Label>
+          <Label htmlFor="testimonial-name">{t("nameLabel")}</Label>
           <Input
             id="testimonial-name"
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
-            placeholder="e.g. Priya Sharma"
+            placeholder={t("namePlaceholder")}
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="testimonial-designation">Designation</Label>
+          <Label htmlFor="testimonial-designation">{t("designationLabel")}</Label>
           <Input
             id="testimonial-designation"
             value={designation}
             onChange={(e) => setDesignation(e.target.value)}
-            placeholder="e.g. Parent of Class VIII student"
+            placeholder={t("designationPlaceholder")}
           />
         </div>
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="testimonial-quote">Quote</Label>
+        <Label htmlFor="testimonial-quote">{t("quoteLabel")}</Label>
         <Textarea
           id="testimonial-quote"
           value={quote}
           onChange={(e) => setQuote(e.target.value)}
           required
           rows={5}
-          placeholder="What did they say about the school?"
+          placeholder={t("quotePlaceholder")}
         />
       </div>
 
@@ -158,19 +159,17 @@ export function TeacherTestimonialsForm({ initialItem }) {
 
       <div className="flex gap-2">
         <Button type="submit" disabled={saving || uploadingPhoto}>
-          {saving ? "Saving…" : isEdit ? "Save changes" : "Publish"}
+          {saving ? t("saving") : isEdit ? t("saveChanges") : t("publish")}
         </Button>
         <Button
           type="button"
           variant="outline"
           onClick={() => router.push("/teacher/testimonials")}
         >
-          Cancel
+          {tActions("cancel")}
         </Button>
       </div>
-      <p className="text-xs text-muted-foreground">
-        This testimonial is published immediately and appears on the school website right away.
-      </p>
+      <p className="text-xs text-muted-foreground">{t("publishNote")}</p>
     </form>
   );
 }

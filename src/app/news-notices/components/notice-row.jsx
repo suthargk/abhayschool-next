@@ -1,10 +1,13 @@
 import Link from "next/link";
 import { format } from "date-fns";
 import { Pin } from "lucide-react";
+import { useTranslations } from "next-intl";
 
-import { categoryLabel } from "@/lib/news-notices/categories";
+import { CATEGORY_LABEL_KEYS } from "@/lib/news-notices/categories";
 
 export function NoticeRow({ item }) {
+  const t = useTranslations("newsNotices.categories");
+
   return (
     <Link
       href={`/news-notices/${item.slug}`}
@@ -22,7 +25,7 @@ export function NoticeRow({ item }) {
         {item.title}
       </span>
       <span className="hidden shrink-0 rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground sm:inline-block">
-        {categoryLabel(item.category)}
+        {t(CATEGORY_LABEL_KEYS[item.category])}
       </span>
     </Link>
   );

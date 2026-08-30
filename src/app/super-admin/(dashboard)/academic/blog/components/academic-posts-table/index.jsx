@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 import { DataTablePagination } from "@/components/data-table-pagination";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -15,7 +16,7 @@ import {
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 
-import { COLUMNS } from "./columns";
+import { getColumns } from "./columns";
 import { AcademicPostsDeleteDialog } from "./delete-dialog";
 import { AcademicPostRow } from "./table-row";
 import { AcademicPostsTableToolbar } from "./toolbar";
@@ -31,9 +32,13 @@ export function AcademicPostsTable({
   defaultPageSize,
 }) {
   const router = useRouter();
+  const t = useTranslations("superAdminBlog.table");
+  const tCommon = useTranslations("common.actions");
+  const tTable = useTranslations("common.table");
+  const columns = getColumns(t);
   const [pendingId, setPendingId] = useState(null);
   const [visibleColumns, setVisibleColumns] = useState(() =>
-    Object.fromEntries(COLUMNS.map((c) => [c.key, c.defaultVisible]))
+    Object.fromEntries(columns.map((c) => [c.key, c.defaultVisible]))
   );
   const [selectedIds, setSelectedIds] = useState(() => new Set());
   const [deleteTarget, setDeleteTarget] = useState(null);
@@ -87,7 +92,7 @@ export function AcademicPostsTable({
   function requestBulkDelete() {
     setDeleteTarget({
       ids: Array.from(selectedIds),
-      label: `${selectedIds.size} item${selectedIds.size === 1 ? "" : "s"}`,
+      label: t("bulkDeleteLabel", { count: selectedIds.size }),
     });
   }
 
@@ -132,8 +137,8 @@ export function AcademicPostsTable({
       {items.length === 0 ? (
         <p className="rounded-md border border-dashed p-8 text-center text-sm text-muted-foreground">
           {total === 0
-            ? "No academic posts yet."
-            : "No results match your search."}
+            ? t("emptyNoPosts")
+            : tTable("noResults")}
         </p>
       ) : (
         <div className="relative rounded-md border">
@@ -151,18 +156,18 @@ export function AcademicPostsTable({
                       <Checkbox
                         checked={allSelected ? true : someSelected ? "indeterminate" : false}
                         onCheckedChange={toggleSelectAll}
-                        aria-label="Select all rows"
+                        aria-label={tCommon("selectAll")}
                       />
                     </TableHead>
                   ) : null}
-                  <TableHead>Title</TableHead>
-                  {visibleColumns.status ? <TableHead>Status</TableHead> : null}
-                  {visibleColumns.author ? <TableHead>Author</TableHead> : null}
+                  <TableHead>{t("titleHeader")}</TableHead>
+                  {visibleColumns.status ? <TableHead>{t("columns.status")}</TableHead> : null}
+                  {visibleColumns.author ? <TableHead>{t("columns.author")}</TableHead> : null}
                   {visibleColumns.created ? (
-                    <TableHead>Created</TableHead>
+                    <TableHead>{t("columns.created")}</TableHead>
                   ) : null}
                   <TableHead className="w-10">
-                    <span className="sr-only">Actions</span>
+                    <span className="sr-only">{t("actionsSr")}</span>
                   </TableHead>
                 </TableRow>
               </TableHeader>

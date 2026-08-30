@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { Trophy, UserRound } from "lucide-react";
 
 function AchievementCard({ item }) {
@@ -35,18 +36,15 @@ function AchievementCard({ item }) {
 }
 
 export function ExcellenceInTeaching({ faculty }) {
+  const t = useTranslations("faculty.excellenceInTeaching");
   const withAchievements = faculty.filter((item) => item.achievements.length > 0);
   if (withAchievements.length === 0) return null;
 
   return (
     <section className="space-y-8">
       <div className="mx-auto max-w-2xl space-y-2 text-center">
-        <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-          Excellence in Teaching
-        </h2>
-        <p className="text-muted-foreground">
-          Recognition our faculty have earned for their work in and beyond the classroom.
-        </p>
+        <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">{t("heading")}</h2>
+        <p className="text-muted-foreground">{t("description")}</p>
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">

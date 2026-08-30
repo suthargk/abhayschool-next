@@ -9,6 +9,17 @@ export const WEEKDAYS = [
 
 export const WEEKDAY_VALUES = WEEKDAYS.map((d) => d.value);
 
+// value -> message key, for locale-aware display. Reuses the labels already
+// translated under "academics.timeTable.weekdays".
+export const WEEKDAY_LABEL_KEYS = {
+  MONDAY: "monday",
+  TUESDAY: "tuesday",
+  WEDNESDAY: "wednesday",
+  THURSDAY: "thursday",
+  FRIDAY: "friday",
+  SATURDAY: "saturday",
+};
+
 export function weekdayLabel(value) {
   return WEEKDAYS.find((d) => d.value === value)?.label ?? value;
 }

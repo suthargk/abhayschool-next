@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { Loader2, X } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
@@ -13,6 +14,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { RichTextEditor } from "@/components/news-notices/rich-text-editor";
 
 export function PrincipalMessageForm({ initialItem, canPublish }) {
+  const t = useTranslations("superAdminPrincipalMessage.form");
+  const tCommon = useTranslations("common.actions");
+  const tStatus = useTranslations("common.status");
   const router = useRouter();
 
   const [principalName, setPrincipalName] = useState(
@@ -53,7 +57,7 @@ export function PrincipalMessageForm({ initialItem, canPublish }) {
       body: formData,
     });
     const data = await res.json();
-    if (!res.ok) throw new Error(data.error || "Upload failed");
+    if (!res.ok) throw new Error(data.error || t("uploadFailedError"));
     return data.url;
   }
 
@@ -113,7 +117,7 @@ export function PrincipalMessageForm({ initialItem, canPublish }) {
         }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Save failed");
+      if (!res.ok) throw new Error(data.error || t("saveFailedError"));
       setStatus(data.item.status);
       router.refresh();
     } catch (err) {
@@ -133,7 +137,7 @@ export function PrincipalMessageForm({ initialItem, canPublish }) {
         body: JSON.stringify({ publish: status !== "PUBLISHED" }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to update status");
+      if (!res.ok) throw new Error(data.error || t("statusUpdateFailedError"));
       setStatus(data.item.status);
       router.refresh();
     } catch (err) {
@@ -147,7 +151,7 @@ export function PrincipalMessageForm({ initialItem, canPublish }) {
     <form onSubmit={handleSubmit} className="max-w-3xl space-y-6">
       <div className="flex items-center gap-2">
         <Badge variant="outline">
-          {status === "PUBLISHED" ? "Published" : "Draft"}
+          {status === "PUBLISHED" ? tStatus("published") : tStatus("draft")}
         </Badge>
         {canPublish && initialItem ? (
           <Button
@@ -158,48 +162,48 @@ export function PrincipalMessageForm({ initialItem, canPublish }) {
             onClick={handleTogglePublish}
           >
             {publishing
-              ? "Updating…"
+              ? t("updating")
               : status === "PUBLISHED"
-                ? "Unpublish"
-                : "Publish"}
+                ? tCommon("unpublish")
+                : tCommon("publish")}
           </Button>
         ) : null}
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="space-y-2">
-          <Label htmlFor="principal-name">Principal&apos;s name</Label>
+          <Label htmlFor="principal-name">{t("nameLabel")}</Label>
           <Input
             id="principal-name"
             value={principalName}
             onChange={(e) => setPrincipalName(e.target.value)}
-            placeholder="e.g. Dr. Jane Doe"
+            placeholder={t("namePlaceholder")}
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="principal-designation">Designation</Label>
+          <Label htmlFor="principal-designation">{t("designationLabel")}</Label>
           <Input
             id="principal-designation"
             value={designation}
             onChange={(e) => setDesignation(e.target.value)}
-            placeholder="e.g. Principal, Shri Abhay Nobles Senior Secondary School"
+            placeholder={t("designationPlaceholder")}
           />
         </div>
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="principal-quote">Hero quote</Label>
+        <Label htmlFor="principal-quote">{t("heroQuoteLabel")}</Label>
         <Textarea
           id="principal-quote"
           value={quote}
           onChange={(e) => setQuote(e.target.value)}
-          placeholder="A short line shown alongside the photo, e.g. “Education is not simply about achieving academic success…”"
+          placeholder={t("heroQuotePlaceholder")}
           rows={2}
         />
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="principal-photo">Photo</Label>
+        <Label htmlFor="principal-photo">{t("photoLabel")}</Label>
         {photoUrl ? (
           <div className="relative w-40 overflow-hidden rounded-md border">
             <Image
@@ -231,13 +235,13 @@ export function PrincipalMessageForm({ initialItem, canPublish }) {
         )}
         {uploadingPhoto ? (
           <p className="flex items-center gap-2 text-xs text-muted-foreground">
-            <Loader2 className="size-3 animate-spin" /> Uploading…
+            <Loader2 className="size-3 animate-spin" /> {t("uploading")}
           </p>
         ) : null}
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="principal-signature">Signature</Label>
+        <Label htmlFor="principal-signature">{t("signatureLabel")}</Label>
         {signatureUrl ? (
           <div className="relative w-56 overflow-hidden rounded-md border bg-white p-2">
             <Image
@@ -269,71 +273,71 @@ export function PrincipalMessageForm({ initialItem, canPublish }) {
         )}
         {uploadingSignature ? (
           <p className="flex items-center gap-2 text-xs text-muted-foreground">
-            <Loader2 className="size-3 animate-spin" /> Uploading…
+            <Loader2 className="size-3 animate-spin" /> {t("uploading")}
           </p>
         ) : null}
       </div>
 
       <div className="space-y-2">
-        <Label>Message</Label>
+        <Label>{t("messageLabel")}</Label>
         <RichTextEditor
           content={content}
           onChange={setContent}
-          placeholder="Dear Students, Parents, and Members of Our School Community, … Try covering: a welcome, your educational philosophy, character &amp; values, academics, and your vision for the future — using subheadings to break it up."
+          placeholder={t("messagePlaceholder")}
         />
       </div>
 
       <div className="space-y-4 rounded-md border p-4">
-        <p className="text-sm font-medium">About the Principal (short profile)</p>
+        <p className="text-sm font-medium">{t("aboutSectionTitle")}</p>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
           <div className="space-y-2">
-            <Label htmlFor="principal-since">Principal since</Label>
+            <Label htmlFor="principal-since">{t("principalSinceLabel")}</Label>
             <Input
               id="principal-since"
               type="number"
               value={principalSince}
               onChange={(e) => setPrincipalSince(e.target.value)}
-              placeholder="2021"
+              placeholder={t("principalSincePlaceholder")}
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="principal-experience">Experience (years)</Label>
+            <Label htmlFor="principal-experience">{t("experienceLabel")}</Label>
             <Input
               id="principal-experience"
               type="number"
               value={experienceYears}
               onChange={(e) => setExperienceYears(e.target.value)}
-              placeholder="20"
+              placeholder={t("experiencePlaceholder")}
             />
           </div>
           <div className="col-span-2 space-y-2">
-            <Label htmlFor="principal-qualification">Qualification</Label>
+            <Label htmlFor="principal-qualification">{t("qualificationLabel")}</Label>
             <Input
               id="principal-qualification"
               value={qualification}
               onChange={(e) => setQualification(e.target.value)}
-              placeholder="M.Ed., Ph.D. in Education"
+              placeholder={t("qualificationPlaceholder")}
             />
           </div>
         </div>
         <div className="space-y-2">
-          <Label htmlFor="principal-interests">Areas of interest</Label>
+          <Label htmlFor="principal-interests">{t("interestsLabel")}</Label>
           <Input
             id="principal-interests"
             value={interests}
             onChange={(e) => setInterests(e.target.value)}
-            placeholder="Student development, educational leadership, STEM education"
+            placeholder={t("interestsPlaceholder")}
           />
         </div>
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="principal-video">Video message URL (YouTube or Vimeo, optional)</Label>
+        <Label htmlFor="principal-video">{t("videoLabel")}</Label>
         <Input
           id="principal-video"
           value={videoUrl}
           onChange={(e) => setVideoUrl(e.target.value)}
-          placeholder="https://www.youtube.com/watch?v=…"
+          placeholder={t("videoPlaceholder")}
         />
       </div>
 
@@ -348,7 +352,7 @@ export function PrincipalMessageForm({ initialItem, canPublish }) {
           type="submit"
           disabled={saving || uploadingPhoto || uploadingSignature}
         >
-          {saving ? "Saving…" : "Save"}
+          {saving ? t("saving") : t("save")}
         </Button>
       </div>
     </form>

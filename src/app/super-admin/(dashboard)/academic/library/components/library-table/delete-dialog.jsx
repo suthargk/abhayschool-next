@@ -1,5 +1,7 @@
 "use client";
 
+import { useTranslations } from "next-intl";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -13,18 +15,22 @@ import {
 import { buttonVariants } from "@/components/ui/button";
 
 export function LibraryDeleteDialog({ target, deleting, onOpenChange, onConfirm }) {
+  const t = useTranslations("superAdminLibrary.table");
+  const tCommon = useTranslations("common.actions");
+  const tTable = useTranslations("common.table");
+
   return (
     <AlertDialog open={target !== null} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Delete {target?.label}?</AlertDialogTitle>
+          <AlertDialogTitle>{tTable("deleteConfirmTitle", { label: target?.label })}</AlertDialogTitle>
           <AlertDialogDescription>
-            This can&apos;t be undone. This will permanently remove{" "}
-            {target?.ids.length === 1 ? "this book" : "these books"} from the library catalogue.
+            {tTable("deleteConfirmDescription")}{" "}
+            {target?.ids.length === 1 ? t("confirmDeleteOneBook") : t("confirmDeleteManyBooks")}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
+          <AlertDialogCancel disabled={deleting}>{tCommon("cancel")}</AlertDialogCancel>
           <AlertDialogAction
             disabled={deleting}
             onClick={(event) => {
@@ -33,7 +39,7 @@ export function LibraryDeleteDialog({ target, deleting, onOpenChange, onConfirm 
             }}
             className={buttonVariants({ variant: "destructive" })}
           >
-            {deleting ? "Deleting..." : "Delete"}
+            {deleting ? tCommon("deleting") : tCommon("delete")}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

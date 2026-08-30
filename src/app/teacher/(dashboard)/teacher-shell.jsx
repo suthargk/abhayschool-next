@@ -4,10 +4,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
+import { useTranslations } from "next-intl";
 import { Toaster } from "sonner";
 import { ExternalLink, GraduationCap, LayoutDashboard, LogOut } from "lucide-react";
 
 import { ModeToggle } from "@/components/mode-toggle";
+import { LanguageSelect } from "@/components/language-select";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -35,20 +37,23 @@ import { getInitials, teacherFullName } from "@/lib/teacher";
 import { TEACHER_FEATURES } from "@/lib/teacher-features";
 
 const BASE_NAV_ITEMS = [
-  { href: "/teacher", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/teacher/homework", label: "Homework", icon: GraduationCap },
+  { href: "/teacher", labelKey: "dashboard", icon: LayoutDashboard },
+  { href: "/teacher/homework", labelKey: "homework", icon: GraduationCap },
 ];
 
-function buildNavItems(features) {
+function buildNavItems(features, t, tFeatures) {
   const granted = TEACHER_FEATURES.filter((f) => features.includes(f.key));
-  return [...BASE_NAV_ITEMS, ...granted];
+  return [
+    ...BASE_NAV_ITEMS.map((item) => ({ ...item, label: t(item.labelKey) })),
+    ...granted.map((item) => ({ ...item, label: tFeatures(item.key) })),
+  ];
 }
 
-function getPageTitle(pathname, navItems) {
+function getPageTitle(pathname, navItems, fallback) {
   const match = [...navItems]
     .sort((a, b) => b.href.length - a.href.length)
     .find((item) => pathname === item.href || pathname?.startsWith(`${item.href}/`));
-  return match?.label ?? "Dashboard";
+  return match?.label ?? fallback;
 }
 
 function NavLink({ href, label, icon: Icon }) {
@@ -71,8 +76,10 @@ export function TeacherShell({ children, profile, features = [] }) {
   const router = useRouter();
   const pathname = usePathname();
   const { resolvedTheme } = useTheme();
+  const t = useTranslations("teacherShell");
+  const tFeatures = useTranslations("common.teacherFeatures");
   const name = teacherFullName(profile);
-  const navItems = buildNavItems(features);
+  const navItems = buildNavItems(features, t, tFeatures);
 
   async function handleLogout() {
     await fetch("/api/teacher/logout", { method: "POST" });
@@ -100,7 +107,7 @@ export function TeacherShell({ children, profile, features = [] }) {
                   </div>
                   <div className="grid flex-1 text-left text-sm leading-tight">
                     <span className="truncate font-semibold">Abhay Nobles</span>
-                    <span className="truncate text-xs text-sidebar-foreground/70">Teacher</span>
+                    <span className="truncate text-xs text-sidebar-foreground/70">{t("teacher")}</span>
                   </div>
                 </Link>
               </SidebarMenuButton>
@@ -134,9 +141,9 @@ export function TeacherShell({ children, profile, features = [] }) {
                       </AvatarFallback>
                     </Avatar>
                     <div className="grid flex-1 text-left text-sm leading-tight">
-                      <span className="truncate font-medium">{name || "Teacher"}</span>
+                      <span className="truncate font-medium">{name || t("teacher")}</span>
                       <span className="truncate text-xs text-sidebar-foreground/70">
-                        {profile?.email ?? "Signed in"}
+                        {profile?.email ?? t("signedIn")}
                       </span>
                     </div>
                   </SidebarMenuButton>
@@ -145,13 +152,13 @@ export function TeacherShell({ children, profile, features = [] }) {
                   <DropdownMenuItem asChild>
                     <Link href="/" target="_blank" rel="noopener noreferrer">
                       <ExternalLink className="size-4" />
-                      View public site
+                      {t("viewPublicSite")}
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleLogout}>
                     <LogOut className="size-4" />
-                    Log out
+                    {t("logOut")}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -163,8 +170,9 @@ export function TeacherShell({ children, profile, features = [] }) {
         <header className="flex h-14 shrink-0 items-center gap-2 border-b px-4 sm:px-6">
           <SidebarTrigger className="-ml-1" />
           <Separator orientation="vertical" className="h-4" />
-          <h1 className="truncate text-sm font-medium">{getPageTitle(pathname, navItems)}</h1>
+          <h1 className="truncate text-sm font-medium">{getPageTitle(pathname, navItems, t("dashboard"))}</h1>
           <div className="ml-auto flex items-center gap-1">
+            <LanguageSelect triggerClassName="h-8 w-[92px] border-none bg-transparent shadow-none" />
             <ModeToggle />
           </div>
         </header>

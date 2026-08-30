@@ -1,12 +1,19 @@
 import Link from "next/link";
 import { format } from "date-fns";
 import { Paperclip } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 import { cn } from "@/lib/utils";
 import { subjectBadgeClass, subjectIcon } from "@/lib/homework/subjects";
-import { DUE_STATUS_BADGE_CLASS, dueStatus } from "@/lib/homework/due-status";
+import {
+  DUE_STATUS_BADGE_CLASS,
+  DUE_STATUS_LABEL_KEYS,
+  dueStatus,
+} from "@/lib/homework/due-status";
 
 export function HomeworkCard({ item }) {
+  const t = useTranslations("homework.card");
+  const tStatus = useTranslations("homework.dueStatus");
   const Icon = subjectIcon(item.subject);
   const status = dueStatus(item.dueDate);
 
@@ -35,7 +42,7 @@ export function HomeworkCard({ item }) {
           </h3>
           <p className="text-xs text-muted-foreground">
             {item.teacherName ? `${item.teacherName} · ` : ""}
-            Due {format(new Date(item.dueDate), "d MMM yyyy")}
+            {t("due")} {format(new Date(item.dueDate), "d MMM yyyy")}
             {item.attachments?.length ? (
               <span className="inline-flex items-center gap-1 pl-1.5 align-middle">
                 <Paperclip className="size-3" />
@@ -51,7 +58,7 @@ export function HomeworkCard({ item }) {
           DUE_STATUS_BADGE_CLASS[status.value],
         )}
       >
-        {status.label}
+        {tStatus(DUE_STATUS_LABEL_KEYS[status.value])}
       </span>
     </Link>
   );

@@ -1,0 +1,45 @@
+{
+  "page": {
+    "heading": "What Parents & Alumni Say",
+    "description": "Stories from the families and students who have been part of the Abhay Nobles community.",
+    "count": "{count, plural, one {testimonial} other {testimonials}}",
+    "empty": "Testimonials will be published here soon."
+  },
+  "shareDialog": {
+    "trigger": "Share Your Story",
+    "form": {
+      "title": "Share your experience",
+      "description": "Tell other families what it's been like. We'll text a one-time code to verify your number before your story is reviewed and published.",
+      "nameLabel": "Your name",
+      "namePlaceholder": "e.g. Priya Sharma",
+      "designationLabel": "You are a...",
+      "designationPlaceholder": "e.g. Parent of Class VI student",
+      "quoteLabel": "Your testimonial",
+      "quotePlaceholder": "What has your experience with the school been like?",
+      "phoneLabel": "Mobile number",
+      "phonePlaceholder": "10-digit mobile number",
+      "phoneHint": "Used only to verify you and never shown publicly.",
+      "missingFieldsError": "Please fill in your name, phone number, and testimonial.",
+      "otpRequestError": "Couldn't send the verification code",
+      "sendingCode": "Sending code…",
+      "sendCode": "Send verification code"
+    },
+    "otp": {
+      "title": "Verify your number",
+      "description": "Enter the code we texted to {phone}.",
+      "codeLabel": "Verification code",
+      "codePlaceholder": "6-digit code",
+      "emptyCodeError": "Enter the code we texted you.",
+      "submitError": "Couldn't submit your testimonial",
+      "resend": "Resend code",
+      "resendCooldown": "Resend code ({seconds}s)",
+      "submitting": "Submitting…",
+      "submit": "Verify & submit"
+    },
+    "success": {
+      "title": "Thank you!",
+      "description": "Your testimonial has been submitted and will appear here once our team reviews and approves it.",
+      "close": "Close"
+    }
+  }
+}

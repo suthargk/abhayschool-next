@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
 import { format } from "date-fns";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Loader2, MoreHorizontal } from "lucide-react";
 
@@ -48,34 +49,40 @@ import { DataTablePagination } from "@/components/data-table-pagination";
 import { classLabel } from "@/lib/classes";
 import { cn } from "@/lib/utils";
 
-const STATUS_META = {
-  DRAFT: { label: "Draft", variant: "outline" },
-  PUBLISHED: { label: "Published", variant: "success" },
-  ARCHIVED: { label: "Archived", variant: "secondary" },
+const STATUS_LABEL_KEYS = {
+  DRAFT: "draft",
+  PUBLISHED: "published",
+  ARCHIVED: "archived",
+};
+const STATUS_VARIANT = {
+  DRAFT: "outline",
+  PUBLISHED: "success",
+  ARCHIVED: "secondary",
 };
 const STATUS_OPTIONS = ["DRAFT", "PUBLISHED", "ARCHIVED"];
 
 function RowActionsMenu({ item, pending, onToggleStatus, onDelete }) {
+  const tCommon = useTranslations("common.actions");
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="size-8" disabled={pending}>
           <MoreHorizontal className="size-4" />
-          <span className="sr-only">Open menu</span>
+          <span className="sr-only">{tCommon("openMenu")}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem asChild>
-          <Link href={`/teacher/homework/${item.id}/edit`}>Edit</Link>
+          <Link href={`/teacher/homework/${item.id}/edit`}>{tCommon("edit")}</Link>
         </DropdownMenuItem>
         {item.status !== "ARCHIVED" ? (
           <DropdownMenuItem onSelect={onToggleStatus}>
-            {item.status === "PUBLISHED" ? "Unpublish" : "Publish"}
+            {item.status === "PUBLISHED" ? tCommon("unpublish") : tCommon("publish")}
           </DropdownMenuItem>
         ) : null}
         <DropdownMenuSeparator />
         <DropdownMenuItem className="text-destructive focus:text-destructive" onSelect={onDelete}>
-          Delete
+          {tCommon("delete")}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -95,6 +102,9 @@ function TeacherHomeworkFilters({
   defaultPageSize,
   onPendingChange,
 }) {
+  const t = useTranslations("teacherHomework.list");
+  const tCommon = useTranslations("common.actions");
+  const tStatus = useTranslations("common.status");
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [search, setSearch] = useState(filters.q);
@@ -144,17 +154,17 @@ function TeacherHomeworkFilters({
         type="search"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        placeholder="Search by title or subject…"
+        placeholder={t("searchPlaceholder")}
         className="sm:max-w-xs"
         disabled={isPending}
       />
 
       <Select value={filters.class} onValueChange={(v) => navigate({ class: v })} disabled={isPending}>
         <SelectTrigger className="sm:w-40">
-          <SelectValue placeholder="All classes" />
+          <SelectValue placeholder={t("allClasses")} />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="ALL">All classes</SelectItem>
+          <SelectItem value="ALL">{t("allClasses")}</SelectItem>
           {classOptions.map((c) => (
             <SelectItem key={c} value={c}>
               {classLabel(classes, c)}
@@ -165,10 +175,10 @@ function TeacherHomeworkFilters({
 
       <Select value={filters.subject} onValueChange={(v) => navigate({ subject: v })} disabled={isPending}>
         <SelectTrigger className="sm:w-44">
-          <SelectValue placeholder="All subjects" />
+          <SelectValue placeholder={t("allSubjects")} />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="ALL">All subjects</SelectItem>
+          <SelectItem value="ALL">{t("allSubjects")}</SelectItem>
           {subjectOptions.map((s) => (
             <SelectItem key={s} value={s}>
               {s}
@@ -179,13 +189,13 @@ function TeacherHomeworkFilters({
 
       <Select value={filters.status} onValueChange={(v) => navigate({ status: v })} disabled={isPending}>
         <SelectTrigger className="sm:w-36">
-          <SelectValue placeholder="All statuses" />
+          <SelectValue placeholder={t("allStatuses")} />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="ALL">All statuses</SelectItem>
+          <SelectItem value="ALL">{t("allStatuses")}</SelectItem>
           {STATUS_OPTIONS.map((s) => (
             <SelectItem key={s} value={s}>
-              {STATUS_META[s].label}
+              {tStatus(STATUS_LABEL_KEYS[s])}
             </SelectItem>
           ))}
         </SelectContent>
@@ -195,13 +205,13 @@ function TeacherHomeworkFilters({
         <DatePicker
           value={filters.due ? new Date(filters.due).toISOString() : null}
           onChange={(iso) => navigate({ due: toDateParam(iso) })}
-          placeholder="Due date"
+          placeholder={t("dueDatePlaceholder")}
         />
       </div>
 
       <Button type="submit" size="sm" disabled={isPending}>
         {isPending ? <Loader2 className="size-4 animate-spin" /> : null}
-        Search
+        {tCommon("search")}
       </Button>
       {hasActiveFilters ? (
         <Button
@@ -214,7 +224,7 @@ function TeacherHomeworkFilters({
             navigate({ q: "", class: "ALL", subject: "ALL", status: "ALL", due: "" });
           }}
         >
-          Clear filters
+          {t("clearFilters")}
         </Button>
       ) : null}
     </form>
@@ -233,6 +243,10 @@ export function TeacherHomeworkList({
   total,
   totalPages,
 }) {
+  const t = useTranslations("teacherHomework.list");
+  const tCommon = useTranslations("common.actions");
+  const tStatus = useTranslations("common.status");
+  const tTable = useTranslations("common.table");
   const router = useRouter();
   const [items, setItems] = useState(initialItems);
   const [selectedIds, setSelectedIds] = useState(() => new Set());
@@ -276,7 +290,7 @@ export function TeacherHomeworkList({
         body: JSON.stringify({ status: nextStatus }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Couldn't update status");
+      if (!res.ok) throw new Error(data.error || t("statusUpdateFailed"));
       setItems((prev) => prev.map((i) => (i.id === item.id ? { ...i, status: nextStatus } : i)));
     } catch (err) {
       toast.error(err.message);
@@ -292,7 +306,7 @@ export function TeacherHomeworkList({
   function requestBulkDelete() {
     setDeleteTarget({
       ids: Array.from(selectedIds),
-      label: `${selectedIds.size} item${selectedIds.size === 1 ? "" : "s"}`,
+      label: t("bulkDeleteLabel", { count: selectedIds.size }),
     });
   }
 
@@ -309,7 +323,11 @@ export function TeacherHomeworkList({
               if (!res.ok) throw new Error("Delete failed");
             }),
           ),
-          { loading: `Deleting ${label}…`, success: `Deleted ${label}`, error: `Failed to delete ${label}` },
+          {
+            loading: t("deletingToast", { label }),
+            success: t("deletedToast", { label }),
+            error: t("deleteFailedToast", { label }),
+          },
         )
         .unwrap();
       setItems((prev) => prev.filter((i) => !ids.includes(i.id)));
@@ -347,9 +365,11 @@ export function TeacherHomeworkList({
 
       {selectedIds.size > 0 ? (
         <div className="flex items-center gap-2">
-          <span className="text-sm text-muted-foreground">{selectedIds.size} selected</span>
+          <span className="text-sm text-muted-foreground">
+            {tTable("rowsSelected", { count: selectedIds.size })}
+          </span>
           <Button variant="destructive" size="sm" onClick={requestBulkDelete}>
-            Delete selected
+            {t("deleteSelected")}
           </Button>
         </div>
       ) : null}
@@ -363,7 +383,7 @@ export function TeacherHomeworkList({
 
         {items.length === 0 ? (
           <p className="rounded-md border border-dashed p-8 text-center text-sm text-muted-foreground">
-            {hasAnyHomework ? "No homework matches your search/filters." : "You haven't posted any homework yet."}
+            {hasAnyHomework ? t("noResultsFiltered") : t("noResultsEmpty")}
           </p>
         ) : (
           <>
@@ -376,9 +396,9 @@ export function TeacherHomeworkList({
                   <Checkbox
                     checked={allSelected ? true : someSelected ? "indeterminate" : false}
                     onCheckedChange={toggleSelectAll}
-                    aria-label="Select all rows"
+                    aria-label={tCommon("selectAll")}
                   />
-                  Select all
+                  {tCommon("selectAll")}
                 </label>
               ) : null}
               {items.map((item) => (
@@ -389,7 +409,7 @@ export function TeacherHomeworkList({
                         className="mt-1"
                         checked={selectedIds.has(item.id)}
                         onCheckedChange={() => toggleSelected(item.id)}
-                        aria-label={`Select ${item.title}`}
+                        aria-label={tCommon("select", { name: item.title })}
                       />
                       <span className="font-medium">{item.title}</span>
                     </div>
@@ -405,11 +425,11 @@ export function TeacherHomeworkList({
                     <span>·</span>
                     <span>{item.subject}</span>
                     <span>·</span>
-                    <span>Due {format(new Date(item.dueDate), "d MMM yyyy")}</span>
+                    <span>{t("dueOn", { date: format(new Date(item.dueDate), "d MMM yyyy") })}</span>
                   </div>
                   <div className="pl-6">
-                    <Badge variant={STATUS_META[item.status].variant}>
-                      {STATUS_META[item.status].label}
+                    <Badge variant={STATUS_VARIANT[item.status]}>
+                      {tStatus(STATUS_LABEL_KEYS[item.status])}
                     </Badge>
                   </div>
                 </div>
@@ -425,14 +445,14 @@ export function TeacherHomeworkList({
                       <Checkbox
                         checked={allSelected ? true : someSelected ? "indeterminate" : false}
                         onCheckedChange={toggleSelectAll}
-                        aria-label="Select all rows"
+                        aria-label={tCommon("selectAll")}
                       />
                     </TableHead>
-                    <TableHead>Title</TableHead>
-                    <TableHead>Class</TableHead>
-                    <TableHead>Subject</TableHead>
-                    <TableHead>Due</TableHead>
-                    <TableHead>Status</TableHead>
+                    <TableHead>{t("titleColumn")}</TableHead>
+                    <TableHead>{t("classColumn")}</TableHead>
+                    <TableHead>{t("subjectColumn")}</TableHead>
+                    <TableHead>{t("dueColumn")}</TableHead>
+                    <TableHead>{t("statusColumn")}</TableHead>
                     <TableHead className="w-0" />
                   </TableRow>
                 </TableHeader>
@@ -443,7 +463,7 @@ export function TeacherHomeworkList({
                         <Checkbox
                           checked={selectedIds.has(item.id)}
                           onCheckedChange={() => toggleSelected(item.id)}
-                          aria-label={`Select ${item.title}`}
+                          aria-label={tCommon("select", { name: item.title })}
                         />
                       </TableCell>
                       <TableCell className="font-medium">{item.title}</TableCell>
@@ -451,8 +471,8 @@ export function TeacherHomeworkList({
                       <TableCell>{item.subject}</TableCell>
                       <TableCell>{format(new Date(item.dueDate), "d MMM yyyy")}</TableCell>
                       <TableCell>
-                        <Badge variant={STATUS_META[item.status].variant}>
-                          {STATUS_META[item.status].label}
+                        <Badge variant={STATUS_VARIANT[item.status]}>
+                          {tStatus(STATUS_LABEL_KEYS[item.status])}
                         </Badge>
                       </TableCell>
                       <TableCell>
@@ -490,14 +510,18 @@ export function TeacherHomeworkList({
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete {deleteTarget?.label}?</AlertDialogTitle>
+            <AlertDialogTitle>
+              {tTable("deleteConfirmTitle", { label: deleteTarget?.label })}
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              This can&apos;t be undone. This will permanently delete{" "}
-              {deleteTarget?.ids.length === 1 ? "this item" : "these items"}.
+              {tTable("deleteConfirmDescription")}{" "}
+              {deleteTarget?.ids.length === 1
+                ? tTable("confirmDeleteOne")
+                : tTable("confirmDeleteMany")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={deleting}>{tCommon("cancel")}</AlertDialogCancel>
             <AlertDialogAction
               disabled={deleting}
               onClick={(event) => {
@@ -506,7 +530,7 @@ export function TeacherHomeworkList({
               }}
               className={buttonVariants({ variant: "destructive" })}
             >
-              {deleting ? "Deleting…" : "Delete"}
+              {deleting ? tCommon("deleting") : tCommon("delete")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

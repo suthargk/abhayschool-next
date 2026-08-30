@@ -1,111 +1,88 @@
-import { ReaderIcon, RocketIcon } from "@radix-ui/react-icons";
+import { ReaderIcon } from "@radix-ui/react-icons";
 import { Award, Book as BookIcon } from "react-feather";
 
+// title/description text lives in messages/*/common.json under "nav.<key>"
+// and "nav.<key>Description" — see Navbar for how these keys are resolved.
 const navigationCategory = [
-  { title: "Home", href: "/", subCategories: [] },
+  { key: "home", href: "/", subCategories: [] },
   {
-    title: "About Us",
+    key: "aboutUs",
     icon: ReaderIcon,
     href: "/about",
     subCategories: [
       {
-        title: "About Us",
+        key: "aboutUs",
         href: "/about",
-        description:
-          "Discover our commitment to comprehensive education and student success.",
       },
       {
-        title: "Principal's Message",
+        key: "principalMessage",
         href: "/principal-message",
-        description:
-          "Message from our Principal: Inspiring a passion for learning and a commitment to excellence.",
       },
       {
-        title: "Facilities",
+        key: "facilities",
         href: "/facilities",
-        description:
-          "Discover our state-of-the-art facilities that provide a comfortable and engaging learning environment.",
       },
-
       {
-        title: "Route Plan of School Buses",
+        key: "busRoutePlan",
         href: "bus-route-plan",
-        description:
-          "Explore our school bus routes and transportation options for safe and convenient travel to and from school.",
       },
       {
-        title: "Faculty",
+        key: "faculty",
         href: "/faculty",
-        description:
-          "Meet our highly qualified and dedicated faculty who inspire and guide our students.",
       },
     ],
   },
   {
-    title: "Gallery",
+    key: "gallery",
     subCategories: [],
     href: "/gallery",
   },
   {
-    title: "Academics",
+    key: "academics",
     icon: BookIcon,
     href: "/academics",
-    description:
-      "Explore our academic programs and achievements that reflect our commitment to excellence.",
     subCategories: [
       {
-        title: "Academics",
+        key: "academics",
         href: "/academics",
-        description:
-          "Discover our academic programs and achievements that reflect our commitment to excellence.",
       },
       {
-        title: "Library",
+        key: "library",
         href: "/library",
-        description:
-          "Explore our library and resources that support our academic programs.",
       },
       {
-        title: "Time Table",
+        key: "timeTable",
         href: "/time-table",
-        description:
-          "View the weekly class schedule for each class, by day and period.",
       },
       {
-        title: "Testimonials",
+        key: "testimonials",
         href: "/testimonials",
         absolute: true,
-        description:
-          "Read stories from the families and students who have been part of the Abhay Nobles community.",
       },
     ],
   },
   {
-    title: "Achievements",
+    key: "achievements",
     icon: Award,
     href: "/achievements",
     subCategories: [
       {
-        title: "Achievements",
+        key: "achievements",
         href: "/achievements",
-        description:
-          "We are thrilled to share some exciting news about our school's recent achievement!",
       },
       {
-        title: "Toppers",
+        key: "toppers",
         href: "/toppers",
-        description:
-          "We are proud to announce the school toppers for this academic year!",
       },
     ],
   },
   {
-    title: "Homework",
+    key: "homework",
     href: "/homework",
     subCategories: [],
   },
   {
-    title: "News & Notices",
+    key: "newsNotices",
     href: "/news-notices",
     subCategories: [],
   },
