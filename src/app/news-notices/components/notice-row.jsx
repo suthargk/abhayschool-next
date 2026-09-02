@@ -4,6 +4,7 @@ import { Pin } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { CATEGORY_LABEL_KEYS } from "@/lib/news-notices/categories";
+import { NewBadge } from "@/components/seen/new-badge";
 
 export function NoticeRow({ item }) {
   const t = useTranslations("newsNotices.categories");
@@ -24,6 +25,7 @@ export function NoticeRow({ item }) {
       <span className="min-w-0 flex-1 truncate font-medium">
         {item.title}
       </span>
+      <NewBadge scope="news-notices" id={item.id} publishedAt={item.publishedAt} />
       <span className="hidden shrink-0 rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground sm:inline-block">
         {t(CATEGORY_LABEL_KEYS[item.category])}
       </span>

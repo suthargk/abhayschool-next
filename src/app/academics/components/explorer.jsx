@@ -10,6 +10,7 @@ import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { NewBadge } from "@/components/seen/new-badge";
 import { cn } from "@/lib/utils";
 
 function buildHref({ q, page }) {
@@ -83,11 +84,14 @@ export function AcademicsExplorer({ q, page, totalPages, items }) {
                 />
               ) : null}
               <div className="min-w-0 flex-1">
-                <span className="text-sm text-muted-foreground">
-                  {item.publishedAt
-                    ? format(new Date(item.publishedAt), "MMM d, yyyy")
-                    : null}
-                </span>
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="text-sm text-muted-foreground">
+                    {item.publishedAt
+                      ? format(new Date(item.publishedAt), "MMM d, yyyy")
+                      : null}
+                  </span>
+                  <NewBadge scope="blog" id={item.id} publishedAt={item.publishedAt} />
+                </div>
                 <h2 className="mt-1 text-lg font-semibold leading-snug">
                   {item.title}
                 </h2>

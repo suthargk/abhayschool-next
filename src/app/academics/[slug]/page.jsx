@@ -7,6 +7,10 @@ import { getTranslations } from "next-intl/server";
 
 import { prisma } from "@/lib/prisma";
 import { ContentRenderer } from "@/components/news-notices/content-renderer";
+import { MarkSeen } from "@/components/seen/mark-seen";
+import { RecordView } from "@/components/seen/record-view";
+import { ViewCount } from "@/components/seen/view-count";
+import { VIEWABLE_TYPES } from "@/lib/views/constants";
 
 export const revalidate = 60;
 
@@ -21,9 +25,15 @@ export default async function AcademicPostDetailPage({ params }) {
 
   if (!item) notFound();
 
+  const viewCount = await prisma.itemView.count({
+    where: { itemType: VIEWABLE_TYPES.ACADEMIC_POST, itemId: item.id },
+  });
+
   return (
     <div className="min-h-screen px-4 pb-16 pt-[100px] md:px-10 md:pt-[102px] lg:px-20">
       <div className="mx-auto max-w-3xl space-y-8">
+        <MarkSeen scope="blog" id={item.id} />
+        <RecordView itemType={VIEWABLE_TYPES.ACADEMIC_POST} itemId={item.id} />
         <Link
           href="/academics"
           className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
@@ -42,6 +52,7 @@ export default async function AcademicPostDetailPage({ params }) {
               : null}
             {item.author?.email ? ` · ${item.author.email}` : null}
           </p>
+          <ViewCount count={viewCount} />
         </div>
 
         {item.coverImageUrl ? (

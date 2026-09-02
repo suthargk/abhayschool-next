@@ -4,6 +4,8 @@ import { format } from "date-fns";
 import { ImageOff } from "lucide-react";
 import { useTranslations } from "next-intl";
 
+import { NewBadge } from "@/components/seen/new-badge";
+
 const ASPECTS = ["aspect-[4/3]", "aspect-square", "aspect-[3/4]"];
 
 export function AlbumGrid({ albums, emptyMessage }) {
@@ -41,9 +43,12 @@ export function AlbumGrid({ albums, emptyMessage }) {
             )}
           </div>
           <div className="space-y-1 p-4">
-            <p className="text-sm text-muted-foreground">
-              {format(new Date(album.eventDate), "MMMM d, yyyy")}
-            </p>
+            <div className="flex items-center gap-2">
+              <p className="text-sm text-muted-foreground">
+                {format(new Date(album.eventDate), "MMMM d, yyyy")}
+              </p>
+              <NewBadge scope="gallery" id={album.id} publishedAt={album.publishedAt} />
+            </div>
             <h2 className="text-lg font-semibold leading-snug">
               {album.title}
             </h2>

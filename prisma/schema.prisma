@@ -578,3 +578,27 @@ model Testimonial {
   @@index([status, position])
   @@map("testimonials")
 }
+
+enum ViewableType {
+  HOMEWORK
+  NEWS_NOTICE
+  GALLERY_ALBUM
+  ACADEMIC_POST
+}
+
+// One row per (item, anonymous visitor) — visitors have no account (see
+// Profile), so `visitorId` is a random id stored in a long-lived cookie
+// (src/app/api/views/route.js). The unique constraint dedupes repeat visits
+// so `count()` on this table gives the unique-visitor total shown on public
+// detail pages.
+model ItemView {
+  id        String       @id @default(cuid())
+  itemType  ViewableType
+  itemId    String
+  visitorId String
+  createdAt DateTime     @default(now())
+
+  @@unique([itemType, itemId, visitorId])
+  @@index([itemType, itemId])
+  @@map("item_views")
+}

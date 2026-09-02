@@ -10,6 +10,7 @@ import {
   DUE_STATUS_LABEL_KEYS,
   dueStatus,
 } from "@/lib/homework/due-status";
+import { NewBadge } from "@/components/seen/new-badge";
 
 export function HomeworkCard({ item }) {
   const t = useTranslations("homework.card");
@@ -52,14 +53,17 @@ export function HomeworkCard({ item }) {
           </p>
         </div>
       </div>
-      <span
-        className={cn(
-          "shrink-0 self-start rounded-full px-2.5 py-0.5 text-xs font-medium sm:self-center",
-          DUE_STATUS_BADGE_CLASS[status.value],
-        )}
-      >
-        {tStatus(DUE_STATUS_LABEL_KEYS[status.value])}
-      </span>
+      <div className="flex shrink-0 items-center gap-2 self-start sm:self-center">
+        <NewBadge scope="homework" id={item.id} publishedAt={item.publishedAt} />
+        <span
+          className={cn(
+            "rounded-full px-2.5 py-0.5 text-xs font-medium",
+            DUE_STATUS_BADGE_CLASS[status.value],
+          )}
+        >
+          {tStatus(DUE_STATUS_LABEL_KEYS[status.value])}
+        </span>
+      </div>
     </Link>
   );
 }

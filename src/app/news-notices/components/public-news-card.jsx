@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 
 import { cn } from "@/lib/utils";
 import { CATEGORY_LABEL_KEYS, categoryBadgeClass } from "@/lib/news-notices/categories";
+import { NewBadge } from "@/components/seen/new-badge";
 
 export function PublicNewsCard({ item }) {
   const t = useTranslations("newsNotices.publicNewsCard");
@@ -32,14 +33,17 @@ export function PublicNewsCard({ item }) {
         )}
       </div>
       <div className="flex flex-1 flex-col gap-2 p-4">
-        <span
-          className={cn(
-            "w-fit rounded-full px-2.5 py-0.5 text-xs font-medium",
-            categoryBadgeClass(item.category),
-          )}
-        >
-          {tCategories(CATEGORY_LABEL_KEYS[item.category])}
-        </span>
+        <div className="flex flex-wrap items-center gap-2">
+          <span
+            className={cn(
+              "w-fit rounded-full px-2.5 py-0.5 text-xs font-medium",
+              categoryBadgeClass(item.category),
+            )}
+          >
+            {tCategories(CATEGORY_LABEL_KEYS[item.category])}
+          </span>
+          <NewBadge scope="news-notices" id={item.id} publishedAt={item.publishedAt} />
+        </div>
         <h3 className="font-semibold leading-snug">{item.title}</h3>
         {item.summary ? (
           <p className="line-clamp-2 text-sm text-muted-foreground">

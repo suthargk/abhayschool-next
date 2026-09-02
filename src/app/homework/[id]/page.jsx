@@ -6,6 +6,9 @@ import { getTranslations } from "next-intl/server";
 
 import { prisma } from "@/lib/prisma";
 import { ContentRenderer } from "@/components/news-notices/content-renderer";
+import { MarkSeen } from "@/components/seen/mark-seen";
+import { RecordView } from "@/components/seen/record-view";
+import { ViewCount } from "@/components/seen/view-count";
 import { cn } from "@/lib/utils";
 import { classLabel } from "@/lib/classes";
 import { subjectBadgeClass, subjectIcon } from "@/lib/homework/subjects";
@@ -14,6 +17,7 @@ import {
   DUE_STATUS_LABEL_KEYS,
   dueStatus,
 } from "@/lib/homework/due-status";
+import { VIEWABLE_TYPES } from "@/lib/views/constants";
 
 function formatFileSize(bytes) {
   if (!bytes) return "";
@@ -36,11 +40,16 @@ export default async function HomeworkDetailPage({ params }) {
 
   if (!item) notFound();
 
+  const viewCount = await prisma.itemView.count({
+    where: { itemType: VIEWABLE_TYPES.HOMEWORK, itemId: item.id },
+  });
   const Icon = subjectIcon(item.subject);
   const status = dueStatus(item.dueDate);
 
   return (
     <div className="mx-auto max-w-3xl space-y-8 px-4 py-16 sm:px-6">
+      <MarkSeen scope="homework" id={item.id} />
+      <RecordView itemType={VIEWABLE_TYPES.HOMEWORK} itemId={item.id} />
       <Link
         href="/homework"
         className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
@@ -75,6 +84,7 @@ export default async function HomeworkDetailPage({ params }) {
         <h1 className="text-2xl font-semibold leading-tight tracking-tight sm:text-3xl">
           {item.title}
         </h1>
+        <ViewCount count={viewCount} />
       </div>
 
       <div className="grid gap-4 rounded-lg border bg-muted/30 p-5 sm:grid-cols-3">

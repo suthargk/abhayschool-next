@@ -7,8 +7,12 @@ import { getTranslations } from "next-intl/server";
 
 import { prisma } from "@/lib/prisma";
 import { ContentRenderer } from "@/components/news-notices/content-renderer";
+import { MarkSeen } from "@/components/seen/mark-seen";
+import { RecordView } from "@/components/seen/record-view";
+import { ViewCount } from "@/components/seen/view-count";
 import { cn } from "@/lib/utils";
 import { CATEGORY_LABEL_KEYS, categoryBadgeClass } from "@/lib/news-notices/categories";
+import { VIEWABLE_TYPES } from "@/lib/views/constants";
 
 function formatFileSize(bytes) {
   if (!bytes) return "";
@@ -28,6 +32,10 @@ export default async function NewsNoticeDetailPage({ params }) {
 
   if (!item) notFound();
 
+  const viewCount = await prisma.itemView.count({
+    where: { itemType: VIEWABLE_TYPES.NEWS_NOTICE, itemId: item.id },
+  });
+
   const hasEventInfo = item.eventDate || item.eventTime || item.venue;
   const wasUpdated =
     item.updatedAt &&
@@ -37,6 +45,8 @@ export default async function NewsNoticeDetailPage({ params }) {
 
   return (
     <div className="mx-auto max-w-3xl space-y-8 px-4 py-16 sm:px-6">
+      <MarkSeen scope="news-notices" id={item.id} />
+      <RecordView itemType={VIEWABLE_TYPES.NEWS_NOTICE} itemId={item.id} />
       <Link
         href="/news-notices"
         className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
@@ -88,6 +98,7 @@ export default async function NewsNoticeDetailPage({ params }) {
             : null}
           {item.author?.email ? ` · ${item.author.email}` : null}
         </p>
+        <ViewCount count={viewCount} />
       </div>
 
       {item.coverImageUrl ? (

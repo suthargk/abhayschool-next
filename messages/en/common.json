@@ -84,6 +84,10 @@
     "archived": "Archived",
     "pending": "Pending"
   },
+  "badges": {
+    "new": "New",
+    "views": "{count, plural, one {# view} other {# views}}"
+  },
   "table": {
     "noResults": "No results found.",
     "loading": "Loading…",
