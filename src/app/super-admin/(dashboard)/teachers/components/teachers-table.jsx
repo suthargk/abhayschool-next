@@ -34,13 +34,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { MultiSelect } from "@/components/ui/multi-select";
 import {
   Table,
   TableBody,
@@ -53,6 +47,37 @@ import { classLabel } from "@/lib/classes";
 import { getInitials, teacherFullName } from "@/lib/teacher";
 import { TEACHER_FEATURE_GROUPS, TEACHER_FEATURES } from "@/lib/teacher-features";
 import { cn } from "@/lib/utils";
+
+// Groups a teacher's flat list of {class, subject} assignment rows by class,
+// so the table can show "Class II · 5 subjects" instead of one badge per row
+// — a teacher registering with several classes/subjects selected can easily
+// end up with 20+ rows, which made the table cell (and the assign dialog's
+// list) unbounded and messy.
+//
+// Groups and subjects-within-a-group are ordered to match `classes`/
+// `subjects` (the admin-configured order from the Classes/Subjects pages,
+// already sorted by position) rather than alphabetically, so this list
+// reads the same order an admin sees everywhere else. A class/subject that
+// no longer exists in the current list (renamed/deleted) sorts last instead
+// of throwing.
+function groupAssignmentsByClass(assignments, classes, subjects = []) {
+  const classOrder = new Map(classes.map((c, i) => [c.value, i]));
+  const subjectOrder = new Map(subjects.map((s, i) => [s.label, i]));
+  const orderOf = (map, key) => map.get(key) ?? Number.MAX_SAFE_INTEGER;
+
+  const byClass = new Map();
+  for (const a of assignments) {
+    if (!byClass.has(a.class)) byClass.set(a.class, []);
+    byClass.get(a.class).push(a);
+  }
+  return [...byClass.entries()]
+    .map(([classValue, items]) => ({
+      classValue,
+      label: classLabel(classes, classValue),
+      items: items.sort((a, b) => orderOf(subjectOrder, a.subject) - orderOf(subjectOrder, b.subject)),
+    }))
+    .sort((a, b) => orderOf(classOrder, a.classValue) - orderOf(classOrder, b.classValue));
+}
 
 const STATUS_VARIANTS = {
   ACTIVE: "success",
@@ -136,6 +161,32 @@ function TeacherActionsMenu({
         )}
       </DropdownMenuContent>
     </DropdownMenu>
+  );
+}
+
+function AssignedSummary({ assignments, classes, subjects, max = 3 }) {
+  const t = useTranslations("superAdminDashboard.teachers.table");
+  if (assignments.length === 0) {
+    return <span className="text-xs text-muted-foreground">{t("noneAssigned")}</span>;
+  }
+  const groups = groupAssignmentsByClass(assignments, classes, subjects);
+  const shown = groups.slice(0, max);
+  const hiddenCount = groups.length - shown.length;
+  return (
+    <div className="flex flex-wrap gap-1">
+      {shown.map((g) => (
+        <Badge
+          key={g.classValue}
+          variant="outline"
+          title={g.items.map((a) => a.subject).join(", ")}
+        >
+          {g.label} · {t("subjectCount", { count: g.items.length })}
+        </Badge>
+      ))}
+      {hiddenCount > 0 ? (
+        <Badge variant="secondary">{t("moreClasses", { count: hiddenCount })}</Badge>
+      ) : null}
+    </div>
   );
 }
 
@@ -298,16 +349,8 @@ export function TeachersTable({ initialTeachers, classes, subjects = [] }) {
                 {t(STATUS_LABEL_KEYS[teacher.status])}
               </Badge>
             </div>
-            <div className="flex flex-wrap gap-1 pl-11">
-              {teacher.teacherAssignments.length === 0 ? (
-                <span className="text-xs text-muted-foreground">{t("noAssignments")}</span>
-              ) : (
-                teacher.teacherAssignments.map((a) => (
-                  <Badge key={a.id} variant="outline">
-                    {classLabel(classes, a.class)} · {a.subject}
-                  </Badge>
-                ))
-              )}
+            <div className="pl-11">
+              <AssignedSummary assignments={teacher.teacherAssignments} classes={classes} subjects={subjects} />
             </div>
           </div>
         ))}
@@ -350,18 +393,8 @@ export function TeachersTable({ initialTeachers, classes, subjects = [] }) {
                     {t(STATUS_LABEL_KEYS[teacher.status])}
                   </Badge>
                 </TableCell>
-                <TableCell>
-                  {teacher.teacherAssignments.length === 0 ? (
-                    <span className="text-xs text-muted-foreground">{t("noneAssigned")}</span>
-                  ) : (
-                    <div className="flex flex-wrap gap-1">
-                      {teacher.teacherAssignments.map((a) => (
-                        <Badge key={a.id} variant="outline">
-                          {classLabel(classes, a.class)} · {a.subject}
-                        </Badge>
-                      ))}
-                    </div>
-                  )}
+                <TableCell className="max-w-xs">
+                  <AssignedSummary assignments={teacher.teacherAssignments} classes={classes} subjects={subjects} />
                 </TableCell>
                 <TableCell>
                   <TeacherActionsMenu
@@ -451,30 +484,49 @@ function TeacherDeleteDialog({ teacher, deleting, onOpenChange, onConfirm }) {
 
 function AssignmentsDialog({ teacher, classes, subjects, onClose, onChange }) {
   const t = useTranslations("superAdminDashboard.teachers.table");
-  const [classValue, setClassValue] = useState(classes[0]?.value ?? "");
-  const [subject, setSubject] = useState(subjects[0]?.label ?? "");
+  const [addClasses, setAddClasses] = useState([]);
+  const [addSubjects, setAddSubjects] = useState([]);
   const [saving, setSaving] = useState(false);
+  const [removingId, setRemovingId] = useState(null);
+  const [removingClass, setRemovingClass] = useState(null);
 
-  async function addAssignment() {
-    if (!teacher || !classValue || !subject) return;
+  const anyPending = saving || removingId !== null || removingClass !== null;
+
+  function reset() {
+    setAddClasses([]);
+    setAddSubjects([]);
+  }
+
+  async function addAssignments() {
+    if (!teacher || addClasses.length === 0 || addSubjects.length === 0) return;
+    const existing = new Set(teacher.teacherAssignments.map((a) => `${a.class}::${a.subject}`));
+    const pairs = addClasses
+      .flatMap((classValue) => addSubjects.map((subject) => ({ class: classValue, subject })))
+      .filter((p) => !existing.has(`${p.class}::${p.subject}`));
+    if (pairs.length === 0) {
+      reset();
+      return;
+    }
+
     setSaving(true);
     try {
-      const res = await fetch(`/api/super-admin/teachers/${teacher.id}/assignments`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ class: classValue, subject }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || t("assignmentAddFailed"));
-      const exists = teacher.teacherAssignments.some((a) => a.id === data.item.id);
-      onChange(
-        teacher.id,
-        exists
-          ? teacher.teacherAssignments
-          : [...teacher.teacherAssignments, data.item],
+      const results = await Promise.all(
+        pairs.map((pair) =>
+          fetch(`/api/super-admin/teachers/${teacher.id}/assignments`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(pair),
+          }).then(async (res) => ({ ok: res.ok, item: (await res.json().catch(() => ({}))).item })),
+        ),
       );
-    } catch (err) {
-      toast.error(err.message);
+      const addedIds = new Set(teacher.teacherAssignments.map((a) => a.id));
+      const added = results.filter((r) => r.ok && r.item && !addedIds.has(r.item.id)).map((r) => r.item);
+      if (added.length > 0) {
+        onChange(teacher.id, [...teacher.teacherAssignments, ...added]);
+      }
+      const failed = pairs.length - results.filter((r) => r.ok).length;
+      if (failed > 0) toast.error(t("assignmentAddFailedCount", { count: failed }));
+      reset();
     } finally {
       setSaving(false);
     }
@@ -482,6 +534,7 @@ function AssignmentsDialog({ teacher, classes, subjects, onClose, onChange }) {
 
   async function removeAssignment(assignmentId) {
     if (!teacher) return;
+    setRemovingId(assignmentId);
     try {
       const res = await fetch(
         `/api/super-admin/teachers/${teacher.id}/assignments/${assignmentId}`,
@@ -495,78 +548,144 @@ function AssignmentsDialog({ teacher, classes, subjects, onClose, onChange }) {
       );
     } catch (err) {
       toast.error(err.message);
+    } finally {
+      setRemovingId(null);
     }
   }
 
+  async function removeClassGroup(group) {
+    if (!teacher) return;
+    setRemovingClass(group.classValue);
+    try {
+      const results = await Promise.all(
+        group.items.map((a) =>
+          fetch(`/api/super-admin/teachers/${teacher.id}/assignments/${a.id}`, {
+            method: "DELETE",
+          }).then((res) => ({ ok: res.ok, id: a.id })),
+        ),
+      );
+      const removedIds = new Set(results.filter((r) => r.ok).map((r) => r.id));
+      onChange(
+        teacher.id,
+        teacher.teacherAssignments.filter((a) => !removedIds.has(a.id)),
+      );
+      const failed = group.items.length - removedIds.size;
+      if (failed > 0) toast.error(t("assignmentRemoveFailed"));
+    } finally {
+      setRemovingClass(null);
+    }
+  }
+
+  const groups = teacher ? groupAssignmentsByClass(teacher.teacherAssignments, classes, subjects) : [];
+
   return (
-    <Dialog open={Boolean(teacher)} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent>
+    <Dialog
+      open={Boolean(teacher)}
+      onOpenChange={(open) => {
+        if (!open && !anyPending) {
+          reset();
+          onClose();
+        }
+      }}
+    >
+      <DialogContent className="flex max-h-[85vh] flex-col sm:max-w-xl">
         <DialogHeader>
           <DialogTitle>{t("assignDialogTitle")}</DialogTitle>
         </DialogHeader>
         {teacher ? (
-          <div className="space-y-4">
-            <p className="text-sm text-muted-foreground">
+          <div className="flex min-h-0 flex-1 flex-col gap-4">
+            <p className="shrink-0 text-sm text-muted-foreground">
               {teacherFullName(teacher) || teacher.email}
             </p>
 
-            {teacher.teacherAssignments.length > 0 ? (
-              <ul className="space-y-2">
-                {teacher.teacherAssignments.map((a) => (
-                  <li
-                    key={a.id}
-                    className="flex items-center justify-between rounded-md border px-3 py-2 text-sm"
-                  >
-                    <span>
-                      {classLabel(classes, a.class)} · {a.subject}
-                    </span>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      className="size-7"
-                      onClick={() => removeAssignment(a.id)}
-                    >
-                      <X className="size-4" />
-                    </Button>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="text-sm text-muted-foreground">{t("noAssignmentsYet")}</p>
-            )}
+            <div className="min-h-0 flex-1 space-y-3 overflow-y-auto rounded-md border p-3">
+              {groups.length > 0 ? (
+                groups.map((group) => (
+                  <div key={group.classValue} className="space-y-1.5">
+                    <div className="flex items-center justify-between gap-2">
+                      <p className="text-sm font-medium">{group.label}</p>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="size-7 shrink-0 text-muted-foreground hover:text-destructive"
+                        disabled={anyPending}
+                        onClick={() => removeClassGroup(group)}
+                        title={t("removeClass")}
+                      >
+                        {removingClass === group.classValue ? (
+                          <Loader2 className="size-4 animate-spin" />
+                        ) : (
+                          <X className="size-4" />
+                        )}
+                      </Button>
+                    </div>
+                    <div className="flex flex-wrap gap-1.5">
+                      {group.items.map((a) => (
+                        <Badge key={a.id} variant="secondary" className="gap-1">
+                          {a.subject}
+                          <button
+                            type="button"
+                            disabled={anyPending}
+                            onClick={() => removeAssignment(a.id)}
+                            className="rounded-full hover:text-destructive disabled:opacity-50"
+                          >
+                            {removingId === a.id ? (
+                              <Loader2 className="size-3 animate-spin" />
+                            ) : (
+                              <X className="size-3" />
+                            )}
+                          </button>
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p className="text-sm text-muted-foreground">{t("noAssignmentsYet")}</p>
+              )}
+            </div>
 
-            <div className="flex items-end gap-2">
-              <div className="flex-1 space-y-1">
-                <Select value={classValue} onValueChange={setClassValue}>
-                  <SelectTrigger>
-                    <SelectValue placeholder={t("classPlaceholder")} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {classes.map((c) => (
-                      <SelectItem key={c.value} value={c.value}>
-                        {c.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+            <div className="shrink-0 space-y-3 rounded-md border p-3">
+              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                {t("addAssignmentsHeading")}
+              </p>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div className="space-y-1.5">
+                  <Label htmlFor="assign-classes">{t("classesLabel")}</Label>
+                  <MultiSelect
+                    id="assign-classes"
+                    options={classes.map((c) => ({ value: c.value, label: c.label }))}
+                    values={addClasses}
+                    onChange={setAddClasses}
+                    placeholder={t("classesPlaceholder")}
+                    emptyText={t("classesEmpty")}
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="assign-subjects">{t("subjectsLabel")}</Label>
+                  <MultiSelect
+                    id="assign-subjects"
+                    options={subjects.map((s) => ({ value: s.label, label: s.label }))}
+                    values={addSubjects}
+                    onChange={setAddSubjects}
+                    placeholder={t("subjectsPlaceholder")}
+                    emptyText={t("subjectsEmpty")}
+                  />
+                </div>
               </div>
-              <div className="flex-1 space-y-1">
-                <Select value={subject} onValueChange={setSubject}>
-                  <SelectTrigger>
-                    <SelectValue placeholder={t("subjectPlaceholder")} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {subjects.map((s) => (
-                      <SelectItem key={s.id} value={s.label}>
-                        {s.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <Button type="button" size="icon" disabled={saving} onClick={addAssignment}>
-                <Plus className="size-4" />
+              <Button
+                type="button"
+                className="w-full sm:w-auto"
+                disabled={anyPending || addClasses.length === 0 || addSubjects.length === 0}
+                onClick={addAssignments}
+              >
+                {saving ? (
+                  <Loader2 className="size-4 animate-spin" />
+                ) : (
+                  <Plus className="size-4" />
+                )}
+                {t("addAssignments")}
               </Button>
             </div>
           </div>
