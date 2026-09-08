@@ -3,10 +3,13 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
-import { formatDistanceToNow } from "date-fns";
+import { format, formatDistanceToNow } from "date-fns";
 import {
   ChevronLeft,
   ChevronRight,
+  Download,
+  FileSpreadsheet,
+  FileText,
   Loader2,
   MoreHorizontal,
   Search,
@@ -70,6 +73,7 @@ export function AdmissionsTable({
   const [selectedIds, setSelectedIds] = useState(() => new Set());
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [deleting, setDeleting] = useState(false);
+  const [exportFormat, setExportFormat] = useState(null);
 
   useEffect(() => {
     setSelectedIds(new Set());
@@ -173,6 +177,72 @@ export function AdmissionsTable({
     }
   }
 
+  function buildExportRows(rows) {
+    return rows.map((item) => ({
+      "Student Name": item.studentName,
+      "Date of Birth": item.dateOfBirth ? format(new Date(item.dateOfBirth), "yyyy-MM-dd") : "",
+      Gender: item.gender ?? "",
+      "Class Applied For": item.classAppliedFor,
+      "Parent Name": item.parentName,
+      Phone: displayPhone(item.phone),
+      Email: item.email ?? "",
+      Address: item.address ?? "",
+      "Previous School": item.previousSchool ?? "",
+      Message: item.message ?? "",
+      Status: STATUS_META[item.status]?.label ?? item.status,
+      "Submitted On": format(new Date(item.createdAt), "yyyy-MM-dd HH:mm"),
+    }));
+  }
+
+  async function handleExport(kind) {
+    setExportFormat(kind);
+    try {
+      const usp = new URLSearchParams();
+      if (search) usp.set("q", search);
+      if (status) usp.set("status", status);
+      const res = await fetch(`/api/super-admin/admissions?${usp.toString()}`);
+      if (!res.ok) throw new Error("Failed to fetch admissions for export");
+      const { items: allItems } = await res.json();
+
+      if (allItems.length === 0) {
+        toast.error("No admission enquiries to export.");
+        return;
+      }
+
+      const rows = buildExportRows(allItems);
+      const filename = `admissions-${format(new Date(), "yyyy-MM-dd")}`;
+
+      if (kind === "pdf") {
+        const [{ jsPDF }, { autoTable }] = await Promise.all([
+          import("jspdf"),
+          import("jspdf-autotable"),
+        ]);
+        const doc = new jsPDF({ orientation: "landscape" });
+        doc.setFontSize(14);
+        doc.text("Admission Enquiries", 14, 15);
+        autoTable(doc, {
+          startY: 20,
+          head: [Object.keys(rows[0])],
+          body: rows.map((row) => Object.values(row)),
+          styles: { fontSize: 8, cellPadding: 2 },
+          headStyles: { fillColor: [24, 24, 27] },
+        });
+        doc.save(`${filename}.pdf`);
+      } else {
+        const XLSX = await import("xlsx");
+        const worksheet = XLSX.utils.json_to_sheet(rows);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Admissions");
+        const bookType = kind === "csv" ? "csv" : kind === "xls" ? "biff8" : "xlsx";
+        XLSX.writeFile(workbook, `${filename}.${kind}`, { bookType });
+      }
+    } catch (err) {
+      toast.error(err.message || "Export failed");
+    } finally {
+      setExportFormat(null);
+    }
+  }
+
   return (
     <div className="space-y-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
@@ -210,6 +280,43 @@ export function AdmissionsTable({
               <SelectItem value="CLOSED">Closed</SelectItem>
             </SelectContent>
           </Select>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                disabled={Boolean(exportFormat)}
+                className="gap-1.5"
+              >
+                {exportFormat ? (
+                  <Loader2 className="size-4 animate-spin" />
+                ) : (
+                  <Download className="size-4" />
+                )}
+                Export
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onSelect={() => handleExport("xlsx")}>
+                <FileSpreadsheet className="size-4" />
+                Export as .xlsx
+              </DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => handleExport("xls")}>
+                <FileSpreadsheet className="size-4" />
+                Export as .xls
+              </DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => handleExport("csv")}>
+                <FileSpreadsheet className="size-4" />
+                Export as .csv
+              </DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => handleExport("pdf")}>
+                <FileText className="size-4" />
+                Export as .pdf
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
 

@@ -63,6 +63,7 @@ import { classLabel } from "@/lib/classes";
 import { displayPhone } from "@/lib/phone";
 import { getInitials, teacherFullName } from "@/lib/teacher";
 import { TEACHER_FEATURE_GROUPS, TEACHER_FEATURES } from "@/lib/teacher-features";
+import { toTitleCase } from "@/lib/text-case";
 import { cn } from "@/lib/utils";
 
 // Groups a teacher's flat list of {class, subject} assignment rows by class,
@@ -1066,7 +1067,7 @@ function AddTeacherDialog({ open, onOpenChange, onCreated }) {
               <Input
                 id="add-teacher-first-name"
                 value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
+                onChange={(e) => setFirstName(toTitleCase(e.target.value))}
               />
             </div>
             <div className="space-y-1.5">
@@ -1074,7 +1075,7 @@ function AddTeacherDialog({ open, onOpenChange, onCreated }) {
               <Input
                 id="add-teacher-last-name"
                 value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
+                onChange={(e) => setLastName(toTitleCase(e.target.value))}
               />
             </div>
           </div>
