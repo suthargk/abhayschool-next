@@ -7,6 +7,8 @@ import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { PasswordChecklist } from "@/components/ui/password-checklist";
+import { PASSWORD_RULES, isStrongPassword } from "@/lib/password";
 
 export function TeacherRegisterForm({ email, token }) {
   const t = useTranslations("teacherAuth.register");
@@ -17,10 +19,19 @@ export function TeacherRegisterForm({ email, token }) {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const passwordRules = PASSWORD_RULES.map((rule) => ({
+    ...rule,
+    label: t(`passwordRequirements.${rule.key}`),
+  }));
+
   async function onSubmit(e) {
     e.preventDefault();
     setError("");
 
+    if (!isStrongPassword(password)) {
+      setError(t("passwordWeak"));
+      return;
+    }
     if (password !== confirmPassword) {
       setError(t("passwordMismatch"));
       return;
@@ -69,31 +80,32 @@ export function TeacherRegisterForm({ email, token }) {
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="password">{t("passwordLabel")}</Label>
-              <Input
-                id="password"
-                type="password"
-                autoComplete="new-password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                minLength={8}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="confirmPassword">{t("confirmPasswordLabel")}</Label>
-              <Input
-                id="confirmPassword"
-                type="password"
-                autoComplete="new-password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                required
-                minLength={8}
-              />
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="password">{t("passwordLabel")}</Label>
+            <Input
+              id="password"
+              type="password"
+              autoComplete="new-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              minLength={8}
+            />
+            <p className="text-xs text-muted-foreground">{t("passwordHelp")}</p>
+            <PasswordChecklist password={password} rules={passwordRules} />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="confirmPassword">{t("confirmPasswordLabel")}</Label>
+            <Input
+              id="confirmPassword"
+              type="password"
+              autoComplete="new-password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+              minLength={8}
+            />
           </div>
 
           {error ? (

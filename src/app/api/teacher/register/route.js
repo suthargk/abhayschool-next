@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { normalizePhone } from "@/lib/phone";
+import { isStrongPassword } from "@/lib/password";
 import { rateLimit } from "@/lib/rate-limit";
 import { prisma } from "@/lib/prisma";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -28,9 +29,12 @@ export async function POST(request) {
   if (!phone) {
     return NextResponse.json({ error: "Enter a valid 10-digit mobile number" }, { status: 400 });
   }
-  if (password.length < 8) {
+  if (!isStrongPassword(password)) {
     return NextResponse.json(
-      { error: "Password must be at least 8 characters" },
+      {
+        error:
+          "Password must be at least 8 characters and include one capital letter, one number, and one special character",
+      },
       { status: 400 },
     );
   }
