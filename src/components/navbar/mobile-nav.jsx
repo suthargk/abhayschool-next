@@ -63,7 +63,7 @@ function NavPill({ href, isActive, children }) {
   );
 }
 
-export function MobileNav() {
+export function MobileNav({ isTeacherLoggedIn }) {
   const pathname = usePathname();
   const router = useRouter();
   const { theme, setTheme } = useTheme();
@@ -258,13 +258,15 @@ export function MobileNav() {
           </SheetClose>
           <SheetClose asChild>
             <Link
-              href="/teacher/login"
+              href={isTeacherLoggedIn ? "/teacher" : "/teacher/login"}
               className={cn(
                 buttonVariants({ size: "lg", variant: "outline" }),
                 "mt-2 w-full"
               )}
             >
-              {t("header.teacherLogin")}
+              {isTeacherLoggedIn
+                ? t("header.dashboard")
+                : t("header.teacherLogin")}
             </Link>
           </SheetClose>
         </div>

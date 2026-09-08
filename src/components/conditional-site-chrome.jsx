@@ -12,7 +12,7 @@ import CustomizeSettingDialog from "@/components/customize-setting-dialog";
 import { FestivalBackground } from "@/components/backgrounds/festival-background";
 import Footer from "@/app/landing/footer";
 
-export function ConditionalSiteChrome({ children }) {
+export function ConditionalSiteChrome({ children, isTeacherLoggedIn }) {
   const pathname = usePathname();
   const t = useTranslations("common");
   const hideSiteChrome =
@@ -44,12 +44,16 @@ export function ConditionalSiteChrome({ children }) {
             variant="outline"
             className="hidden md:inline-flex"
           >
-            <Link href="/teacher/login">{t("header.teacherLogin")}</Link>
+            <Link href={isTeacherLoggedIn ? "/teacher" : "/teacher/login"}>
+              {isTeacherLoggedIn
+                ? t("header.dashboard")
+                : t("header.teacherLogin")}
+            </Link>
           </Button>
           <Button asChild size="sm" className="hidden md:inline-flex">
             <Link href="/#admissions">{t("header.applyNow")}</Link>
           </Button>
-          <MobileNav />
+          <MobileNav isTeacherLoggedIn={isTeacherLoggedIn} />
         </div>
       </div>
       {children}

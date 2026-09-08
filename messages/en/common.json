@@ -49,6 +49,7 @@
   },
   "header": {
     "teacherLogin": "Teacher Login",
+    "dashboard": "Dashboard",
     "applyNow": "Apply Now"
   },
   "actions": {

@@ -173,6 +173,15 @@ export function TeacherShell({ children, profile, features = [] }) {
           <h1 className="truncate text-sm font-medium">{getPageTitle(pathname, navItems, t("dashboard"))}</h1>
           <div className="ml-auto flex items-center gap-1">
             <LanguageSelect triggerClassName="h-8 w-[92px] border-none bg-transparent shadow-none" />
+            <Link
+              href="/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex size-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              aria-label={t("viewPublicSite")}
+            >
+              <ExternalLink className="size-4" />
+            </Link>
             <ModeToggle />
           </div>
         </header>

@@ -5,6 +5,7 @@ import "./globals.css";
 
 import { ConditionalSiteChrome } from "@/components/conditional-site-chrome";
 import { ThemeProvider } from "@/components/theme-provider";
+import { getCurrentProfile } from "@/lib/auth";
 
 const SITE_NAME = "Shri Abhay Nobles Senior Secondary School";
 const SITE_DESCRIPTION =
@@ -39,6 +40,9 @@ const organizationJsonLd = {
 export default async function RootLayout({ children }) {
   const locale = await getLocale();
   const messages = await getMessages();
+  const profile = await getCurrentProfile();
+  const isTeacherLoggedIn =
+    profile?.role === "TEACHER" && profile?.status === "ACTIVE";
 
   return (
     <html lang={locale} suppressHydrationWarning className="overflow-x-hidden">
@@ -54,7 +58,9 @@ export default async function RootLayout({ children }) {
             enableSystem
             disableTransitionOnChange
           >
-            <ConditionalSiteChrome>{children}</ConditionalSiteChrome>
+            <ConditionalSiteChrome isTeacherLoggedIn={isTeacherLoggedIn}>
+              {children}
+            </ConditionalSiteChrome>
             <Analytics />
           </ThemeProvider>
         </NextIntlClientProvider>
