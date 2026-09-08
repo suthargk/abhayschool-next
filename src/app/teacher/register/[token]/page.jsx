@@ -9,9 +9,11 @@ export default async function TeacherRegisterPage({ params }) {
   const { token } = await params;
   const t = await getTranslations("teacherAuth.register");
 
-  const profile = await prisma.profile.findUnique({
-    where: { inviteTokenHash: hashInviteToken(token) },
-  });
+  const [profile, classes, subjects] = await Promise.all([
+    prisma.profile.findUnique({ where: { inviteTokenHash: hashInviteToken(token) } }),
+    prisma.schoolClass.findMany({ orderBy: { position: "asc" } }),
+    prisma.subject.findMany({ orderBy: { position: "asc" } }),
+  ]);
   const valid =
     profile &&
     profile.status === "INVITED" &&
@@ -29,5 +31,5 @@ export default async function TeacherRegisterPage({ params }) {
     );
   }
 
-  return <TeacherRegisterForm email={profile.email} token={token} />;
+  return <TeacherRegisterForm email={profile.email} token={token} classes={classes} subjects={subjects} />;
 }

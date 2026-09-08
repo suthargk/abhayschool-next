@@ -18,9 +18,10 @@ enum Role {
 // Only meaningful for TEACHER profiles: ADMIN/EDITOR rows created via Prisma
 // Studio stay ACTIVE. INVITED means an admin created the account and emailed
 // an invite link, but the teacher hasn't completed registration (set a
-// password) yet — see src/app/api/teacher/register. PENDING is retained only
-// for any historical rows from the removed self-serve signup flow; nothing
-// creates PENDING rows anymore. REJECTED revokes access.
+// password, picked classes/subjects) yet — see src/app/api/teacher/register.
+// PENDING means the teacher completed registration but an admin hasn't
+// approved the account yet — see the super-admin Teachers page. REJECTED
+// revokes access.
 enum ProfileStatus {
   ACTIVE
   INVITED
@@ -33,8 +34,12 @@ enum ProfileStatus {
 // Auth dashboard. TEACHER rows are created by an admin from the super-admin
 // Teachers page (src/app/api/super-admin/teachers), which creates the Auth
 // user + this row with status INVITED and emails an invite link; the teacher
-// completes registration (mobile number + password) at that link, which
-// flips status to ACTIVE — see src/app/api/teacher/register.
+// completes registration (mobile number, password, and the classes/subjects
+// they teach) at that link — see src/app/api/teacher/register — which
+// creates their TeacherAssignment rows and flips status to PENDING. An
+// admin then reviews and approves (status ACTIVE) or rejects the account,
+// and can add further class/subject assignments, from the super-admin
+// Teachers page.
 model Profile {
   id                   String        @id @db.Uuid
   email                String        @unique
@@ -69,7 +74,9 @@ model Profile {
 }
 
 // Which class+subject combinations a TEACHER profile is allowed to post
-// homework for, set by an admin from the super-admin teacher-approval page.
+// homework for. Initially created from the classes/subjects the teacher
+// selects during registration (src/app/api/teacher/register); an admin can
+// add further rows from the super-admin teacher-approval page.
 model TeacherAssignment {
   id        String   @id @default(cuid())
   class     String

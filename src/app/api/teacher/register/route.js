@@ -16,6 +16,12 @@ export async function POST(request) {
   const token = typeof body?.token === "string" ? body.token.trim() : "";
   const password = typeof body?.password === "string" ? body.password : "";
   const phone = normalizePhone(body?.phone);
+  const classes = Array.isArray(body?.classes)
+    ? [...new Set(body.classes.filter((c) => typeof c === "string" && c))]
+    : [];
+  const subjects = Array.isArray(body?.subjects)
+    ? [...new Set(body.subjects.filter((s) => typeof s === "string" && s))]
+    : [];
 
   if (!token) {
     return NextResponse.json({ error: "Invalid invite link" }, { status: 400 });
@@ -37,6 +43,23 @@ export async function POST(request) {
       },
       { status: 400 },
     );
+  }
+  if (classes.length === 0) {
+    return NextResponse.json({ error: "Select at least one class" }, { status: 400 });
+  }
+  if (subjects.length === 0) {
+    return NextResponse.json({ error: "Select at least one subject" }, { status: 400 });
+  }
+
+  const [validClasses, validSubjects] = await Promise.all([
+    prisma.schoolClass.findMany({ where: { value: { in: classes } }, select: { value: true } }),
+    prisma.subject.findMany({ where: { label: { in: subjects } }, select: { label: true } }),
+  ]);
+  if (validClasses.length !== classes.length) {
+    return NextResponse.json({ error: "One or more selected classes is invalid" }, { status: 400 });
+  }
+  if (validSubjects.length !== subjects.length) {
+    return NextResponse.json({ error: "One or more selected subjects is invalid" }, { status: 400 });
   }
 
   const profile = await prisma.profile.findUnique({ where: { inviteTokenHash: hashInviteToken(token) } });
@@ -62,10 +85,17 @@ export async function POST(request) {
     return NextResponse.json({ error: updateError.message }, { status: 400 });
   }
 
-  await prisma.profile.update({
-    where: { id: profile.id },
-    data: { phone, status: "ACTIVE", inviteTokenHash: null, inviteTokenExpiresAt: null },
-  });
+  const assignments = classes.flatMap((classValue) =>
+    subjects.map((subject) => ({ teacherId: profile.id, class: classValue, subject })),
+  );
+
+  await prisma.$transaction([
+    prisma.profile.update({
+      where: { id: profile.id },
+      data: { phone, status: "PENDING", inviteTokenHash: null, inviteTokenExpiresAt: null },
+    }),
+    prisma.teacherAssignment.createMany({ data: assignments, skipDuplicates: true }),
+  ]);
 
   return NextResponse.json({ ok: true });
 }

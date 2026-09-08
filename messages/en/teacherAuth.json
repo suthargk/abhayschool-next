@@ -2,7 +2,7 @@
   "login": {
     "heading": "Teacher sign in",
     "subheading": "Sign in with your teacher account.",
-    "registeredNotice": "Account set up! You can now sign in.",
+    "registeredNotice": "Account set up! An admin needs to approve it before you can sign in.",
     "emailLabel": "Email",
     "passwordLabel": "Password",
     "signIn": "Sign in",
@@ -11,7 +11,7 @@
   },
   "register": {
     "heading": "Set up your account",
-    "subheading": "Add your mobile number and choose a password to finish setting up your teacher account.",
+    "subheading": "Add your mobile number, choose a password, and select the classes/subjects you teach to finish setting up your teacher account.",
     "emailLabel": "Email",
     "phoneLabel": "Mobile number",
     "phonePlaceholder": "98765 43210",
@@ -24,6 +24,14 @@
       "specialChar": "One special character (e.g. ! @ # $)"
     },
     "confirmPasswordLabel": "Confirm password",
+    "classesLabel": "Classes you teach",
+    "classesPlaceholder": "Select classes",
+    "classesEmpty": "No classes found.",
+    "classesRequired": "Select at least one class",
+    "subjectsLabel": "Subjects you teach",
+    "subjectsPlaceholder": "Select subjects",
+    "subjectsEmpty": "No subjects found.",
+    "subjectsRequired": "Select at least one subject",
     "submit": "Finish setup",
     "submitting": "Setting up…",
     "passwordMismatch": "Passwords don't match",

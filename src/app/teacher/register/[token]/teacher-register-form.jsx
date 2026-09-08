@@ -7,15 +7,18 @@ import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { MultiSelect } from "@/components/ui/multi-select";
 import { PasswordChecklist } from "@/components/ui/password-checklist";
 import { PASSWORD_RULES, isStrongPassword } from "@/lib/password";
 
-export function TeacherRegisterForm({ email, token }) {
+export function TeacherRegisterForm({ email, token, classes = [], subjects: subjectOptions = [] }) {
   const t = useTranslations("teacherAuth.register");
   const router = useRouter();
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [classValues, setClassValues] = useState([]);
+  const [subjectValues, setSubjectValues] = useState([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -36,13 +39,27 @@ export function TeacherRegisterForm({ email, token }) {
       setError(t("passwordMismatch"));
       return;
     }
+    if (classValues.length === 0) {
+      setError(t("classesRequired"));
+      return;
+    }
+    if (subjectValues.length === 0) {
+      setError(t("subjectsRequired"));
+      return;
+    }
 
     setLoading(true);
     try {
       const res = await fetch("/api/teacher/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token, phone, password }),
+        body: JSON.stringify({
+          token,
+          phone,
+          password,
+          classes: classValues,
+          subjects: subjectValues,
+        }),
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
@@ -105,6 +122,30 @@ export function TeacherRegisterForm({ email, token }) {
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
               minLength={8}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="register-classes">{t("classesLabel")}</Label>
+            <MultiSelect
+              id="register-classes"
+              options={classes.map((c) => ({ value: c.value, label: c.label }))}
+              values={classValues}
+              onChange={setClassValues}
+              placeholder={t("classesPlaceholder")}
+              emptyText={t("classesEmpty")}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="register-subjects">{t("subjectsLabel")}</Label>
+            <MultiSelect
+              id="register-subjects"
+              options={subjectOptions.map((s) => ({ value: s.label, label: s.label }))}
+              values={subjectValues}
+              onChange={setSubjectValues}
+              placeholder={t("subjectsPlaceholder")}
+              emptyText={t("subjectsEmpty")}
             />
           </div>
 
