@@ -1,9 +1,11 @@
-import { NextResponse } from "next/server";
+import { NextResponse, after } from "next/server";
 import { Prisma } from "@prisma/client";
 
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { sendMail } from "@/lib/mailer";
+import { buildTeacherApprovedEmail } from "@/lib/email-templates/teacher-approved";
 
 const ALLOWED_STATUSES = ["ACTIVE", "PENDING", "REJECTED"];
 
@@ -54,6 +56,25 @@ export async function PATCH(request, { params }) {
     data: { status: body.status },
     include: { teacherAssignments: true },
   });
+
+  if (body.status === "ACTIVE" && existing.status !== "ACTIVE" && item.email) {
+    const loginUrl = process.env.NEXT_PUBLIC_SITE_URL
+      ? `${process.env.NEXT_PUBLIC_SITE_URL}/teacher/login`
+      : undefined;
+
+    // Status is already updated, so don't make the admin's browser wait on
+    // an SMTP round trip — schedule the teacher notification after the
+    // response is sent.
+    after(() => {
+      const { subject, html, text, attachments } = buildTeacherApprovedEmail({
+        firstName: item.firstName,
+        loginUrl,
+      });
+      return sendMail({ to: item.email, subject, html, text, attachments }).catch((error) => {
+        console.error("Failed to send teacher approval email:", error);
+      });
+    });
+  }
 
   return NextResponse.json({ item });
 }

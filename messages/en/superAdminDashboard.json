@@ -2,7 +2,48 @@
   "home": {
     "heading": "Overview",
     "description": "Choose a section from the left to manage content. This area is separate from the public site header and footer.",
-    "recentChangesHeading": "Recent changes"
+    "recentChangesHeading": "Recent changes",
+    "pendingActionsHeading": "Needs attention"
+  },
+  "overview": {
+    "stats": {
+      "activeTeachers": "Active teachers",
+      "activeTeachersSub": "{count, plural, =0 {No pending approvals} one {# pending approval} other {# pending approvals}}",
+      "publishedContent": "Published content",
+      "publishedContentSub": "{count, plural, =0 {No items in draft} one {# item in draft} other {# items in draft}}",
+      "newAdmissions": "Admission enquiries",
+      "pageViews": "Page views",
+      "trendUp": "+{percent}% vs previous 30 days",
+      "trendDown": "-{percent}% vs previous 30 days",
+      "trendFlat": "No change vs previous 30 days",
+      "trendNew": "New this period"
+    },
+    "charts": {
+      "admissionsTitle": "Admission enquiries",
+      "admissionsDescription": "New enquiries submitted over the last 30 days",
+      "pageViewsTitle": "Page views",
+      "pageViewsDescription": "Unique visitors across news, gallery, homework & blog in the last 30 days",
+      "contentTitle": "Content by section",
+      "contentDescription": "Published vs draft items across each content area",
+      "homeworkTrendTitle": "Homework assigned",
+      "homeworkTrendDescription": "New homework created over the last 30 days",
+      "homeworkByClassTitle": "Homework by class",
+      "homeworkByClassDescription": "Total homework items posted for each class",
+      "published": "Published",
+      "draft": "Draft",
+      "views": "Views",
+      "enquiries": "Enquiries",
+      "homework": "Homework"
+    },
+    "pendingActions": {
+      "empty": "All caught up — nothing needs your attention.",
+      "teacherApprovals": "Teacher approvals",
+      "teacherApprovalsDescription": "{count, plural, one {# account awaiting review} other {# accounts awaiting review}}",
+      "newAdmissions": "New admission enquiries",
+      "newAdmissionsDescription": "{count, plural, one {# enquiry not yet contacted} other {# enquiries not yet contacted}}",
+      "pendingTestimonials": "Testimonials awaiting review",
+      "pendingTestimonialsDescription": "{count, plural, one {# submission awaiting review} other {# submissions awaiting review}}"
+    }
   },
   "recentChanges": {
     "empty": "No changes yet.",

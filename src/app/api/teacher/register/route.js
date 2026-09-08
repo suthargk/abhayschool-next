@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextResponse, after } from "next/server";
 
 import { normalizePhone } from "@/lib/phone";
 import { isStrongPassword } from "@/lib/password";
@@ -6,6 +6,8 @@ import { rateLimit } from "@/lib/rate-limit";
 import { prisma } from "@/lib/prisma";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { hashInviteToken } from "@/lib/teacher-invite";
+import { sendMail } from "@/lib/mailer";
+import { buildTeacherSetupNotifyEmail } from "@/lib/email-templates/teacher-setup-notify";
 
 function clientIp(request) {
   return request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
@@ -96,6 +98,20 @@ export async function POST(request) {
     }),
     prisma.teacherAssignment.createMany({ data: assignments, skipDuplicates: true }),
   ]);
+
+  const notifyTo = process.env.ADMISSIONS_NOTIFY_EMAIL || "admin@shriabhaynoblesschool.com";
+  const adminUrl = process.env.NEXT_PUBLIC_SITE_URL
+    ? `${process.env.NEXT_PUBLIC_SITE_URL}/super-admin/teachers`
+    : undefined;
+
+  // Account is already set up, so don't make the browser wait on an SMTP
+  // round trip — schedule the admin notification after the response is sent.
+  after(() => {
+    const { subject, html, text, attachments } = buildTeacherSetupNotifyEmail({ profile, adminUrl });
+    return sendMail({ to: notifyTo, subject, html, text, attachments }).catch((error) => {
+      console.error("Failed to send teacher setup notification email:", error);
+    });
+  });
 
   return NextResponse.json({ ok: true });
 }
