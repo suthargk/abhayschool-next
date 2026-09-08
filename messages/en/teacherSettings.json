@@ -1,0 +1,38 @@
+{
+  "heading": "Settings",
+  "subheading": "Manage your profile photo, password, and language.",
+  "photo": {
+    "title": "Profile photo",
+    "description": "Shown in the sidebar and anywhere your name appears to admins.",
+    "upload": "Upload photo",
+    "uploading": "Uploading…",
+    "uploadFailed": "Couldn't upload photo",
+    "updated": "Profile photo updated"
+  },
+  "password": {
+    "title": "Password",
+    "description": "Choose a strong password you don't use anywhere else.",
+    "currentPasswordLabel": "Current password",
+    "newPasswordLabel": "New password",
+    "confirmPasswordLabel": "Confirm new password",
+    "passwordHelp": "Your new password must include:",
+    "passwordRequirements": {
+      "minLength": "At least 8 characters",
+      "uppercase": "One capital letter (A-Z)",
+      "number": "One number (0-9)",
+      "specialChar": "One special character (e.g. ! @ # $)"
+    },
+    "submit": "Update password",
+    "submitting": "Updating…",
+    "currentPasswordRequired": "Enter your current password",
+    "passwordMismatch": "Passwords don't match",
+    "passwordWeak": "Password must be at least 8 characters and include one capital letter, one number, and one special character",
+    "updated": "Password updated",
+    "defaultError": "Couldn't update your password"
+  },
+  "preferences": {
+    "title": "Preferences",
+    "description": "Language used across your teacher dashboard.",
+    "languageLabel": "Language"
+  }
+}

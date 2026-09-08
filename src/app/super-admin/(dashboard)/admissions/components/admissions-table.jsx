@@ -33,6 +33,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { displayPhone } from "@/lib/phone";
 
 import { AdmissionsDeleteDialog } from "./admissions-delete-dialog";
 
@@ -272,7 +273,7 @@ export function AdmissionsTable({
                     </TableCell>
                     <TableCell className="text-muted-foreground">{item.classAppliedFor}</TableCell>
                     <TableCell className="text-muted-foreground">{item.parentName}</TableCell>
-                    <TableCell className="text-muted-foreground">{item.phone}</TableCell>
+                    <TableCell className="text-muted-foreground">{displayPhone(item.phone)}</TableCell>
                     <TableCell>
                       <Badge variant={statusMeta.variant}>{statusMeta.label}</Badge>
                     </TableCell>

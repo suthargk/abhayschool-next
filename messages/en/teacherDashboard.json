@@ -4,7 +4,10 @@
     "defaultTeacherName": "Teacher",
     "subheading": "Post and manage homework for your classes.",
     "homeworkPosted": "Homework posted",
+    "classesAssigned": "Classes assigned",
+    "subjectsAssigned": "Subjects assigned",
     "yourAssignments": "Your assignments",
+    "assignmentsCount": "{count, plural, =0 {No classes} =1 {1 class} other {# classes}}",
     "addHomework": "Add homework",
     "noAssignments": "No classes/subjects assigned yet. Contact an admin."
   }

@@ -1,14 +1,16 @@
 import { NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 
-const TEACHER_PUBLIC_PATHS = ["/teacher/login"];
+const TEACHER_PUBLIC_PATHS = ["/teacher/login", "/teacher/forgot-password"];
 
 export async function middleware(request) {
   const { pathname } = request.nextUrl;
   const isLogin = pathname === "/super-admin/login";
   const isTeacherArea = pathname === "/teacher" || pathname.startsWith("/teacher/");
   const isTeacherPublic =
-    TEACHER_PUBLIC_PATHS.includes(pathname) || pathname.startsWith("/teacher/register/");
+    TEACHER_PUBLIC_PATHS.includes(pathname) ||
+    pathname.startsWith("/teacher/register/") ||
+    pathname.startsWith("/teacher/reset-password/");
 
   let response = NextResponse.next({ request });
 

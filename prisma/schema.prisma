@@ -51,6 +51,8 @@ model Profile {
   photoUrl             String?
   inviteTokenHash      String?       @unique
   inviteTokenExpiresAt DateTime?
+  resetTokenHash       String?       @unique
+  resetTokenExpiresAt  DateTime?
   createdAt            DateTime      @default(now())
 
   newsNotices               NewsNotice[]

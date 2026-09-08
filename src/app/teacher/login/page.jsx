@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -13,6 +14,7 @@ function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const justRegistered = searchParams.get("registered") === "1";
+  const justReset = searchParams.get("reset") === "1";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -55,6 +57,11 @@ function LoginForm() {
             {t("registeredNotice")}
           </p>
         ) : null}
+        {justReset ? (
+          <p className="rounded-md bg-emerald-50 px-3 py-2 text-sm text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400">
+            {t("resetNotice")}
+          </p>
+        ) : null}
         <form onSubmit={onSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="email">{t("emailLabel")}</Label>
@@ -68,7 +75,12 @@ function LoginForm() {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="password">{t("passwordLabel")}</Label>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="password">{t("passwordLabel")}</Label>
+              <Link href="/teacher/forgot-password" className="text-sm text-muted-foreground hover:text-foreground">
+                {t("forgotPassword")}
+              </Link>
+            </div>
             <Input
               id="password"
               type="password"

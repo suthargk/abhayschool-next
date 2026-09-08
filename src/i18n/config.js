@@ -33,6 +33,7 @@ export const NAMESPACES = [
   "teacherLibrary",
   "teacherNewsNotices",
   "teacherPrincipalMessage",
+  "teacherSettings",
   "teacherTestimonials",
   "teacherTimeTable",
   "teacherToppers",

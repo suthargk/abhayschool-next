@@ -3,11 +3,43 @@
     "heading": "Teacher sign in",
     "subheading": "Sign in with your teacher account.",
     "registeredNotice": "Account set up! An admin needs to approve it before you can sign in.",
+    "resetNotice": "Password reset. Sign in with your new password.",
     "emailLabel": "Email",
     "passwordLabel": "Password",
+    "forgotPassword": "Forgot password?",
     "signIn": "Sign in",
     "signingIn": "Signing in…",
     "defaultError": "Sign in failed"
+  },
+  "forgotPassword": {
+    "heading": "Reset your password",
+    "subheading": "Enter your teacher account email and we'll send you a link to reset your password.",
+    "emailLabel": "Email",
+    "sendLink": "Send reset link",
+    "sending": "Sending…",
+    "sentNotice": "If that email belongs to a teacher account, we've sent a link to reset your password.",
+    "backToLogin": "Back to sign in",
+    "defaultError": "Couldn't send the reset link"
+  },
+  "resetPassword": {
+    "heading": "Choose a new password",
+    "subheading": "Set a new password for your teacher account.",
+    "passwordLabel": "New password",
+    "passwordHelp": "Your password must include:",
+    "passwordRequirements": {
+      "minLength": "At least 8 characters",
+      "uppercase": "One capital letter (A-Z)",
+      "number": "One number (0-9)",
+      "specialChar": "One special character (e.g. ! @ # $)"
+    },
+    "confirmPasswordLabel": "Confirm new password",
+    "submit": "Reset password",
+    "submitting": "Resetting…",
+    "passwordMismatch": "Passwords don't match",
+    "passwordWeak": "Password must be at least 8 characters and include one capital letter, one number, and one special character",
+    "defaultError": "Couldn't reset your password",
+    "invalidHeading": "Reset link invalid",
+    "invalidMessage": "This reset link is invalid or has expired. Request a new one from the sign-in page."
   },
   "register": {
     "heading": "Set up your account",

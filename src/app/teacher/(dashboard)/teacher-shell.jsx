@@ -6,7 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 import { useTranslations } from "next-intl";
 import { Toaster } from "sonner";
-import { ExternalLink, GraduationCap, LayoutDashboard, LogOut } from "lucide-react";
+import { ExternalLink, GraduationCap, LayoutDashboard, LogOut, Settings } from "lucide-react";
 
 import { ModeToggle } from "@/components/mode-toggle";
 import { LanguageSelect } from "@/components/language-select";
@@ -41,11 +41,14 @@ const BASE_NAV_ITEMS = [
   { href: "/teacher/homework", labelKey: "homework", icon: GraduationCap },
 ];
 
+const SETTINGS_NAV_ITEM = { href: "/teacher/settings", labelKey: "settings", icon: Settings };
+
 function buildNavItems(features, t, tFeatures) {
   const granted = TEACHER_FEATURES.filter((f) => features.includes(f.key));
   return [
     ...BASE_NAV_ITEMS.map((item) => ({ ...item, label: t(item.labelKey) })),
     ...granted.map((item) => ({ ...item, label: tFeatures(item.key) })),
+    { ...SETTINGS_NAV_ITEM, label: t(SETTINGS_NAV_ITEM.labelKey) },
   ];
 }
 

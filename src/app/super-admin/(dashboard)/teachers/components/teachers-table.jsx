@@ -5,8 +5,6 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import {
-  ChevronLeft,
-  ChevronRight,
   Loader2,
   MoreHorizontal,
   Plus,
@@ -27,6 +25,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { DataTablePagination } from "@/components/data-table-pagination";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -61,6 +60,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { classLabel } from "@/lib/classes";
+import { displayPhone } from "@/lib/phone";
 import { getInitials, teacherFullName } from "@/lib/teacher";
 import { TEACHER_FEATURE_GROUPS, TEACHER_FEATURES } from "@/lib/teacher-features";
 import { cn } from "@/lib/utils";
@@ -249,6 +249,7 @@ export function TeachersTable({
   const [resendingTeacher, setResendingTeacher] = useState(null);
   const [deletingTeacher, setDeletingTeacher] = useState(null);
   const [deleting, setDeleting] = useState(false);
+  const [paginationPending, setPaginationPending] = useState(false);
 
   // The source of truth for which teachers are on this page/filter/search is
   // always the server (`items`) — re-sync whenever it changes (pagination,
@@ -431,7 +432,7 @@ export function TeachersTable({
         </p>
       ) : (
         <div className="relative">
-          {isPending ? (
+          {isPending || paginationPending ? (
             <div className="absolute inset-0 z-10 flex items-center justify-center rounded-xl bg-background/60">
               <Loader2 className="size-6 animate-spin text-muted-foreground" />
             </div>
@@ -468,7 +469,7 @@ export function TeachersTable({
                   />
                 </div>
                 <div className="flex flex-wrap items-center gap-1.5 pl-11 text-sm text-muted-foreground">
-                  <span>{teacher.phone ?? "—"}</span>
+                  <span>{teacher.phone ? displayPhone(teacher.phone) : "—"}</span>
                   <span>·</span>
                   <Badge variant={STATUS_VARIANTS[teacher.status]}>
                     {t(STATUS_LABEL_KEYS[teacher.status])}
@@ -512,7 +513,7 @@ export function TeachersTable({
                         </div>
                       </div>
                     </TableCell>
-                    <TableCell>{teacher.phone ?? "—"}</TableCell>
+                    <TableCell>{teacher.phone ? displayPhone(teacher.phone) : "—"}</TableCell>
                     <TableCell>
                       <Badge variant={STATUS_VARIANTS[teacher.status]}>
                         {t(STATUS_LABEL_KEYS[teacher.status])}
@@ -541,37 +542,17 @@ export function TeachersTable({
         </div>
       )}
 
-      {total > 0 ? (
-        <div className="flex items-center justify-between gap-4">
-          <p className="text-sm text-muted-foreground">
-            {t("paginationSummary", { page, totalPages, total })}
-          </p>
-          <div className="flex items-center gap-1">
-            <Button
-              type="button"
-              variant="outline"
-              size="icon"
-              className="size-8"
-              aria-label={t("previousPage")}
-              disabled={isPending || page <= 1}
-              onClick={() => navigate({ page: page - 1 > 1 ? page - 1 : undefined })}
-            >
-              <ChevronLeft className="size-4" />
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              size="icon"
-              className="size-8"
-              aria-label={t("nextPage")}
-              disabled={isPending || page >= totalPages}
-              onClick={() => navigate({ page: page + 1 })}
-            >
-              <ChevronRight className="size-4" />
-            </Button>
-          </div>
-        </div>
-      ) : null}
+      <DataTablePagination
+        basePath="/super-admin/teachers"
+        onPendingChange={setPaginationPending}
+        search={search}
+        page={page}
+        totalPages={totalPages}
+        total={total}
+        pageSize={pageSize}
+        defaultPageSize={defaultPageSize}
+        extraParams={{ status: status || undefined }}
+      />
 
       <AssignmentsDialog
         teacher={assigningTeacher}

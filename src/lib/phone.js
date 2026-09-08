@@ -9,3 +9,11 @@ export function normalizePhone(raw) {
 
   return null;
 }
+
+// Drops the +91 country code for display, since every stored number is a
+// domestic Indian mobile — leaves anything else (other country codes, bare
+// numbers) untouched.
+export function displayPhone(phone) {
+  if (typeof phone !== "string") return phone;
+  return phone.startsWith("+91") ? phone.slice(3) : phone;
+}
