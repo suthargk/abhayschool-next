@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 
+import { LOCALES, LOCALE_COOKIE } from "@/i18n/config";
 import { prisma } from "@/lib/prisma";
 import { createClient } from "@/lib/supabase/server";
 
@@ -43,5 +44,14 @@ export async function POST(request) {
     );
   }
 
-  return NextResponse.json({ ok: true, status: profile.status });
+  const response = NextResponse.json({ ok: true, status: profile.status });
+  // Apply the teacher's saved language preference to this browser, so it
+  // shows up correctly even on a device/browser they haven't used before.
+  if (LOCALES.includes(profile.locale)) {
+    response.cookies.set(LOCALE_COOKIE, profile.locale, {
+      path: "/",
+      maxAge: 60 * 60 * 24 * 365,
+    });
+  }
+  return response;
 }

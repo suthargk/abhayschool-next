@@ -33,6 +33,7 @@
   "preferences": {
     "title": "Preferences",
     "description": "Language used across your teacher dashboard.",
-    "languageLabel": "Language"
+    "languageLabel": "Language",
+    "saveFailed": "Language changed here, but couldn't be saved to your account"
   }
 }

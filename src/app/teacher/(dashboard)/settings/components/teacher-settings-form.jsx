@@ -34,6 +34,19 @@ export function TeacherSettingsForm({ profile }) {
     label: t(`password.passwordRequirements.${rule.key}`),
   }));
 
+  async function handleLocaleChange(locale) {
+    try {
+      const res = await fetch("/api/teacher/settings/locale", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ locale }),
+      });
+      if (!res.ok) throw new Error();
+    } catch {
+      toast.error(t("preferences.saveFailed"));
+    }
+  }
+
   async function handlePhotoChange(e) {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -197,7 +210,7 @@ export function TeacherSettingsForm({ profile }) {
         <p className="mt-1 text-sm text-muted-foreground">{t("preferences.description")}</p>
         <div className="mt-4 max-w-[220px] space-y-2">
           <Label>{t("preferences.languageLabel")}</Label>
-          <LanguageSelect />
+          <LanguageSelect onLocaleChange={handleLocaleChange} />
         </div>
       </section>
     </div>

@@ -16,7 +16,7 @@ import {
 import { LANGUAGES } from "@/Helper/languages";
 import { LOCALE_COOKIE } from "@/i18n/config";
 
-export function LanguageSelect({ triggerClassName }) {
+export function LanguageSelect({ triggerClassName, onLocaleChange }) {
   const locale = useLocale();
   const t = useTranslations("common");
   const router = useRouter();
@@ -24,6 +24,7 @@ export function LanguageSelect({ triggerClassName }) {
 
   function handleChange(value) {
     document.cookie = `${LOCALE_COOKIE}=${value}; path=/; max-age=31536000`;
+    onLocaleChange?.(value);
     startTransition(() => {
       router.refresh();
     });

@@ -49,6 +49,7 @@ model Profile {
   lastName             String?
   phone                String?
   photoUrl             String?
+  locale               String        @default("en")
   inviteTokenHash      String?       @unique
   inviteTokenExpiresAt DateTime?
   resetTokenHash       String?       @unique
