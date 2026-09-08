@@ -39,12 +39,13 @@ async function EditTimeTableFormSection({ params }) {
   const { id } = await params;
   const profile = await getCurrentProfile();
 
-  const [item, classes] = await Promise.all([
+  const [item, classes, subjects] = await Promise.all([
     prisma.timeTableSlot.findUnique({ where: { id } }),
     prisma.schoolClass.findMany({ orderBy: { position: "asc" } }),
+    prisma.subject.findMany({ orderBy: { position: "asc" } }),
   ]);
 
   if (!item || item.authorId !== profile.id) notFound();
 
-  return <TeacherTimeTableForm initialItem={item} classes={classes} />;
+  return <TeacherTimeTableForm initialItem={item} classes={classes} subjects={subjects} />;
 }

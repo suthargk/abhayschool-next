@@ -1,10 +1,15 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import { ArrowLeft } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { FormSkeleton } from "@/components/form-skeleton";
+import { prisma } from "@/lib/prisma";
 
 import { TeacherFacultyForm } from "../components/teacher-faculty-form";
 
+// Not async: the header has no data dependency, so it streams immediately
+// instead of waiting on the classes query below.
 export default function NewTeacherFacultyPage() {
   return (
     <div className="space-y-6">
@@ -17,7 +22,18 @@ export default function NewTeacherFacultyPage() {
         </Button>
         <h1 className="text-2xl font-semibold tracking-tight">Add faculty</h1>
       </div>
-      <TeacherFacultyForm />
+      <Suspense fallback={<FormSkeleton />}>
+        <NewFacultyFormSection />
+      </Suspense>
     </div>
   );
+}
+
+async function NewFacultyFormSection() {
+  const [classes, subjects] = await Promise.all([
+    prisma.schoolClass.findMany({ orderBy: { position: "asc" } }),
+    prisma.subject.findMany({ orderBy: { position: "asc" } }),
+  ]);
+
+  return <TeacherFacultyForm classes={classes} subjects={subjects} />;
 }

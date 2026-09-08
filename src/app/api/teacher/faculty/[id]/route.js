@@ -3,12 +3,29 @@ import { NextResponse } from "next/server";
 import { requireTeacherFeature } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { FACULTY_CATEGORIES } from "@/data/faculty-categories";
+import { toTitleCase } from "@/lib/text-case";
 
 const FACULTY_CATEGORY_VALUES = FACULTY_CATEGORIES.map((c) => c.value);
 
 function sanitizeStringArray(values) {
   if (!Array.isArray(values)) return [];
-  return values.map((value) => (typeof value === "string" ? value.trim() : "")).filter(Boolean);
+  return values
+    .map((value) => (typeof value === "string" ? toTitleCase(value.trim()) : ""))
+    .filter(Boolean);
+}
+
+// Grades must be one of the admin-managed SchoolClass values — free text is
+// no longer accepted (the form only offers a dropdown of known classes).
+function sanitizeGrades(values, validValues) {
+  if (!Array.isArray(values)) return [];
+  return [...new Set(values.filter((value) => validValues.has(value)))];
+}
+
+// Subjects must be one of the admin-managed Subject labels — free text is
+// no longer accepted (the form only offers a dropdown of known subjects).
+function sanitizeSubjects(values, validLabels) {
+  if (!Array.isArray(values)) return [];
+  return [...new Set(values.filter((value) => validLabels.has(value)))];
 }
 
 export async function GET(request, { params }) {
@@ -53,25 +70,28 @@ export async function PATCH(request, { params }) {
     if (!body.name.trim()) {
       return NextResponse.json({ error: "Name is required" }, { status: 400 });
     }
-    data.name = body.name.trim();
+    data.name = toTitleCase(body.name.trim());
   }
   if (typeof body.designation === "string") {
     if (!body.designation.trim()) {
       return NextResponse.json({ error: "Designation is required" }, { status: 400 });
     }
-    data.designation = body.designation.trim();
+    data.designation = toTitleCase(body.designation.trim());
   }
   if (body.department !== undefined) {
-    data.department = typeof body.department === "string" ? body.department.trim() || null : null;
+    data.department =
+      typeof body.department === "string" ? toTitleCase(body.department.trim()) || null : null;
   }
   if (body.category !== undefined) {
     data.category = FACULTY_CATEGORY_VALUES.includes(body.category) ? body.category : "TEACHING";
   }
   if (body.subjects !== undefined) {
-    data.subjects = sanitizeStringArray(body.subjects);
+    const subjectRows = await prisma.subject.findMany({ select: { label: true } });
+    data.subjects = sanitizeSubjects(body.subjects, new Set(subjectRows.map((s) => s.label)));
   }
   if (body.grades !== undefined) {
-    data.grades = sanitizeStringArray(body.grades);
+    const schoolClasses = await prisma.schoolClass.findMany({ select: { value: true } });
+    data.grades = sanitizeGrades(body.grades, new Set(schoolClasses.map((c) => c.value)));
   }
   if (body.areasOfInterest !== undefined) {
     data.areasOfInterest = sanitizeStringArray(body.areasOfInterest);

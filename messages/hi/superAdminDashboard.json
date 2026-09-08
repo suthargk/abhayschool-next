@@ -27,7 +27,7 @@
   "teachers": {
     "page": {
       "heading": "शिक्षक",
-      "description": "शिक्षक साइनअप स्वीकृत करें और प्रत्येक शिक्षक जिन कक्षाओं/विषयों के लिए होमवर्क पोस्ट कर सकता है, वे असाइन करें।"
+      "description": "शिक्षकों को आमंत्रित करें और प्रत्येक शिक्षक जिन कक्षाओं/विषयों के लिए होमवर्क पोस्ट कर सकता है, वे असाइन करें।"
     },
     "table": {
       "empty": "अभी तक कोई शिक्षक खाता नहीं है।",
@@ -39,6 +39,7 @@
       "revoke": "रद्द करें",
       "reApprove": "पुनः स्वीकृत करें",
       "statusActive": "सक्रिय",
+      "statusInvited": "आमंत्रित",
       "statusPending": "लंबित",
       "statusRejected": "अस्वीकृत",
       "columnTeacher": "शिक्षक",
@@ -52,6 +53,26 @@
       "toastRevoked": "पहुंच रद्द कर दी गई",
       "toastStatusUpdated": "स्थिति अपडेट की गई",
       "statusUpdateFailed": "अपडेट असफल रहा",
+      "addTeacher": "शिक्षक जोड़ें",
+      "addDialogTitle": "शिक्षक को आमंत्रित करें",
+      "addDialogDescription": "हम उन्हें मोबाइल नंबर और पासवर्ड सेट करने के लिए एक लिंक ईमेल करेंगे।",
+      "firstNameLabel": "पहला नाम",
+      "lastNameLabel": "उपनाम",
+      "emailLabel": "ईमेल",
+      "sendInvite": "आमंत्रण भेजें",
+      "sending": "भेजा जा रहा है…",
+      "toastInvited": "आमंत्रण भेजा गया",
+      "inviteFailed": "आमंत्रण नहीं भेजा जा सका",
+      "resendInvite": "आमंत्रण पुनः भेजें",
+      "resendDialogTitle": "आमंत्रण पुनः भेजें",
+      "resendDialogDescription": "पुनः भेजने से पहले आप ईमेल बदल सकते हैं — आमंत्रण लिंक नीचे दिए गए पते पर जाएगा।",
+      "toastInviteSent": "आमंत्रण भेजा गया",
+      "cancelInvite": "आमंत्रण रद्द करें",
+      "toastInviteCancelled": "आमंत्रण रद्द किया गया",
+      "cancelInviteFailed": "आमंत्रण रद्द नहीं किया जा सका",
+      "deleteTeacherDescription": "इससे उनका खाता, कक्षा/विषय असाइनमेंट और फ़ीचर अनुमतियां स्थायी रूप से हट जाएंगी।",
+      "toastDeleted": "शिक्षक हटाया गया",
+      "deleteFailed": "शिक्षक हटाया नहीं जा सका",
       "assignDialogTitle": "कक्षाएं/विषय असाइन करें",
       "noAssignmentsYet": "अभी तक कोई असाइनमेंट नहीं।",
       "classPlaceholder": "कक्षा",

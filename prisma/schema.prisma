@@ -16,30 +16,37 @@ enum Role {
 }
 
 // Only meaningful for TEACHER profiles: ADMIN/EDITOR rows created via Prisma
-// Studio stay ACTIVE. A teacher who self-signs-up starts PENDING until an
-// admin approves them in the super-admin dashboard; REJECTED revokes access.
+// Studio stay ACTIVE. INVITED means an admin created the account and emailed
+// an invite link, but the teacher hasn't completed registration (set a
+// password) yet — see src/app/api/teacher/register. PENDING is retained only
+// for any historical rows from the removed self-serve signup flow; nothing
+// creates PENDING rows anymore. REJECTED revokes access.
 enum ProfileStatus {
   ACTIVE
+  INVITED
   PENDING
   REJECTED
 }
 
 // Mirrors a Supabase Auth user (auth.users.id). ADMIN/EDITOR rows are created
 // manually via Prisma Studio after the account is created in the Supabase
-// Auth dashboard. TEACHER rows are created by the self-serve signup flow
-// (src/app/api/teacher/verify-otp) after the teacher verifies the OTP emailed
-// to their school address — this row is what grants dashboard access and a
-// role.
+// Auth dashboard. TEACHER rows are created by an admin from the super-admin
+// Teachers page (src/app/api/super-admin/teachers), which creates the Auth
+// user + this row with status INVITED and emails an invite link; the teacher
+// completes registration (mobile number + password) at that link, which
+// flips status to ACTIVE — see src/app/api/teacher/register.
 model Profile {
-  id        String        @id @db.Uuid
-  email     String        @unique
-  role      Role          @default(EDITOR)
-  status    ProfileStatus @default(ACTIVE)
-  firstName String?
-  lastName  String?
-  phone     String?
-  photoUrl  String?
-  createdAt DateTime      @default(now())
+  id                   String        @id @db.Uuid
+  email                String        @unique
+  role                 Role          @default(EDITOR)
+  status               ProfileStatus @default(ACTIVE)
+  firstName            String?
+  lastName             String?
+  phone                String?
+  photoUrl             String?
+  inviteTokenHash      String?       @unique
+  inviteTokenExpiresAt DateTime?
+  createdAt            DateTime      @default(now())
 
   newsNotices               NewsNotice[]
   galleryAlbums             GalleryAlbum[]
@@ -54,6 +61,7 @@ model Profile {
   testimonials              Testimonial[]
   timeTableSlots            TimeTableSlot[]
   schoolClasses             SchoolClass[]
+  subjects                  Subject[]
   teacherAssignments        TeacherAssignment[]
   teacherFeaturePermissions TeacherFeaturePermission[]
 
@@ -84,6 +92,7 @@ enum TeacherFeature {
   GALLERY
   NEWS_NOTICES
   CLASSES
+  SUBJECTS
   LIBRARY
   TIME_TABLE
   BLOG
@@ -103,29 +112,6 @@ model TeacherFeaturePermission {
 
   @@unique([teacherId, feature])
   @@map("teacher_feature_permissions")
-}
-
-// Short-lived record backing teacher email verification. Holds the signup
-// form data (password encrypted at rest, see src/lib/otp.js) until the OTP
-// is verified — no Supabase Auth user and no Profile are created until then,
-// so an unverified signup never reaches auth.users. Consumed by
-// /api/teacher/verify-otp, which creates the Auth user and Profile together.
-// One pending signup per email; re-signing up before verifying replaces the
-// row (see /api/teacher/signup).
-model TeacherSignupOtp {
-  id          String   @id @default(cuid())
-  email       String   @unique
-  firstName   String
-  lastName    String
-  phone       String
-  photoUrl    String?
-  passwordEnc String
-  codeHash    String
-  attempts    Int      @default(0)
-  expiresAt   DateTime
-  createdAt   DateTime @default(now())
-
-  @@map("teacher_signup_otps")
 }
 
 enum ContentType {
@@ -323,6 +309,24 @@ model SchoolClass {
   author   Profile @relation(fields: [authorId], references: [id])
 
   @@map("school_classes")
+}
+
+// Admin-managed list of academic subjects (e.g. "Mathematics", "Science").
+// `value` is a stable, immutable identifier stored on content records
+// (Faculty.subjects, Homework.subject, TimeTableSlot.subject,
+// TeacherAssignment.subject); `label` is the editable display name.
+model Subject {
+  id        String   @id @default(cuid())
+  value     String   @unique
+  label     String
+  position  Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  authorId String  @db.Uuid
+  author   Profile @relation(fields: [authorId], references: [id])
+
+  @@map("subjects")
 }
 
 model LibraryBook {

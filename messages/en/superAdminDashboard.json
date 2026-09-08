@@ -27,7 +27,7 @@
   "teachers": {
     "page": {
       "heading": "Teachers",
-      "description": "Approve teacher signups and assign the classes/subjects each teacher can post homework for."
+      "description": "Invite teachers and assign the classes/subjects each teacher can post homework for."
     },
     "table": {
       "empty": "No teacher accounts yet.",
@@ -39,6 +39,7 @@
       "revoke": "Revoke",
       "reApprove": "Re-approve",
       "statusActive": "Active",
+      "statusInvited": "Invited",
       "statusPending": "Pending",
       "statusRejected": "Rejected",
       "columnTeacher": "Teacher",
@@ -52,6 +53,26 @@
       "toastRevoked": "Access revoked",
       "toastStatusUpdated": "Status updated",
       "statusUpdateFailed": "Update failed",
+      "addTeacher": "Add teacher",
+      "addDialogTitle": "Invite a teacher",
+      "addDialogDescription": "We'll email them a link to set their mobile number and password.",
+      "firstNameLabel": "First name",
+      "lastNameLabel": "Last name",
+      "emailLabel": "Email",
+      "sendInvite": "Send invite",
+      "sending": "Sending…",
+      "toastInvited": "Invite sent",
+      "inviteFailed": "Couldn't send the invite",
+      "resendInvite": "Resend invite",
+      "resendDialogTitle": "Resend invite",
+      "resendDialogDescription": "You can change the email before resending — the invite link will go to whichever address is below.",
+      "toastInviteSent": "Invite sent",
+      "cancelInvite": "Cancel invite",
+      "toastInviteCancelled": "Invite cancelled",
+      "cancelInviteFailed": "Couldn't cancel the invite",
+      "deleteTeacherDescription": "This permanently removes their account, class/subject assignments, and feature permissions.",
+      "toastDeleted": "Teacher deleted",
+      "deleteFailed": "Couldn't delete the teacher",
       "assignDialogTitle": "Assign classes/subjects",
       "noAssignmentsYet": "No assignments yet.",
       "classPlaceholder": "Class",

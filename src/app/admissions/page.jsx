@@ -1,4 +1,8 @@
+import { Suspense } from "react";
 import { useTranslations } from "next-intl";
+
+import { Skeleton } from "@/components/ui/skeleton";
+import { prisma } from "@/lib/prisma";
 
 import { AdmissionForm } from "./components/admission-form";
 
@@ -13,8 +17,16 @@ export default function AdmissionsPage() {
           <p className="mt-1 text-sm text-muted-foreground">{t("description")}</p>
         </div>
 
-        <AdmissionForm />
+        <Suspense fallback={<Skeleton className="h-[600px] w-full" />}>
+          <AdmissionFormSection />
+        </Suspense>
       </div>
     </div>
   );
+}
+
+async function AdmissionFormSection() {
+  const classes = await prisma.schoolClass.findMany({ orderBy: { position: "asc" } });
+
+  return <AdmissionForm classes={classes} />;
 }

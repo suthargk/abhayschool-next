@@ -1,0 +1,15 @@
+{
+  "heading": "Subjects",
+  "description": "Manage the list of subjects used across Faculty, Homework, and Time Table.",
+  "addPlaceholder": "e.g. Mathematics, Physics, Political Science",
+  "empty": "No subjects yet. Add one above.",
+  "deleteDialog": {
+    "title": "Delete \"{label}\"?",
+    "description": "This can't be undone. Deletion is blocked if any faculty, homework, or time table entry still uses this subject."
+  },
+  "errors": {
+    "addFailed": "Failed to add subject",
+    "renameFailed": "Failed to rename subject",
+    "deleteFailed": "Failed to delete subject"
+  }
+}

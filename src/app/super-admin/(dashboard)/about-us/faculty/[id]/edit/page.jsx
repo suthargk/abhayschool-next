@@ -35,12 +35,21 @@ export default async function EditFacultyPage({ params }) {
 }
 
 async function EditFacultySection({ id }) {
-  const [item, profile] = await Promise.all([
+  const [item, profile, classes, subjects] = await Promise.all([
     prisma.faculty.findUnique({ where: { id } }),
     getCurrentProfile(),
+    prisma.schoolClass.findMany({ orderBy: { position: "asc" } }),
+    prisma.subject.findMany({ orderBy: { position: "asc" } }),
   ]);
 
   if (!item) notFound();
 
-  return <FacultyForm initialItem={item} canPublish={profile?.role === "ADMIN"} />;
+  return (
+    <FacultyForm
+      initialItem={item}
+      canPublish={profile?.role === "ADMIN"}
+      classes={classes}
+      subjects={subjects}
+    />
+  );
 }

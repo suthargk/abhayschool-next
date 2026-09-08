@@ -7,7 +7,10 @@ import { prisma } from "@/lib/prisma";
 import { HomeworkForm } from "../components/homework-form";
 
 export default async function NewHomeworkPage() {
-  const classes = await prisma.schoolClass.findMany({ orderBy: { position: "asc" } });
+  const [classes, subjects] = await Promise.all([
+    prisma.schoolClass.findMany({ orderBy: { position: "asc" } }),
+    prisma.subject.findMany({ orderBy: { position: "asc" } }),
+  ]);
 
   return (
     <div className="space-y-6">
@@ -22,7 +25,7 @@ export default async function NewHomeworkPage() {
           Create homework
         </h1>
       </div>
-      <HomeworkForm classes={classes} />
+      <HomeworkForm classes={classes} subjects={subjects} />
     </div>
   );
 }

@@ -7,9 +7,10 @@ import { prisma } from "@/lib/prisma";
 import { TimeTableForm } from "../components/time-table-form";
 
 export default async function NewTimeTableSlotPage({ searchParams }) {
-  const [params, classes] = await Promise.all([
+  const [params, classes, subjects] = await Promise.all([
     searchParams,
     prisma.schoolClass.findMany({ orderBy: { position: "asc" } }),
+    prisma.subject.findMany({ orderBy: { position: "asc" } }),
   ]);
   const defaultClass = classes.some((c) => c.value === params.class)
     ? params.class
@@ -26,7 +27,7 @@ export default async function NewTimeTableSlotPage({ searchParams }) {
         </Button>
         <h1 className="text-2xl font-semibold tracking-tight">Add time table slot</h1>
       </div>
-      <TimeTableForm classes={classes} defaultClass={defaultClass} />
+      <TimeTableForm classes={classes} subjects={subjects} defaultClass={defaultClass} />
     </div>
   );
 }

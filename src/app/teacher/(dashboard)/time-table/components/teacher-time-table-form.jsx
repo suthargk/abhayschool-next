@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/select";
 import { WEEKDAYS, WEEKDAY_LABEL_KEYS } from "@/data/weekdays";
 
-export function TeacherTimeTableForm({ initialItem, classes }) {
+export function TeacherTimeTableForm({ initialItem, classes, subjects = [] }) {
   const t = useTranslations("teacherTimeTable.form");
   const tActions = useTranslations("common.actions");
   const tWeekdays = useTranslations("academics.timeTable");
@@ -26,7 +26,7 @@ export function TeacherTimeTableForm({ initialItem, classes }) {
   const [klass, setKlass] = useState(initialItem?.class ?? classes[0]?.value ?? "");
   const [day, setDay] = useState(initialItem?.day ?? WEEKDAYS[0].value);
   const [period, setPeriod] = useState(initialItem?.period ?? "");
-  const [subject, setSubject] = useState(initialItem?.subject ?? "");
+  const [subject, setSubject] = useState(initialItem?.subject ?? subjects[0]?.label ?? "");
   const [teacherName, setTeacherName] = useState(initialItem?.teacherName ?? "");
   const [startTime, setStartTime] = useState(initialItem?.startTime ?? "");
   const [endTime, setEndTime] = useState(initialItem?.endTime ?? "");
@@ -123,13 +123,18 @@ export function TeacherTimeTableForm({ initialItem, classes }) {
         </div>
         <div className="space-y-2">
           <Label htmlFor="time-table-subject">{t("subjectLabel")}</Label>
-          <Input
-            id="time-table-subject"
-            value={subject}
-            onChange={(e) => setSubject(e.target.value)}
-            required
-            placeholder={t("subjectPlaceholder")}
-          />
+          <Select value={subject} onValueChange={setSubject}>
+            <SelectTrigger id="time-table-subject">
+              <SelectValue placeholder={t("subjectPlaceholder")} />
+            </SelectTrigger>
+            <SelectContent>
+              {subjects.map((s) => (
+                <SelectItem key={s.id} value={s.label}>
+                  {s.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       </div>
 

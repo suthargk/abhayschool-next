@@ -2,7 +2,23 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { ArrowDown, ArrowUp, Check, Pencil, Plus, Trash2, X } from "lucide-react";
+import {
+  DndContext,
+  KeyboardSensor,
+  PointerSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  arrayMove,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import { Check, GripVertical, Pencil, Plus, Trash2, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import {
@@ -17,6 +33,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 
 export function TeacherClassesAdmin({ initialItems }) {
   const t = useTranslations("teacherClasses");
@@ -82,12 +99,18 @@ export function TeacherClassesAdmin({ initialItems }) {
     }
   }
 
-  async function move(index, direction) {
-    const targetIndex = index + direction;
-    if (targetIndex < 0 || targetIndex >= items.length) return;
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+  );
 
-    const reordered = [...items];
-    [reordered[index], reordered[targetIndex]] = [reordered[targetIndex], reordered[index]];
+  async function handleDragEnd(event) {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+
+    const oldIndex = items.findIndex((i) => i.id === active.id);
+    const newIndex = items.findIndex((i) => i.id === over.id);
+    const reordered = arrayMove(items, oldIndex, newIndex);
     setItems(reordered);
 
     await fetch("/api/teacher/classes/reorder", {
@@ -143,85 +166,71 @@ export function TeacherClassesAdmin({ initialItems }) {
           No classes yet. Add one above.
         </p>
       ) : (
-        <ul className="divide-y rounded-md border">
-          {items.map((item, index) => (
-            <li key={item.id} className="flex items-center gap-2 px-3 py-2">
-              <div className="flex shrink-0 flex-col">
-                <button
-                  type="button"
-                  className="text-muted-foreground disabled:opacity-30"
-                  disabled={index === 0}
-                  onClick={() => move(index, -1)}
-                  aria-label={`Move ${item.label} up`}
-                >
-                  <ArrowUp className="size-3.5" />
-                </button>
-                <button
-                  type="button"
-                  className="text-muted-foreground disabled:opacity-30"
-                  disabled={index === items.length - 1}
-                  onClick={() => move(index, 1)}
-                  aria-label={`Move ${item.label} down`}
-                >
-                  <ArrowDown className="size-3.5" />
-                </button>
-              </div>
-
-              {editingId === item.id ? (
-                <>
-                  <Input
-                    autoFocus
-                    value={editLabel}
-                    onChange={(e) => setEditLabel(e.target.value)}
-                    className="h-8 flex-1"
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="size-8 shrink-0"
-                    disabled={savingId === item.id}
-                    onClick={() => saveEdit(item)}
-                  >
-                    <Check className="size-4" />
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="size-8 shrink-0"
-                    onClick={() => setEditingId(null)}
-                  >
-                    <X className="size-4" />
-                  </Button>
-                </>
-              ) : (
-                <>
-                  <span className="flex-1 text-sm font-medium">{item.label}</span>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="size-8 shrink-0"
-                    onClick={() => startEdit(item)}
-                  >
-                    <Pencil className="size-4" />
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="size-8 shrink-0 text-destructive hover:text-destructive"
-                    onClick={() => setDeleteTarget(item)}
-                  >
-                    <Trash2 className="size-4" />
-                  </Button>
-                </>
-              )}
-            </li>
-          ))}
-        </ul>
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+          <SortableContext items={items.map((i) => i.id)} strategy={verticalListSortingStrategy}>
+            <ul className="divide-y rounded-md border">
+              {items.map((item) => (
+                <SortableClassItem key={item.id} item={item}>
+                  {editingId === item.id ? (
+                    <>
+                      <Input
+                        autoFocus
+                        value={editLabel}
+                        onChange={(e) => setEditLabel(e.target.value)}
+                        className="h-8 flex-1"
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="size-8 shrink-0"
+                        disabled={savingId === item.id}
+                        onClick={() => saveEdit(item)}
+                      >
+                        <Check className="size-4" />
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="size-8 shrink-0"
+                        onClick={() => setEditingId(null)}
+                      >
+                        <X className="size-4" />
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <span className="flex-1 text-sm font-medium">{item.label}</span>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="size-8 shrink-0"
+                        onClick={() => startEdit(item)}
+                      >
+                        <Pencil className="size-4" />
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="size-8 shrink-0 text-destructive hover:text-destructive"
+                        onClick={() => setDeleteTarget(item)}
+                      >
+                        <Trash2 className="size-4" />
+                      </Button>
+                    </>
+                  )}
+                </SortableClassItem>
+              ))}
+            </ul>
+          </SortableContext>
+        </DndContext>
       )}
+      {items.length > 1 ? (
+        <p className="text-xs text-muted-foreground">Drag to reorder.</p>
+      ) : null}
 
       <AlertDialog open={deleteTarget !== null} onOpenChange={(open) => !open && setDeleteTarget(null)}>
         <AlertDialogContent>
@@ -248,5 +257,35 @@ export function TeacherClassesAdmin({ initialItems }) {
         </AlertDialogContent>
       </AlertDialog>
     </div>
+  );
+}
+
+function SortableClassItem({ item, children }) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: item.id,
+  });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
+  return (
+    <li
+      ref={setNodeRef}
+      style={style}
+      className={cn("flex items-center gap-2 px-3 py-2", isDragging && "relative z-10 bg-muted")}
+    >
+      <button
+        type="button"
+        className="flex size-6 shrink-0 cursor-grab items-center justify-center text-muted-foreground active:cursor-grabbing"
+        aria-label={`Drag to reorder ${item.label}`}
+        {...attributes}
+        {...listeners}
+      >
+        <GripVertical className="size-4" />
+      </button>
+      {children}
+    </li>
   );
 }

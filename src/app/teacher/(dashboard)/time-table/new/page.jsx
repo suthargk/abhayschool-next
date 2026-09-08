@@ -34,7 +34,10 @@ export default function NewTeacherTimeTablePage() {
 }
 
 async function NewTimeTableFormSection() {
-  const classes = await prisma.schoolClass.findMany({ orderBy: { position: "asc" } });
+  const [classes, subjects] = await Promise.all([
+    prisma.schoolClass.findMany({ orderBy: { position: "asc" } }),
+    prisma.subject.findMany({ orderBy: { position: "asc" } }),
+  ]);
 
-  return <TeacherTimeTableForm classes={classes} />;
+  return <TeacherTimeTableForm classes={classes} subjects={subjects} />;
 }

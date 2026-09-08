@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { MultiSelect } from "@/components/ui/multi-select";
 import {
   Select,
   SelectContent,
@@ -19,8 +20,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { FACULTY_CATEGORIES, FACULTY_CATEGORY_LABEL_KEYS } from "@/data/faculty-categories";
+import { toTitleCase } from "@/lib/text-case";
 
-function TagInput({ id, label, values, onChange, placeholder }) {
+function TagInput({ id, label, values, onChange, placeholder, autoCorrectCase = true }) {
   const [draft, setDraft] = useState("");
 
   function addTag() {
@@ -64,7 +66,7 @@ function TagInput({ id, label, values, onChange, placeholder }) {
         <input
           id={id}
           value={draft}
-          onChange={(e) => setDraft(e.target.value)}
+          onChange={(e) => setDraft(autoCorrectCase ? toTitleCase(e.target.value) : e.target.value)}
           onKeyDown={handleKeyDown}
           onBlur={addTag}
           placeholder={values.length === 0 ? placeholder : ""}
@@ -75,7 +77,7 @@ function TagInput({ id, label, values, onChange, placeholder }) {
   );
 }
 
-export function TeacherFacultyForm({ initialItem }) {
+export function TeacherFacultyForm({ initialItem, classes = [], subjects: subjectOptions = [] }) {
   const t = useTranslations("teacherFaculty.form");
   const tCategories = useTranslations("teacherFaculty.categories");
   const tCommon = useTranslations("common.actions");
@@ -213,7 +215,7 @@ export function TeacherFacultyForm({ initialItem }) {
           <Input
             id="faculty-name"
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={(e) => setName(toTitleCase(e.target.value))}
             required
             placeholder={t("namePlaceholder")}
           />
@@ -223,7 +225,7 @@ export function TeacherFacultyForm({ initialItem }) {
           <Input
             id="faculty-designation"
             value={designation}
-            onChange={(e) => setDesignation(e.target.value)}
+            onChange={(e) => setDesignation(toTitleCase(e.target.value))}
             required
             placeholder={t("designationPlaceholder")}
           />
@@ -252,7 +254,7 @@ export function TeacherFacultyForm({ initialItem }) {
           <Input
             id="faculty-department"
             value={department}
-            onChange={(e) => setDepartment(e.target.value)}
+            onChange={(e) => setDepartment(toTitleCase(e.target.value))}
             placeholder={t("departmentPlaceholder")}
           />
         </div>
@@ -271,21 +273,29 @@ export function TeacherFacultyForm({ initialItem }) {
         />
       </div>
 
-      <TagInput
-        id="faculty-subjects"
-        label={t("subjectsLabel")}
-        values={subjects}
-        onChange={setSubjects}
-        placeholder={t("subjectsPlaceholder")}
-      />
+      <div className="space-y-2">
+        <Label htmlFor="faculty-subjects">{t("subjectsLabel")}</Label>
+        <MultiSelect
+          id="faculty-subjects"
+          options={subjectOptions.map((s) => ({ value: s.label, label: s.label }))}
+          values={subjects}
+          onChange={setSubjects}
+          placeholder={t("subjectsPlaceholder")}
+          emptyText={t("subjectsEmpty")}
+        />
+      </div>
 
-      <TagInput
-        id="faculty-grades"
-        label={t("gradesLabel")}
-        values={grades}
-        onChange={setGrades}
-        placeholder={t("gradesPlaceholder")}
-      />
+      <div className="space-y-2">
+        <Label htmlFor="faculty-grades">{t("gradesLabel")}</Label>
+        <MultiSelect
+          id="faculty-grades"
+          options={classes.map((c) => ({ value: c.value, label: c.label }))}
+          values={grades}
+          onChange={setGrades}
+          placeholder={t("gradesPlaceholder")}
+          emptyText={t("gradesEmpty")}
+        />
+      </div>
 
       <div className="space-y-2">
         <Label htmlFor="faculty-qualification">{t("qualificationLabel")}</Label>

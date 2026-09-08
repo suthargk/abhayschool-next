@@ -40,6 +40,10 @@ export async function POST(request) {
   if (!classAppliedFor) {
     return NextResponse.json({ error: "Please select the class applying for" }, { status: 400 });
   }
+  const knownClasses = await prisma.schoolClass.findMany({ select: { label: true } });
+  if (!knownClasses.some((c) => c.label === classAppliedFor)) {
+    return NextResponse.json({ error: "Please select a valid class" }, { status: 400 });
+  }
   if (!parentName) {
     return NextResponse.json({ error: "Parent/guardian name is required" }, { status: 400 });
   }

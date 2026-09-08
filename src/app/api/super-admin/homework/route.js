@@ -50,6 +50,9 @@ export async function POST(request) {
   if (typeof body.subject !== "string" || !body.subject.trim()) {
     return NextResponse.json({ error: "Subject is required" }, { status: 400 });
   }
+  if (!(await prisma.subject.findFirst({ where: { label: body.subject.trim() } }))) {
+    return NextResponse.json({ error: "Invalid subject" }, { status: 400 });
+  }
   if (!body.assignedDate || !body.dueDate) {
     return NextResponse.json(
       { error: "Assigned date and due date are required" },

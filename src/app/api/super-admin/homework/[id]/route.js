@@ -66,6 +66,9 @@ export async function PATCH(request, { params }) {
     data.class = body.class;
   }
   if (typeof body.subject === "string" && body.subject.trim()) {
+    if (!(await prisma.subject.findFirst({ where: { label: body.subject.trim() } }))) {
+      return NextResponse.json({ error: "Invalid subject" }, { status: 400 });
+    }
     data.subject = body.subject.trim();
   }
   if (body.content !== undefined) data.content = body.content;

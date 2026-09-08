@@ -26,6 +26,9 @@ export async function POST(request, { params }) {
   if (!subject) {
     return NextResponse.json({ error: "Subject is required" }, { status: 400 });
   }
+  if (!(await prisma.subject.findFirst({ where: { label: subject } }))) {
+    return NextResponse.json({ error: "Invalid subject" }, { status: 400 });
+  }
 
   const item = await prisma.teacherAssignment.upsert({
     where: { teacherId_class_subject: { teacherId: id, class: classValue, subject } },

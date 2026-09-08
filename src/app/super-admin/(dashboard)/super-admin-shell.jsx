@@ -36,6 +36,7 @@ import {
 } from "@/components/ui/sidebar";
 import {
   Bell,
+  BookMarked,
   Bus,
   Building2,
   CalendarClock,
@@ -120,6 +121,7 @@ const navSections = [
     titleKey: "sectionAcademic",
     items: [
       { href: "/super-admin/classes", featureKey: "CLASSES", icon: Layers },
+      { href: "/super-admin/subjects", featureKey: "SUBJECTS", icon: BookMarked },
       { href: "/super-admin/academic/library", featureKey: "LIBRARY", icon: Library },
       {
         href: "/super-admin/academic/time-table",
@@ -189,6 +191,7 @@ const TEACHER_ACTIVITY_ICON = {
   "News & Notices": Megaphone,
   Homework: GraduationCap,
   Classes: Layers,
+  Subjects: BookMarked,
   Library: Library,
   "Time Table": CalendarClock,
   Blog: Newspaper,

@@ -5,8 +5,9 @@ import { X } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
+import { toTitleCase } from "@/lib/text-case";
 
-export function TagInput({ id, label, values, onChange, placeholder }) {
+export function TagInput({ id, label, values, onChange, placeholder, autoCorrectCase = true }) {
   const [draft, setDraft] = useState("");
 
   function addTag() {
@@ -50,7 +51,7 @@ export function TagInput({ id, label, values, onChange, placeholder }) {
         <input
           id={id}
           value={draft}
-          onChange={(e) => setDraft(e.target.value)}
+          onChange={(e) => setDraft(autoCorrectCase ? toTitleCase(e.target.value) : e.target.value)}
           onKeyDown={handleKeyDown}
           onBlur={addTag}
           placeholder={values.length === 0 ? placeholder : ""}

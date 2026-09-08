@@ -16,7 +16,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { RichTextEditor } from "@/components/news-notices/rich-text-editor";
-import { SUBJECTS } from "@/lib/homework/subjects";
 
 function formatFileSize(bytes) {
   if (!bytes) return "";
@@ -24,7 +23,7 @@ function formatFileSize(bytes) {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
-export function HomeworkForm({ initialItem, classes }) {
+export function HomeworkForm({ initialItem, classes, subjects = [] }) {
   const router = useRouter();
   const isEdit = Boolean(initialItem);
 
@@ -32,7 +31,7 @@ export function HomeworkForm({ initialItem, classes }) {
     initialItem?.class ?? classes[0]?.value,
   );
   const [subject, setSubject] = useState(
-    initialItem?.subject ?? SUBJECTS[0].value,
+    initialItem?.subject ?? subjects[0]?.label ?? "",
   );
   const [title, setTitle] = useState(initialItem?.title ?? "");
   const [content, setContent] = useState(initialItem?.content ?? "");
@@ -184,9 +183,9 @@ export function HomeworkForm({ initialItem, classes }) {
               <SelectValue placeholder="Select a subject" />
             </SelectTrigger>
             <SelectContent>
-              {SUBJECTS.map((s) => (
-                <SelectItem key={s.value} value={s.value}>
-                  {s.value}
+              {subjects.map((s) => (
+                <SelectItem key={s.id} value={s.label}>
+                  {s.label}
                 </SelectItem>
               ))}
             </SelectContent>

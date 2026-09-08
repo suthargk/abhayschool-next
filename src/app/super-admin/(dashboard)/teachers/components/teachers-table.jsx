@@ -3,11 +3,21 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
-import { Loader2, MoreHorizontal, Plus, X } from "lucide-react";
+import { Loader2, MoreHorizontal, Plus, UserPlus, X } from "lucide-react";
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
@@ -22,6 +32,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -38,13 +50,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { classLabel } from "@/lib/classes";
-import { SUBJECTS } from "@/lib/homework/subjects";
 import { getInitials, teacherFullName } from "@/lib/teacher";
 import { TEACHER_FEATURE_GROUPS, TEACHER_FEATURES } from "@/lib/teacher-features";
 import { cn } from "@/lib/utils";
 
 const STATUS_VARIANTS = {
   ACTIVE: "success",
+  INVITED: "outline",
   PENDING: "warning",
   REJECTED: "destructive",
 };
@@ -60,7 +72,16 @@ const GROUP_LABEL_KEYS = {
   Achievements: "achievements",
 };
 
-function TeacherActionsMenu({ teacher, pending, onAssign, onPermissions, onSetStatus }) {
+function TeacherActionsMenu({
+  teacher,
+  pending,
+  onAssign,
+  onPermissions,
+  onSetStatus,
+  onResendInvite,
+  onCancelInvite,
+  onDelete,
+}) {
   const t = useTranslations("superAdminDashboard.teachers.table");
   const tCommon = useTranslations("common.actions");
   return (
@@ -75,25 +96,43 @@ function TeacherActionsMenu({ teacher, pending, onAssign, onPermissions, onSetSt
         <DropdownMenuItem onSelect={onAssign}>{t("assign")}</DropdownMenuItem>
         <DropdownMenuItem onSelect={onPermissions}>{t("permissions")}</DropdownMenuItem>
         <DropdownMenuSeparator />
-        {teacher.status === "PENDING" ? (
+        {teacher.status === "INVITED" ? (
           <>
-            <DropdownMenuItem onSelect={() => onSetStatus("ACTIVE")}>{t("approve")}</DropdownMenuItem>
+            <DropdownMenuItem onSelect={onResendInvite}>{t("resendInvite")}</DropdownMenuItem>
             <DropdownMenuItem
               className="text-destructive focus:text-destructive"
-              onSelect={() => onSetStatus("REJECTED")}
+              onSelect={onCancelInvite}
             >
-              {t("reject")}
+              {t("cancelInvite")}
             </DropdownMenuItem>
           </>
-        ) : teacher.status === "ACTIVE" ? (
-          <DropdownMenuItem
-            className="text-destructive focus:text-destructive"
-            onSelect={() => onSetStatus("REJECTED")}
-          >
-            {t("revoke")}
-          </DropdownMenuItem>
         ) : (
-          <DropdownMenuItem onSelect={() => onSetStatus("ACTIVE")}>{t("reApprove")}</DropdownMenuItem>
+          <>
+            {teacher.status === "PENDING" ? (
+              <>
+                <DropdownMenuItem onSelect={() => onSetStatus("ACTIVE")}>{t("approve")}</DropdownMenuItem>
+                <DropdownMenuItem
+                  className="text-destructive focus:text-destructive"
+                  onSelect={() => onSetStatus("REJECTED")}
+                >
+                  {t("reject")}
+                </DropdownMenuItem>
+              </>
+            ) : teacher.status === "ACTIVE" ? (
+              <DropdownMenuItem
+                className="text-destructive focus:text-destructive"
+                onSelect={() => onSetStatus("REJECTED")}
+              >
+                {t("revoke")}
+              </DropdownMenuItem>
+            ) : (
+              <DropdownMenuItem onSelect={() => onSetStatus("ACTIVE")}>{t("reApprove")}</DropdownMenuItem>
+            )}
+            <DropdownMenuSeparator />
+            <DropdownMenuItem className="text-destructive focus:text-destructive" onSelect={onDelete}>
+              {tCommon("delete")}
+            </DropdownMenuItem>
+          </>
         )}
       </DropdownMenuContent>
     </DropdownMenu>
@@ -102,16 +141,21 @@ function TeacherActionsMenu({ teacher, pending, onAssign, onPermissions, onSetSt
 
 const STATUS_LABEL_KEYS = {
   ACTIVE: "statusActive",
+  INVITED: "statusInvited",
   PENDING: "statusPending",
   REJECTED: "statusRejected",
 };
 
-export function TeachersTable({ initialTeachers, classes }) {
+export function TeachersTable({ initialTeachers, classes, subjects = [] }) {
   const t = useTranslations("superAdminDashboard.teachers.table");
   const [teachers, setTeachers] = useState(initialTeachers);
   const [assigningTeacher, setAssigningTeacher] = useState(null);
   const [permissioningTeacher, setPermissioningTeacher] = useState(null);
   const [pendingId, setPendingId] = useState(null);
+  const [addOpen, setAddOpen] = useState(false);
+  const [resendingTeacher, setResendingTeacher] = useState(null);
+  const [deletingTeacher, setDeletingTeacher] = useState(null);
+  const [deleting, setDeleting] = useState(false);
 
   async function setStatus(teacher, status) {
     setPendingId(teacher.id);
@@ -158,12 +202,65 @@ export function TeachersTable({ initialTeachers, classes }) {
     );
   }
 
-  if (teachers.length === 0) {
-    return <p className="text-sm text-muted-foreground">{t("empty")}</p>;
+  function handleInvited(item) {
+    setTeachers((prev) => [item, ...prev]);
+  }
+
+  function handleResent(item) {
+    setTeachers((prev) => prev.map((t) => (t.id === item.id ? item : t)));
+  }
+
+  async function deleteTeacher(teacher, { successMessage, failMessage }) {
+    const res = await fetch(`/api/super-admin/teachers/${teacher.id}`, { method: "DELETE" });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || failMessage);
+    setTeachers((prev) => prev.filter((item) => item.id !== teacher.id));
+    toast.success(successMessage);
+  }
+
+  async function cancelInvite(teacher) {
+    setPendingId(teacher.id);
+    try {
+      await deleteTeacher(teacher, {
+        successMessage: t("toastInviteCancelled"),
+        failMessage: t("cancelInviteFailed"),
+      });
+    } catch (err) {
+      toast.error(err.message);
+    } finally {
+      setPendingId(null);
+    }
+  }
+
+  async function confirmDelete() {
+    if (!deletingTeacher) return;
+    setDeleting(true);
+    try {
+      await deleteTeacher(deletingTeacher, {
+        successMessage: t("toastDeleted"),
+        failMessage: t("deleteFailed"),
+      });
+      setDeletingTeacher(null);
+    } catch (err) {
+      toast.error(err.message);
+    } finally {
+      setDeleting(false);
+    }
   }
 
   return (
     <>
+      <div className="flex justify-end">
+        <Button type="button" size="sm" onClick={() => setAddOpen(true)}>
+          <UserPlus className="size-4" />
+          {t("addTeacher")}
+        </Button>
+      </div>
+
+      {teachers.length === 0 ? (
+        <p className="text-sm text-muted-foreground">{t("empty")}</p>
+      ) : (
+        <>
       {/* Mobile: stacked cards — a table can't shrink to fit a phone
           screen without either clipping columns or forcing horizontal
           scroll, so below md we switch to one card per item instead. */}
@@ -189,6 +286,9 @@ export function TeachersTable({ initialTeachers, classes }) {
                 onAssign={() => setAssigningTeacher(teacher)}
                 onPermissions={() => setPermissioningTeacher(teacher)}
                 onSetStatus={(status) => setStatus(teacher, status)}
+                onResendInvite={() => setResendingTeacher(teacher)}
+                onCancelInvite={() => cancelInvite(teacher)}
+                onDelete={() => setDeletingTeacher(teacher)}
               />
             </div>
             <div className="flex flex-wrap items-center gap-1.5 pl-11 text-sm text-muted-foreground">
@@ -270,6 +370,9 @@ export function TeachersTable({ initialTeachers, classes }) {
                     onAssign={() => setAssigningTeacher(teacher)}
                     onPermissions={() => setPermissioningTeacher(teacher)}
                     onSetStatus={(status) => setStatus(teacher, status)}
+                    onResendInvite={() => setResendingTeacher(teacher)}
+                    onCancelInvite={() => cancelInvite(teacher)}
+                onDelete={() => setDeletingTeacher(teacher)}
                   />
                 </TableCell>
               </TableRow>
@@ -277,10 +380,13 @@ export function TeachersTable({ initialTeachers, classes }) {
           </TableBody>
         </Table>
       </div>
+        </>
+      )}
 
       <AssignmentsDialog
         teacher={assigningTeacher}
         classes={classes}
+        subjects={subjects}
         onClose={() => setAssigningTeacher(null)}
         onChange={updateAssignments}
       />
@@ -290,14 +396,63 @@ export function TeachersTable({ initialTeachers, classes }) {
         onClose={() => setPermissioningTeacher(null)}
         onChange={updatePermissions}
       />
+
+      <AddTeacherDialog open={addOpen} onOpenChange={setAddOpen} onCreated={handleInvited} />
+
+      <ResendInviteDialog
+        teacher={resendingTeacher}
+        onClose={() => setResendingTeacher(null)}
+        onSent={handleResent}
+      />
+
+      <TeacherDeleteDialog
+        teacher={deletingTeacher}
+        deleting={deleting}
+        onOpenChange={(open) => !open && !deleting && setDeletingTeacher(null)}
+        onConfirm={confirmDelete}
+      />
     </>
   );
 }
 
-function AssignmentsDialog({ teacher, classes, onClose, onChange }) {
+function TeacherDeleteDialog({ teacher, deleting, onOpenChange, onConfirm }) {
+  const t = useTranslations("superAdminDashboard.teachers.table");
+  const tCommon = useTranslations("common.actions");
+  const tTable = useTranslations("common.table");
+
+  return (
+    <AlertDialog open={teacher !== null} onOpenChange={onOpenChange}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>
+            {tTable("deleteConfirmTitle", { label: teacher ? teacherFullName(teacher) || teacher.email : "" })}
+          </AlertDialogTitle>
+          <AlertDialogDescription>
+            {tTable("deleteConfirmDescription")} {t("deleteTeacherDescription")}
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel disabled={deleting}>{tCommon("cancel")}</AlertDialogCancel>
+          <AlertDialogAction
+            disabled={deleting}
+            onClick={(event) => {
+              event.preventDefault();
+              onConfirm();
+            }}
+            className={buttonVariants({ variant: "destructive" })}
+          >
+            {deleting ? tCommon("deleting") : tCommon("delete")}
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+}
+
+function AssignmentsDialog({ teacher, classes, subjects, onClose, onChange }) {
   const t = useTranslations("superAdminDashboard.teachers.table");
   const [classValue, setClassValue] = useState(classes[0]?.value ?? "");
-  const [subject, setSubject] = useState(SUBJECTS[0]?.value ?? "");
+  const [subject, setSubject] = useState(subjects[0]?.label ?? "");
   const [saving, setSaving] = useState(false);
 
   async function addAssignment() {
@@ -402,9 +557,9 @@ function AssignmentsDialog({ teacher, classes, onClose, onChange }) {
                     <SelectValue placeholder={t("subjectPlaceholder")} />
                   </SelectTrigger>
                   <SelectContent>
-                    {SUBJECTS.map((s) => (
-                      <SelectItem key={s.value} value={s.value}>
-                        {s.value}
+                    {subjects.map((s) => (
+                      <SelectItem key={s.id} value={s.label}>
+                        {s.label}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -599,6 +754,143 @@ function PermissionsDialog({ teacher, onClose, onChange }) {
               ))}
             </div>
           </div>
+        ) : null}
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function AddTeacherDialog({ open, onOpenChange, onCreated }) {
+  const t = useTranslations("superAdminDashboard.teachers.table");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  function reset() {
+    setFirstName("");
+    setLastName("");
+    setEmail("");
+  }
+
+  async function onSubmit(e) {
+    e.preventDefault();
+    setSaving(true);
+    try {
+      const res = await fetch("/api/super-admin/teachers", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ firstName, lastName, email }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || t("inviteFailed"));
+      onCreated(data.item);
+      toast.success(t("toastInvited"));
+      reset();
+      onOpenChange(false);
+    } catch (err) {
+      toast.error(err.message);
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={(next) => !saving && onOpenChange(next)}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{t("addDialogTitle")}</DialogTitle>
+        </DialogHeader>
+        <form onSubmit={onSubmit} className="space-y-4">
+          <p className="text-sm text-muted-foreground">{t("addDialogDescription")}</p>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label htmlFor="add-teacher-first-name">{t("firstNameLabel")}</Label>
+              <Input
+                id="add-teacher-first-name"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="add-teacher-last-name">{t("lastNameLabel")}</Label>
+              <Input
+                id="add-teacher-last-name"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+              />
+            </div>
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="add-teacher-email">{t("emailLabel")}</Label>
+            <Input
+              id="add-teacher-email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+          <Button type="submit" className="w-full" disabled={saving}>
+            {saving ? t("sending") : t("sendInvite")}
+          </Button>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function ResendInviteDialog({ teacher, onClose, onSent }) {
+  const t = useTranslations("superAdminDashboard.teachers.table");
+  const [email, setEmail] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  async function onSubmit(e) {
+    e.preventDefault();
+    if (!teacher) return;
+    setSaving(true);
+    try {
+      const res = await fetch(`/api/super-admin/teachers/${teacher.id}/resend-invite`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email || teacher.email }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || t("inviteFailed"));
+      onSent(data.item);
+      toast.success(t("toastInviteSent"));
+      setEmail("");
+      onClose();
+    } catch (err) {
+      toast.error(err.message);
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <Dialog open={Boolean(teacher)} onOpenChange={(open) => !open && !saving && onClose()}>
+      <DialogContent key={teacher?.id ?? "closed"}>
+        <DialogHeader>
+          <DialogTitle>{t("resendDialogTitle")}</DialogTitle>
+        </DialogHeader>
+        {teacher ? (
+          <form onSubmit={onSubmit} className="space-y-4">
+            <p className="text-sm text-muted-foreground">{t("resendDialogDescription")}</p>
+            <div className="space-y-1.5">
+              <Label htmlFor="resend-invite-email">{t("emailLabel")}</Label>
+              <Input
+                id="resend-invite-email"
+                type="email"
+                defaultValue={teacher.email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+            <Button type="submit" className="w-full" disabled={saving}>
+              {saving ? t("sending") : t("resendInvite")}
+            </Button>
+          </form>
         ) : null}
       </DialogContent>
     </Dialog>

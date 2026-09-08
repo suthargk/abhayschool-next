@@ -32,10 +32,11 @@ export default async function EditTimeTableSlotPage({ params }) {
 }
 
 async function EditTimeTableSlotSection({ id }) {
-  const [item, profile, classes] = await Promise.all([
+  const [item, profile, classes, subjects] = await Promise.all([
     prisma.timeTableSlot.findUnique({ where: { id } }),
     getCurrentProfile(),
     prisma.schoolClass.findMany({ orderBy: { position: "asc" } }),
+    prisma.subject.findMany({ orderBy: { position: "asc" } }),
   ]);
 
   if (!item) notFound();
@@ -44,6 +45,7 @@ async function EditTimeTableSlotSection({ id }) {
     <TimeTableForm
       initialItem={item}
       classes={classes}
+      subjects={subjects}
       canPublish={profile?.role === "ADMIN"}
     />
   );

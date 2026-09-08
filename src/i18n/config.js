@@ -24,6 +24,7 @@ export const NAMESPACES = [
   "teacherDashboard",
   "teacherBlog",
   "teacherClasses",
+  "teacherSubjects",
   "teacherFacilities",
   "teacherFaculty",
   "teacherFaq",

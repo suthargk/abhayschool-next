@@ -31,15 +31,16 @@ export default async function EditHomeworkPage({ params }) {
 }
 
 async function EditHomeworkSection({ id }) {
-  const [item, classes] = await Promise.all([
+  const [item, classes, subjects] = await Promise.all([
     prisma.homework.findUnique({
       where: { id },
       include: { attachments: true },
     }),
     prisma.schoolClass.findMany({ orderBy: { position: "asc" } }),
+    prisma.subject.findMany({ orderBy: { position: "asc" } }),
   ]);
 
   if (!item) notFound();
 
-  return <HomeworkForm initialItem={item} classes={classes} />;
+  return <HomeworkForm initialItem={item} classes={classes} subjects={subjects} />;
 }

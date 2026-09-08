@@ -35,9 +35,13 @@ async function EditFacultyFormSection({ params }) {
   const { id } = await params;
   const profile = await getCurrentProfile();
 
-  const item = await prisma.faculty.findUnique({ where: { id } });
+  const [item, classes, subjects] = await Promise.all([
+    prisma.faculty.findUnique({ where: { id } }),
+    prisma.schoolClass.findMany({ orderBy: { position: "asc" } }),
+    prisma.subject.findMany({ orderBy: { position: "asc" } }),
+  ]);
 
   if (!item || item.authorId !== profile.id) notFound();
 
-  return <TeacherFacultyForm initialItem={item} />;
+  return <TeacherFacultyForm initialItem={item} classes={classes} subjects={subjects} />;
 }

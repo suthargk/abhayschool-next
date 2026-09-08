@@ -1,8 +1,11 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import { getTranslations } from "next-intl/server";
 import { ArrowLeft } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { FormSkeleton } from "@/components/form-skeleton";
+import { prisma } from "@/lib/prisma";
 
 import { FacultyForm } from "../components/faculty-form";
 
@@ -21,7 +24,18 @@ export default async function NewFacultyPage() {
         </Button>
         <h1 className="text-2xl font-semibold tracking-tight">{t("heading")}</h1>
       </div>
-      <FacultyForm />
+      <Suspense fallback={<FormSkeleton />}>
+        <NewFacultyFormSection />
+      </Suspense>
     </div>
   );
+}
+
+async function NewFacultyFormSection() {
+  const [classes, subjects] = await Promise.all([
+    prisma.schoolClass.findMany({ orderBy: { position: "asc" } }),
+    prisma.subject.findMany({ orderBy: { position: "asc" } }),
+  ]);
+
+  return <FacultyForm classes={classes} subjects={subjects} />;
 }

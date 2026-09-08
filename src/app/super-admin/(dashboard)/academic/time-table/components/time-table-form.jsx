@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/select";
 import { WEEKDAYS } from "@/data/weekdays";
 
-export function TimeTableForm({ initialItem, classes, defaultClass, canPublish }) {
+export function TimeTableForm({ initialItem, classes, subjects = [], defaultClass, canPublish }) {
   const router = useRouter();
   const isEdit = Boolean(initialItem);
 
@@ -25,7 +25,7 @@ export function TimeTableForm({ initialItem, classes, defaultClass, canPublish }
   );
   const [day, setDay] = useState(initialItem?.day ?? WEEKDAYS[0].value);
   const [period, setPeriod] = useState(initialItem?.period ?? "");
-  const [subject, setSubject] = useState(initialItem?.subject ?? "");
+  const [subject, setSubject] = useState(initialItem?.subject ?? subjects[0]?.label ?? "");
   const [teacherName, setTeacherName] = useState(initialItem?.teacherName ?? "");
   const [startTime, setStartTime] = useState(initialItem?.startTime ?? "");
   const [endTime, setEndTime] = useState(initialItem?.endTime ?? "");
@@ -159,13 +159,18 @@ export function TimeTableForm({ initialItem, classes, defaultClass, canPublish }
         </div>
         <div className="space-y-2">
           <Label htmlFor="time-table-subject">Subject</Label>
-          <Input
-            id="time-table-subject"
-            value={subject}
-            onChange={(e) => setSubject(e.target.value)}
-            required
-            placeholder="e.g. Mathematics"
-          />
+          <Select value={subject} onValueChange={setSubject}>
+            <SelectTrigger id="time-table-subject">
+              <SelectValue placeholder="Select a subject" />
+            </SelectTrigger>
+            <SelectContent>
+              {subjects.map((s) => (
+                <SelectItem key={s.id} value={s.label}>
+                  {s.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       </div>
 

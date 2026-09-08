@@ -1,4 +1,5 @@
 import {
+  BookMarked,
   BookOpen,
   Building2,
   CalendarClock,
@@ -26,6 +27,7 @@ export const TEACHER_FEATURES = [
   { key: "GALLERY", label: "Gallery", href: "/teacher/gallery", icon: Images },
   { key: "NEWS_NOTICES", label: "News & Notices", href: "/teacher/news-notices", icon: Newspaper },
   { key: "CLASSES", label: "Classes", href: "/teacher/classes", icon: LayoutGrid },
+  { key: "SUBJECTS", label: "Subjects", href: "/teacher/subjects", icon: BookMarked },
   { key: "LIBRARY", label: "Library", href: "/teacher/library", icon: BookOpen },
   { key: "TIME_TABLE", label: "Time Table", href: "/teacher/time-table", icon: CalendarClock },
   { key: "BLOG", label: "Blog", href: "/teacher/blog", icon: Newspaper },
@@ -38,13 +40,13 @@ export function teacherFeatureLabel(key) {
   return TEACHER_FEATURES.find((f) => f.key === key)?.label ?? key;
 }
 
-// Groups the 12 permissionable areas the way they already appear across the
+// Groups the permissionable areas the way they already appear across the
 // public site, so the admin grant dialog reads as a scannable checklist
-// instead of one flat list of 12 unrelated checkboxes.
+// instead of one flat list of unrelated checkboxes.
 export const TEACHER_FEATURE_GROUPS = [
   { label: "Homepage", keys: ["FAQ", "TESTIMONIALS"] },
   { label: "About the school", keys: ["PRINCIPAL_MESSAGE", "FACULTY", "FACILITIES"] },
-  { label: "Academics", keys: ["CLASSES", "LIBRARY", "TIME_TABLE", "BLOG"] },
+  { label: "Academics", keys: ["CLASSES", "SUBJECTS", "LIBRARY", "TIME_TABLE", "BLOG"] },
   { label: "Media & updates", keys: ["GALLERY", "NEWS_NOTICES"] },
   { label: "Achievements", keys: ["TOPPERS"] },
 ];

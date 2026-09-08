@@ -65,6 +65,9 @@ export async function PATCH(request, { params }) {
     if (typeof body.subject !== "string" || !body.subject.trim()) {
       return NextResponse.json({ error: "Subject is required" }, { status: 400 });
     }
+    if (!(await prisma.subject.findFirst({ where: { label: body.subject.trim() } }))) {
+      return NextResponse.json({ error: "Invalid subject" }, { status: 400 });
+    }
     data.subject = body.subject.trim();
   }
   if (body.teacherName !== undefined) {

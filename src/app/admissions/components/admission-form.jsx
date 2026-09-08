@@ -17,26 +17,6 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 
-// Values are stored/submitted as-is (English) for backend consistency; only
-// the displayed label is translated via the `classOptions` message key below.
-const CLASS_OPTIONS = [
-  { value: "Nursery", labelKey: "nursery" },
-  { value: "LKG", labelKey: "lkg" },
-  { value: "UKG", labelKey: "ukg" },
-  { value: "Class I", labelKey: "classI" },
-  { value: "Class II", labelKey: "classII" },
-  { value: "Class III", labelKey: "classIII" },
-  { value: "Class IV", labelKey: "classIV" },
-  { value: "Class V", labelKey: "classV" },
-  { value: "Class VI", labelKey: "classVI" },
-  { value: "Class VII", labelKey: "classVII" },
-  { value: "Class VIII", labelKey: "classVIII" },
-  { value: "Class IX", labelKey: "classIX" },
-  { value: "Class X", labelKey: "classX" },
-  { value: "Class XI", labelKey: "classXI" },
-  { value: "Class XII", labelKey: "classXII" },
-];
-
 const INITIAL_FORM = {
   studentName: "",
   dateOfBirth: "",
@@ -50,7 +30,7 @@ const INITIAL_FORM = {
   message: "",
 };
 
-export function AdmissionForm() {
+export function AdmissionForm({ classes = [] }) {
   const t = useTranslations("admissions.form");
   const [form, setForm] = useState(INITIAL_FORM);
   const [submitting, setSubmitting] = useState(false);
@@ -148,9 +128,9 @@ export function AdmissionForm() {
               <SelectValue placeholder={t("classPlaceholder")} />
             </SelectTrigger>
             <SelectContent>
-              {CLASS_OPTIONS.map((option) => (
-                <SelectItem key={option.value} value={option.value}>
-                  {t(`classOptions.${option.labelKey}`)}
+              {classes.map((c) => (
+                <SelectItem key={c.id} value={c.label}>
+                  {c.label}
                 </SelectItem>
               ))}
             </SelectContent>
