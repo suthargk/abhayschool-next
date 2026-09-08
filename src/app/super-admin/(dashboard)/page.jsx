@@ -56,8 +56,8 @@ export default async function SuperAdminDashboardHomePage() {
         <ContentStatusCard />
       </Suspense>
 
-      <div className="grid gap-6 lg:grid-cols-3">
-        <div className="space-y-3 lg:col-span-1">
+      <div className="grid min-w-0 gap-6 lg:grid-cols-3">
+        <div className="min-w-0 space-y-3 lg:col-span-1">
           <h2 className="text-lg font-medium tracking-tight">
             {t("pendingActionsHeading")}
           </h2>
@@ -66,7 +66,7 @@ export default async function SuperAdminDashboardHomePage() {
           </Suspense>
         </div>
 
-        <div className="space-y-3 lg:col-span-2">
+        <div className="min-w-0 space-y-3 lg:col-span-2">
           <h2 className="text-lg font-medium tracking-tight">
             {t("recentChangesHeading")}
           </h2>

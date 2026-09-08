@@ -33,6 +33,7 @@ import {
   SidebarMenuItem,
   SidebarProvider,
   SidebarTrigger,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import {
   Bell,
@@ -157,6 +158,56 @@ function getPageTitle(pathname, allNavItems, fallback) {
 function getInitials(email) {
   if (!email) return "SA";
   return email.slice(0, 2).toUpperCase();
+}
+
+function ProfileMenu({ profile, onLogout, t }) {
+  const { isMobile } = useSidebar();
+
+  return (
+    <SidebarMenuItem>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <SidebarMenuButton
+            size="lg"
+            className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+          >
+            <Avatar className="size-8 rounded-lg">
+              <AvatarFallback className="rounded-lg">
+                {getInitials(profile?.email)}
+              </AvatarFallback>
+            </Avatar>
+            <div className="grid flex-1 text-left text-sm leading-tight">
+              <span className="truncate font-medium">
+                {profile?.role === "ADMIN" ? t("admin") : t("editor")}
+              </span>
+              <span className="truncate text-xs text-sidebar-foreground/70">
+                {profile?.email ?? t("signedIn")}
+              </span>
+            </div>
+            <ChevronsUpDown className="ml-auto size-4" />
+          </SidebarMenuButton>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent
+          side={isMobile ? "bottom" : "right"}
+          align="end"
+          sideOffset={8}
+          className="w-56"
+        >
+          <DropdownMenuItem asChild>
+            <Link href="/" target="_blank" rel="noopener noreferrer">
+              <ExternalLink className="size-4" />
+              {t("viewPublicSite")}
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={onLogout}>
+            <LogOut className="size-4" />
+            {t("logOut")}
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </SidebarMenuItem>
+  );
 }
 
 function NavLink({ href, label, icon: Icon, badge }) {
@@ -332,49 +383,7 @@ export function SuperAdminShell({
         </SidebarContent>
         <SidebarFooter>
           <SidebarMenu>
-            <SidebarMenuItem>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <SidebarMenuButton
-                    size="lg"
-                    className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-                  >
-                    <Avatar className="size-8 rounded-lg">
-                      <AvatarFallback className="rounded-lg">
-                        {getInitials(profile?.email)}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="grid flex-1 text-left text-sm leading-tight">
-                      <span className="truncate font-medium">
-                        {profile?.role === "ADMIN" ? t("admin") : t("editor")}
-                      </span>
-                      <span className="truncate text-xs text-sidebar-foreground/70">
-                        {profile?.email ?? t("signedIn")}
-                      </span>
-                    </div>
-                    <ChevronsUpDown className="ml-auto size-4" />
-                  </SidebarMenuButton>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  side="right"
-                  align="end"
-                  sideOffset={8}
-                  className="w-56"
-                >
-                  <DropdownMenuItem asChild>
-                    <Link href="/" target="_blank" rel="noopener noreferrer">
-                      <ExternalLink className="size-4" />
-                      {t("viewPublicSite")}
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleLogout}>
-                    <LogOut className="size-4" />
-                    {t("logOut")}
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </SidebarMenuItem>
+            <ProfileMenu profile={profile} onLogout={handleLogout} t={t} />
           </SidebarMenu>
         </SidebarFooter>
       </Sidebar>

@@ -32,6 +32,7 @@ import {
   SidebarMenuItem,
   SidebarProvider,
   SidebarTrigger,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { getInitials, teacherFullName } from "@/lib/teacher";
 import { TEACHER_FEATURES } from "@/lib/teacher-features";
@@ -71,6 +72,54 @@ function NavLink({ href, label, icon: Icon }) {
           <span>{label}</span>
         </Link>
       </SidebarMenuButton>
+    </SidebarMenuItem>
+  );
+}
+
+function ProfileMenu({ profile, name, onLogout, t }) {
+  const { isMobile } = useSidebar();
+
+  return (
+    <SidebarMenuItem>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <SidebarMenuButton
+            size="lg"
+            className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+          >
+            <Avatar className="size-8 rounded-lg">
+              {profile?.photoUrl ? <AvatarImage src={profile.photoUrl} alt="" /> : null}
+              <AvatarFallback className="rounded-lg">
+                {getInitials(profile?.firstName, profile?.lastName)}
+              </AvatarFallback>
+            </Avatar>
+            <div className="grid flex-1 text-left text-sm leading-tight">
+              <span className="truncate font-medium">{name || t("teacher")}</span>
+              <span className="truncate text-xs text-sidebar-foreground/70">
+                {profile?.email ?? t("signedIn")}
+              </span>
+            </div>
+          </SidebarMenuButton>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent
+          side={isMobile ? "bottom" : "right"}
+          align="end"
+          sideOffset={8}
+          className="w-56"
+        >
+          <DropdownMenuItem asChild>
+            <Link href="/" target="_blank" rel="noopener noreferrer">
+              <ExternalLink className="size-4" />
+              {t("viewPublicSite")}
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={onLogout}>
+            <LogOut className="size-4" />
+            {t("logOut")}
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </SidebarMenuItem>
   );
 }
@@ -130,42 +179,7 @@ export function TeacherShell({ children, profile, features = [] }) {
         </SidebarContent>
         <SidebarFooter>
           <SidebarMenu>
-            <SidebarMenuItem>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <SidebarMenuButton
-                    size="lg"
-                    className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-                  >
-                    <Avatar className="size-8 rounded-lg">
-                      {profile?.photoUrl ? <AvatarImage src={profile.photoUrl} alt="" /> : null}
-                      <AvatarFallback className="rounded-lg">
-                        {getInitials(profile?.firstName, profile?.lastName)}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="grid flex-1 text-left text-sm leading-tight">
-                      <span className="truncate font-medium">{name || t("teacher")}</span>
-                      <span className="truncate text-xs text-sidebar-foreground/70">
-                        {profile?.email ?? t("signedIn")}
-                      </span>
-                    </div>
-                  </SidebarMenuButton>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent side="right" align="end" sideOffset={8} className="w-56">
-                  <DropdownMenuItem asChild>
-                    <Link href="/" target="_blank" rel="noopener noreferrer">
-                      <ExternalLink className="size-4" />
-                      {t("viewPublicSite")}
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleLogout}>
-                    <LogOut className="size-4" />
-                    {t("logOut")}
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </SidebarMenuItem>
+            <ProfileMenu profile={profile} name={name} onLogout={handleLogout} t={t} />
           </SidebarMenu>
         </SidebarFooter>
       </Sidebar>
