@@ -24,7 +24,7 @@ const navigationCategory = [
       },
       {
         key: "busRoutePlan",
-        href: "bus-route-plan",
+        href: "/bus-route-plan",
       },
       {
         key: "faculty",

@@ -1,0 +1,17 @@
+{
+  "heading": "स्कूल बस मार्ग योजना",
+  "description": "स्कूल आने-जाने के सुरक्षित और सुविधाजनक साधन के लिए हमारे स्कूल बस मार्गों और परिवहन विकल्पों को देखें।",
+  "stopWord": "{count, plural, one {स्टॉप} other {स्टॉप}}",
+  "routeWord": "{count, plural, one {मार्ग} other {मार्ग}}",
+  "searchPlaceholder": "स्थान या मार्ग क्रमांक से खोजें...",
+  "allRoutes": "सभी मार्ग",
+  "clearFilters": "फ़िल्टर हटाएं",
+  "routeOption": "मार्ग {routeNo}",
+  "columnSrNo": "क्र.सं.",
+  "columnPlace": "स्थान",
+  "columnDistance": "किमी",
+  "columnRent": "किराया / वर्ष",
+  "columnRoute": "मार्ग क्रमांक",
+  "noStopsYet": "बस मार्ग जल्द ही यहाँ प्रकाशित किए जाएंगे।",
+  "noStopsMatchFilters": "आपकी खोज या फ़िल्टर से कोई स्टॉप मेल नहीं खाता।"
+}

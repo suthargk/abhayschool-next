@@ -10,6 +10,7 @@ export const NAMESPACES = [
   "about",
   "faculty",
   "facilities",
+  "busRoutePlan",
   "principalMessage",
   "academics",
   "achievements",

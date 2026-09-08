@@ -43,7 +43,7 @@ const Footer = () => {
                 </Link>
               </li>
               <li className="text-sm text-zinc-50">
-                <Link href="#"> {t("footer.busRoutePlan")}</Link>
+                <Link href="/about/bus-route-plan">{t("footer.busRoutePlan")}</Link>
               </li>
             </ul>
           </div>

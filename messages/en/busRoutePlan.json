@@ -1,0 +1,17 @@
+{
+  "heading": "Route Plan of School Buses",
+  "description": "Explore our school bus routes and transportation options for safe and convenient travel to and from school.",
+  "stopWord": "{count, plural, one {stop} other {stops}}",
+  "routeWord": "{count, plural, one {route} other {routes}}",
+  "searchPlaceholder": "Search by place or route no...",
+  "allRoutes": "All routes",
+  "clearFilters": "Clear filters",
+  "routeOption": "Route {routeNo}",
+  "columnSrNo": "Sr. No.",
+  "columnPlace": "Places",
+  "columnDistance": "K.M",
+  "columnRent": "Rent / Year",
+  "columnRoute": "Route No.",
+  "noStopsYet": "Bus routes will be published here soon.",
+  "noStopsMatchFilters": "No stops match your search or filters."
+}

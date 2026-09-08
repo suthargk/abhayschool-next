@@ -64,6 +64,7 @@ model Profile {
   academicPosts             AcademicPost[]
   toppers                   Topper[]
   facilities                Facility[]
+  busRoutes                 BusRoute[]
   homework                  Homework[]
   faqs                      Faq[]
   testimonials              Testimonial[]
@@ -515,6 +516,29 @@ model Facility {
   @@index([section, status, position])
   @@map("facilities")
 }
+
+// Public bus route/rent table (About > Route Plan of School Buses). `routeNo`
+// groups stops served by the same bus; `distanceKm` is optional since not
+// every stop has a measured distance on record.
+model BusRoute {
+  id          String        @id @default(cuid())
+  place       String        @unique
+  routeNo     Int
+  distanceKm  Float?
+  rentPerYear Int
+  position    Int           @default(0)
+  status      ContentStatus @default(DRAFT)
+  publishedAt DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  authorId String  @db.Uuid
+  author   Profile @relation(fields: [authorId], references: [id])
+
+  @@index([status, position])
+  @@map("bus_routes")
+}
+
 
 // Homepage "Frequently Asked Questions" section.
 model Faq {
