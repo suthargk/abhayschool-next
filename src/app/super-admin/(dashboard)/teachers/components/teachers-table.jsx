@@ -1,9 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
-import { Loader2, MoreHorizontal, Plus, UserPlus, X } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Loader2,
+  MoreHorizontal,
+  Plus,
+  Search,
+  UserPlus,
+  X,
+} from "lucide-react";
 
 import {
   AlertDialog,
@@ -35,6 +45,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { MultiSelect } from "@/components/ui/multi-select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Table,
   TableBody,
@@ -197,9 +214,34 @@ const STATUS_LABEL_KEYS = {
   REJECTED: "statusRejected",
 };
 
-export function TeachersTable({ initialTeachers, classes, subjects = [] }) {
+function buildHref(params) {
+  const usp = new URLSearchParams();
+  Object.entries(params).forEach(([key, value]) => {
+    if (value === undefined || value === null || value === "") return;
+    usp.set(key, String(value));
+  });
+  const qs = usp.toString();
+  return qs ? `/super-admin/teachers?${qs}` : "/super-admin/teachers";
+}
+
+export function TeachersTable({
+  items,
+  classes,
+  subjects = [],
+  search,
+  status,
+  page,
+  totalPages,
+  total,
+  pageSize,
+  defaultPageSize,
+}) {
   const t = useTranslations("superAdminDashboard.teachers.table");
-  const [teachers, setTeachers] = useState(initialTeachers);
+  const tTable = useTranslations("common.table");
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+  const [teachers, setTeachers] = useState(items);
+  const [searchValue, setSearchValue] = useState(search);
   const [assigningTeacher, setAssigningTeacher] = useState(null);
   const [permissioningTeacher, setPermissioningTeacher] = useState(null);
   const [pendingId, setPendingId] = useState(null);
@@ -208,24 +250,73 @@ export function TeachersTable({ initialTeachers, classes, subjects = [] }) {
   const [deletingTeacher, setDeletingTeacher] = useState(null);
   const [deleting, setDeleting] = useState(false);
 
-  async function setStatus(teacher, status) {
+  // The source of truth for which teachers are on this page/filter/search is
+  // always the server (`items`) — re-sync whenever it changes (pagination,
+  // filtering, or a router.refresh() below). Assign/permission edits still
+  // patch this local copy directly (see updateAssignments/updatePermissions)
+  // since those never change list membership or ordering.
+  useEffect(() => {
+    setTeachers(items);
+  }, [items]);
+
+  function navigate(overrides) {
+    startTransition(() => {
+      router.push(
+        buildHref({
+          q: search || undefined,
+          status: status || undefined,
+          pageSize: pageSize !== defaultPageSize ? pageSize : undefined,
+          ...overrides,
+        }),
+      );
+    });
+  }
+
+  function refreshList() {
+    startTransition(() => {
+      router.refresh();
+    });
+  }
+
+  // Status changes, deletes, and invites change which page/row a teacher
+  // belongs on, so they refetch from the server rather than patching local
+  // state. If a removal empties the current page (and it isn't page 1),
+  // step back a page instead of refreshing into a page with nothing on it.
+  function refreshAfterRemoval() {
+    if (teachers.length <= 1 && page > 1) {
+      navigate({ page: page - 1 > 1 ? page - 1 : undefined });
+    } else {
+      refreshList();
+    }
+  }
+
+  function handleSearchSubmit(e) {
+    e.preventDefault();
+    navigate({ q: searchValue.trim() || undefined, page: undefined });
+  }
+
+  function handleStatusChangeFilter(value) {
+    navigate({ status: value === "ALL" ? undefined : value, page: undefined });
+  }
+
+  async function setStatus(teacher, newStatus) {
     setPendingId(teacher.id);
     try {
       const res = await fetch(`/api/super-admin/teachers/${teacher.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status }),
+        body: JSON.stringify({ status: newStatus }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || t("statusUpdateFailed"));
-      setTeachers((prev) => prev.map((item) => (item.id === teacher.id ? data.item : item)));
       toast.success(
-        status === "ACTIVE"
+        newStatus === "ACTIVE"
           ? t("toastApproved")
-          : status === "REJECTED"
+          : newStatus === "REJECTED"
             ? t("toastRevoked")
             : t("toastStatusUpdated"),
       );
+      refreshList();
     } catch (err) {
       toast.error(err.message);
     } finally {
@@ -235,7 +326,7 @@ export function TeachersTable({ initialTeachers, classes, subjects = [] }) {
 
   function updateAssignments(teacherId, assignments) {
     setTeachers((prev) =>
-      prev.map((t) => (t.id === teacherId ? { ...t, teacherAssignments: assignments } : t)),
+      prev.map((item) => (item.id === teacherId ? { ...item, teacherAssignments: assignments } : item)),
     );
     setAssigningTeacher((prev) =>
       prev && prev.id === teacherId ? { ...prev, teacherAssignments: assignments } : prev,
@@ -244,8 +335,8 @@ export function TeachersTable({ initialTeachers, classes, subjects = [] }) {
 
   function updatePermissions(teacherId, permissions) {
     setTeachers((prev) =>
-      prev.map((t) =>
-        t.id === teacherId ? { ...t, teacherFeaturePermissions: permissions } : t,
+      prev.map((item) =>
+        item.id === teacherId ? { ...item, teacherFeaturePermissions: permissions } : item,
       ),
     );
     setPermissioningTeacher((prev) =>
@@ -253,20 +344,20 @@ export function TeachersTable({ initialTeachers, classes, subjects = [] }) {
     );
   }
 
-  function handleInvited(item) {
-    setTeachers((prev) => [item, ...prev]);
+  function handleInvited() {
+    refreshList();
   }
 
-  function handleResent(item) {
-    setTeachers((prev) => prev.map((t) => (t.id === item.id ? item : t)));
+  function handleResent() {
+    refreshList();
   }
 
   async function deleteTeacher(teacher, { successMessage, failMessage }) {
     const res = await fetch(`/api/super-admin/teachers/${teacher.id}`, { method: "DELETE" });
     const data = await res.json().catch(() => ({}));
     if (!res.ok) throw new Error(data.error || failMessage);
-    setTeachers((prev) => prev.filter((item) => item.id !== teacher.id));
     toast.success(successMessage);
+    refreshAfterRemoval();
   }
 
   async function cancelInvite(teacher) {
@@ -301,78 +392,59 @@ export function TeachersTable({ initialTeachers, classes, subjects = [] }) {
 
   return (
     <>
-      <div className="flex justify-end">
-        <Button type="button" size="sm" onClick={() => setAddOpen(true)}>
-          <UserPlus className="size-4" />
-          {t("addTeacher")}
-        </Button>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <form onSubmit={handleSearchSubmit} className="relative w-full min-w-[200px] flex-1 sm:max-w-sm">
+          <Search className="pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            type="search"
+            value={searchValue}
+            onChange={(e) => setSearchValue(e.target.value)}
+            placeholder={t("searchPlaceholder")}
+            className="pl-8"
+            disabled={isPending}
+          />
+        </form>
+
+        <div className="flex items-center gap-2">
+          <Select value={status || "ALL"} onValueChange={handleStatusChangeFilter} disabled={isPending}>
+            <SelectTrigger className="w-[160px]">
+              <SelectValue placeholder={t("allStatuses")} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="ALL">{t("allStatuses")}</SelectItem>
+              <SelectItem value="ACTIVE">{t("statusActive")}</SelectItem>
+              <SelectItem value="INVITED">{t("statusInvited")}</SelectItem>
+              <SelectItem value="PENDING">{t("statusPending")}</SelectItem>
+              <SelectItem value="REJECTED">{t("statusRejected")}</SelectItem>
+            </SelectContent>
+          </Select>
+          <Button type="button" size="sm" onClick={() => setAddOpen(true)}>
+            <UserPlus className="size-4" />
+            {t("addTeacher")}
+          </Button>
+        </div>
       </div>
 
       {teachers.length === 0 ? (
-        <p className="text-sm text-muted-foreground">{t("empty")}</p>
+        <p className="rounded-md border border-dashed p-8 text-center text-sm text-muted-foreground">
+          {total === 0 ? t("empty") : tTable("noResults")}
+        </p>
       ) : (
-        <>
-      {/* Mobile: stacked cards — a table can't shrink to fit a phone
-          screen without either clipping columns or forcing horizontal
-          scroll, so below md we switch to one card per item instead. */}
-      <div className="space-y-3 md:hidden">
-        {teachers.map((teacher) => (
-          <div key={teacher.id} className="space-y-3 rounded-xl border p-4">
-            <div className="flex items-start justify-between gap-2">
-              <div className="flex min-w-0 items-center gap-3">
-                <Avatar className="size-8">
-                  {teacher.photoUrl ? <AvatarImage src={teacher.photoUrl} alt="" /> : null}
-                  <AvatarFallback>
-                    {getInitials(teacher.firstName, teacher.lastName)}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="min-w-0">
-                  <p className="truncate font-medium">{teacherFullName(teacher) || "—"}</p>
-                  <p className="truncate text-xs text-muted-foreground">{teacher.email}</p>
-                </div>
-              </div>
-              <TeacherActionsMenu
-                teacher={teacher}
-                pending={pendingId === teacher.id}
-                onAssign={() => setAssigningTeacher(teacher)}
-                onPermissions={() => setPermissioningTeacher(teacher)}
-                onSetStatus={(status) => setStatus(teacher, status)}
-                onResendInvite={() => setResendingTeacher(teacher)}
-                onCancelInvite={() => cancelInvite(teacher)}
-                onDelete={() => setDeletingTeacher(teacher)}
-              />
+        <div className="relative">
+          {isPending ? (
+            <div className="absolute inset-0 z-10 flex items-center justify-center rounded-xl bg-background/60">
+              <Loader2 className="size-6 animate-spin text-muted-foreground" />
             </div>
-            <div className="flex flex-wrap items-center gap-1.5 pl-11 text-sm text-muted-foreground">
-              <span>{teacher.phone ?? "—"}</span>
-              <span>·</span>
-              <Badge variant={STATUS_VARIANTS[teacher.status]}>
-                {t(STATUS_LABEL_KEYS[teacher.status])}
-              </Badge>
-            </div>
-            <div className="pl-11">
-              <AssignedSummary assignments={teacher.teacherAssignments} classes={classes} subjects={subjects} />
-            </div>
-          </div>
-        ))}
-      </div>
+          ) : null}
 
-      {/* Desktop/tablet: full table. */}
-      <div className="hidden rounded-xl border md:block">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>{t("columnTeacher")}</TableHead>
-              <TableHead>{t("columnPhone")}</TableHead>
-              <TableHead>{t("columnStatus")}</TableHead>
-              <TableHead>{t("columnAssigned")}</TableHead>
-              <TableHead className="w-0">{t("columnActions")}</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
+          {/* Mobile: stacked cards — a table can't shrink to fit a phone
+              screen without either clipping columns or forcing horizontal
+              scroll, so below md we switch to one card per item instead. */}
+          <div className="space-y-3 md:hidden">
             {teachers.map((teacher) => (
-              <TableRow key={teacher.id}>
-                <TableCell>
-                  <div className="flex items-center gap-3">
+              <div key={teacher.id} className="space-y-3 rounded-xl border p-4">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="flex min-w-0 items-center gap-3">
                     <Avatar className="size-8">
                       {teacher.photoUrl ? <AvatarImage src={teacher.photoUrl} alt="" /> : null}
                       <AvatarFallback>
@@ -380,41 +452,126 @@ export function TeachersTable({ initialTeachers, classes, subjects = [] }) {
                       </AvatarFallback>
                     </Avatar>
                     <div className="min-w-0">
-                      <p className="truncate font-medium">
-                        {teacherFullName(teacher) || "—"}
-                      </p>
+                      <p className="truncate font-medium">{teacherFullName(teacher) || "—"}</p>
                       <p className="truncate text-xs text-muted-foreground">{teacher.email}</p>
                     </div>
                   </div>
-                </TableCell>
-                <TableCell>{teacher.phone ?? "—"}</TableCell>
-                <TableCell>
-                  <Badge variant={STATUS_VARIANTS[teacher.status]}>
-                    {t(STATUS_LABEL_KEYS[teacher.status])}
-                  </Badge>
-                </TableCell>
-                <TableCell className="max-w-xs">
-                  <AssignedSummary assignments={teacher.teacherAssignments} classes={classes} subjects={subjects} />
-                </TableCell>
-                <TableCell>
                   <TeacherActionsMenu
                     teacher={teacher}
                     pending={pendingId === teacher.id}
                     onAssign={() => setAssigningTeacher(teacher)}
                     onPermissions={() => setPermissioningTeacher(teacher)}
-                    onSetStatus={(status) => setStatus(teacher, status)}
+                    onSetStatus={(newStatus) => setStatus(teacher, newStatus)}
                     onResendInvite={() => setResendingTeacher(teacher)}
                     onCancelInvite={() => cancelInvite(teacher)}
-                onDelete={() => setDeletingTeacher(teacher)}
+                    onDelete={() => setDeletingTeacher(teacher)}
                   />
-                </TableCell>
-              </TableRow>
+                </div>
+                <div className="flex flex-wrap items-center gap-1.5 pl-11 text-sm text-muted-foreground">
+                  <span>{teacher.phone ?? "—"}</span>
+                  <span>·</span>
+                  <Badge variant={STATUS_VARIANTS[teacher.status]}>
+                    {t(STATUS_LABEL_KEYS[teacher.status])}
+                  </Badge>
+                </div>
+                <div className="pl-11">
+                  <AssignedSummary assignments={teacher.teacherAssignments} classes={classes} subjects={subjects} />
+                </div>
+              </div>
             ))}
-          </TableBody>
-        </Table>
-      </div>
-        </>
+          </div>
+
+          {/* Desktop/tablet: full table. */}
+          <div className="hidden rounded-xl border md:block">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>{t("columnTeacher")}</TableHead>
+                  <TableHead>{t("columnPhone")}</TableHead>
+                  <TableHead>{t("columnStatus")}</TableHead>
+                  <TableHead>{t("columnAssigned")}</TableHead>
+                  <TableHead className="w-0">{t("columnActions")}</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {teachers.map((teacher) => (
+                  <TableRow key={teacher.id}>
+                    <TableCell>
+                      <div className="flex items-center gap-3">
+                        <Avatar className="size-8">
+                          {teacher.photoUrl ? <AvatarImage src={teacher.photoUrl} alt="" /> : null}
+                          <AvatarFallback>
+                            {getInitials(teacher.firstName, teacher.lastName)}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="min-w-0">
+                          <p className="truncate font-medium">
+                            {teacherFullName(teacher) || "—"}
+                          </p>
+                          <p className="truncate text-xs text-muted-foreground">{teacher.email}</p>
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell>{teacher.phone ?? "—"}</TableCell>
+                    <TableCell>
+                      <Badge variant={STATUS_VARIANTS[teacher.status]}>
+                        {t(STATUS_LABEL_KEYS[teacher.status])}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="max-w-xs">
+                      <AssignedSummary assignments={teacher.teacherAssignments} classes={classes} subjects={subjects} />
+                    </TableCell>
+                    <TableCell>
+                      <TeacherActionsMenu
+                        teacher={teacher}
+                        pending={pendingId === teacher.id}
+                        onAssign={() => setAssigningTeacher(teacher)}
+                        onPermissions={() => setPermissioningTeacher(teacher)}
+                        onSetStatus={(newStatus) => setStatus(teacher, newStatus)}
+                        onResendInvite={() => setResendingTeacher(teacher)}
+                        onCancelInvite={() => cancelInvite(teacher)}
+                        onDelete={() => setDeletingTeacher(teacher)}
+                      />
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </div>
       )}
+
+      {total > 0 ? (
+        <div className="flex items-center justify-between gap-4">
+          <p className="text-sm text-muted-foreground">
+            {t("paginationSummary", { page, totalPages, total })}
+          </p>
+          <div className="flex items-center gap-1">
+            <Button
+              type="button"
+              variant="outline"
+              size="icon"
+              className="size-8"
+              aria-label={t("previousPage")}
+              disabled={isPending || page <= 1}
+              onClick={() => navigate({ page: page - 1 > 1 ? page - 1 : undefined })}
+            >
+              <ChevronLeft className="size-4" />
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="icon"
+              className="size-8"
+              aria-label={t("nextPage")}
+              disabled={isPending || page >= totalPages}
+              onClick={() => navigate({ page: page + 1 })}
+            >
+              <ChevronRight className="size-4" />
+            </Button>
+          </div>
+        </div>
+      ) : null}
 
       <AssignmentsDialog
         teacher={assigningTeacher}

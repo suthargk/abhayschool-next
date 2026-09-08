@@ -31,6 +31,11 @@
     },
     "table": {
       "empty": "अभी तक कोई शिक्षक खाता नहीं है।",
+      "searchPlaceholder": "नाम या ईमेल से खोजें…",
+      "allStatuses": "सभी स्थितियां",
+      "paginationSummary": "पृष्ठ {page} / {totalPages} · कुल {total}",
+      "previousPage": "पिछला पृष्ठ",
+      "nextPage": "अगला पृष्ठ",
       "openMenu": "मेनू खोलें",
       "assign": "असाइन करें",
       "permissions": "अनुमतियां",
