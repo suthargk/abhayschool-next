@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { rateLimit } from "@/lib/rate-limit";
+import { getSiteUrl } from "@/lib/site-url";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { INVITE_TTL_MS, generateInviteToken, hashInviteToken } from "@/lib/teacher-invite";
 import { buildTeacherInviteEmail } from "@/lib/email-templates/teacher-invite";
@@ -25,6 +26,13 @@ export async function POST(request, { params }) {
 
   if (!rateLimit(`teacher-invite-resend:${id}`, { max: 10, windowMs: 60 * 60 * 1000 })) {
     return NextResponse.json({ error: "Too many resend attempts. Try again later." }, { status: 429 });
+  }
+
+  let siteUrl;
+  try {
+    siteUrl = getSiteUrl();
+  } catch (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
   const body = await request.json().catch(() => ({}));
@@ -75,7 +83,7 @@ export async function POST(request, { params }) {
     },
   });
 
-  const registerUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/teacher/register/${rawToken}`;
+  const registerUrl = `${siteUrl}/teacher/register/${rawToken}`;
   const { subject, html, text, attachments } = buildTeacherInviteEmail({
     registerUrl,
     firstName: profile.firstName,

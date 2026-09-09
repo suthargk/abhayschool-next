@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 import { prisma } from "@/lib/prisma";
 import { rateLimit } from "@/lib/rate-limit";
+import { getSiteUrl } from "@/lib/site-url";
 import { RESET_TTL_MS, generateResetToken, hashResetToken } from "@/lib/password-reset";
 import { buildTeacherPasswordResetEmail } from "@/lib/email-templates/teacher-password-reset";
 import { sendMail } from "@/lib/mailer";
@@ -52,12 +53,12 @@ export async function POST(request) {
     },
   });
 
-  const resetUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/teacher/reset-password/${rawToken}`;
-  const { subject, html, text, attachments } = buildTeacherPasswordResetEmail({
-    resetUrl,
-    firstName: profile.firstName,
-  });
   try {
+    const resetUrl = `${getSiteUrl()}/teacher/reset-password/${rawToken}`;
+    const { subject, html, text, attachments } = buildTeacherPasswordResetEmail({
+      resetUrl,
+      firstName: profile.firstName,
+    });
     await sendMail({ to: email, subject, html, text, attachments });
   } catch (error) {
     console.error("Failed to send teacher password reset email", error);

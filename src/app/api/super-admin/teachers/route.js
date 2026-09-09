@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { getSiteUrl } from "@/lib/site-url";
 import { createAdminClient, findAuthUserIdByEmail } from "@/lib/supabase/admin";
 import {
   INVITE_TTL_MS,
@@ -65,6 +66,8 @@ export async function POST(request) {
   }
 
   try {
+    const siteUrl = getSiteUrl();
+
     const existingProfile = await prisma.profile.findUnique({ where: { email } });
     if (existingProfile) {
       return NextResponse.json(
@@ -110,7 +113,7 @@ export async function POST(request) {
       select: PROFILE_SELECT,
     });
 
-    const registerUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/teacher/register/${rawToken}`;
+    const registerUrl = `${siteUrl}/teacher/register/${rawToken}`;
     const { subject, html, text, attachments } = buildTeacherInviteEmail({
       registerUrl,
       firstName,
