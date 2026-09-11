@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { GALLERY_CATEGORIES } from "@/data/gallery-categories";
+import { prepareImageForUpload } from "@/lib/prepare-image-upload";
 import { cn } from "@/lib/utils";
 
 function toDate(value) {
@@ -57,8 +58,14 @@ export function GalleryAlbumForm({ initialItem }) {
     try {
       const uploaded = [];
       for (const file of files) {
+        let prepared;
+        try {
+          prepared = await prepareImageForUpload(file);
+        } catch {
+          throw new Error(`Could not process ${file.name}`);
+        }
         const formData = new FormData();
-        formData.append("file", file);
+        formData.append("file", prepared);
         const res = await fetch("/api/super-admin/gallery/upload", {
           method: "POST",
           body: formData,
@@ -293,7 +300,7 @@ export function GalleryAlbumForm({ initialItem }) {
             ref={fileInputRef}
             id="photos"
             type="file"
-            accept="image/png,image/jpeg,image/webp,image/gif"
+            accept="image/png,image/jpeg,image/webp,image/gif,image/heic,image/heif,.heic,.heif"
             multiple
             onChange={handleFilesChange}
             disabled={uploading}
