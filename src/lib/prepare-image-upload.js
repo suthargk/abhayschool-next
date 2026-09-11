@@ -35,7 +35,7 @@ export async function prepareImageForUpload(file) {
     maxSizeMB: MAX_SIZE_MB,
     maxWidthOrHeight: MAX_DIMENSION,
     useWebWorker: true,
-    initialQuality: 0.82,
+    initialQuality: 0.6,
   });
 
   return new File([compressedBlob], working.name, {
